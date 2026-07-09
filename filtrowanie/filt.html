@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wybór kategorii</title>
+    <link rel="stylesheet" href="filt.css">
+    <script src="filt.js" defer></script>
+</head>
+<body>
+
+    <div class="container">
+
+        <label for="school">Wybierz szkołę:</label>
+        <select id="school">
+            <option value="">-- Wybierz --</option>
+            <option value="podstawowa">Szkoła podstawowa</option>
+            <option value="srednia">Szkoła średnia</option>
+        </select>
+
+        <label for="class">Klasa:</label>
+        <select id="class">
+            <option value="">Najpierw wybierz szkołę</option>
+        </select>
+
+        <label for="topic">Temat:</label>
+        <input type="text" id="topic" placeholder="Wpisz temat">
+
+    </div>
+
+    <button class="confirm-btn" onclick="goNext()">
+        ZATWIERDŹ
+    </button>
+
+</body>
+</html>
