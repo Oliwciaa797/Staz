@@ -5,7 +5,10 @@ body{
     align-items: center;
     min-height: 100vh;
     font-family: Arial, sans-serif;
-    background-image: url("tlo.png");
+    background-image: url('background.png');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
 }
 
 .login-container{
