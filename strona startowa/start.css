@@ -1,0 +1,142 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+
+body{
+    background:#f4f2ec;
+    min-height: 100vh;
+    overflow:hidden;
+    position:relative;
+}
+
+/* Header */
+
+header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 40px;
+}
+
+.logo{
+    color:#304f00;
+    font-size:2rem;
+    font-weight:700;
+}
+
+.login-btn{
+    background:#2f5500;
+    color:white;
+    border:none;
+    padding:12px 25px;
+    border-radius:30px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+.login-btn:hover{
+    background:#406f00;
+}
+
+/* Main */
+
+main{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    text-align:center;
+}
+
+main h2{
+    color:#264500;
+    font-size:3rem;
+    margin-bottom:25px;
+}
+
+.search-box{
+    display:flex;
+    align-items:center;
+    width:600px;
+    max-width:90vw;
+    background:white;
+    border:8px solid #264500;
+    border-radius:50px;
+    overflow:hidden;
+}
+
+.search-box input{
+    flex:1;
+    border:none;
+    outline:none;
+    padding:15px 20px;
+    font-size:1.1rem;
+}
+
+.search-box button{
+    border:none;
+    background:none;
+    padding:0 20px;
+    cursor:pointer;
+    font-size:1.4rem;
+}
+
+.buttons{
+    margin-top:25px;
+    display:flex;
+    justify-content:center;
+    gap:25px;
+}
+
+.buttons button{
+    background:#264500;
+    color:white;
+    border:none;
+    padding:15px 35px;
+    border-radius:25px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.buttons button:hover{
+    background:#396600;
+}
+
+/* Dekoracje */
+
+.shape{
+    position:absolute;
+    opacity:0.25;
+}
+
+.shape-top{
+    width:250px;
+    height:250px;
+    border:20px solid #9cc46e;
+    border-radius:50%;
+    top:-70px;
+    right:-70px;
+}
+
+.shape-left{
+    width:500px;
+    height:500px;
+    border:30px solid #809267;
+    border-radius:45%;
+    bottom:-260px;
+    left:-200px;
+}
+
+.star{
+    position:absolute;
+    right:60px;
+    bottom:40px;
+    font-size:100px;
+    color:#b9d89b;
+}
