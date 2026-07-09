@@ -11,22 +11,25 @@ body{
     background-size: cover;
 }
 
-.register-container{
+.login-container{
     width: 450px;
     height: 600px;
     background: #ffffff;
-    border: 5px solid #264500;
+    border: 8px solid #264500;
     border-radius: 35px;
     padding: 40px;
     
 }
 
+.login-container h1{
 .register-container h1{
     color: #264500;
     font-size: 50px;
     margin-bottom: 40px;
 }
 
+.login-container input[type="email"],
+.login-container input[type="password"]{
 .register-container input[type="email"],
 .register-container input[type="password"]{
     width: 100%;
@@ -39,6 +42,7 @@ body{
     outline: none;
 }
 
+.login-btn{
 .register-btn{
     background: #264500;
     color: white;
@@ -67,6 +71,7 @@ body{
     cursor: pointer;
 }
 
+.login-btn:hover,
 .register-btn:hover{
     background: #356600;
 }
