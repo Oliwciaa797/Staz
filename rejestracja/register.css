@@ -11,7 +11,9 @@ body{
     background-size: cover;
 }
 
-.login-container{
+.register-container{
+    display: flex;
+    flex-direction: column;
     width: 450px;
     height: 600px;
     background: #ffffff;
@@ -44,6 +46,8 @@ body{
 
 .login-btn{
 .register-btn{
+    width: 200px;
+    align-self: center;
     background: #264500;
     color: white;
     border: none;
