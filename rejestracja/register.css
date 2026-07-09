@@ -22,6 +22,7 @@ body{
 }
 
 .login-container h1{
+.register-container h1{
     color: #264500;
     font-size: 50px;
     margin-bottom: 40px;
@@ -29,6 +30,8 @@ body{
 
 .login-container input[type="email"],
 .login-container input[type="password"]{
+.register-container input[type="email"],
+.register-container input[type="password"]{
     width: 100%;
     border: none;
     border-bottom: 3px solid black;
@@ -40,6 +43,7 @@ body{
 }
 
 .login-btn{
+.register-btn{
     background: #264500;
     color: white;
     border: none;
