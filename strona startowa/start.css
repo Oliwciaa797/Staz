@@ -13,11 +13,16 @@ body{
     min-height: 100vh;
     overflow:hidden;
     position:relative;
+    background-image: url('background.png');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
 }
 
 /* Header */
 
 header{
+    width: auto;
     display:flex;
     justify-content:space-between;
     align-items:center;
@@ -30,20 +35,8 @@ header{
     font-weight:700;
 }
 
-.login-signup {
-    align-self: left;
-    display: flex;
-    justify-content: left;
-}
-.signup-btn {
-    background: transparent;
-    color: #2f5500;
-    padding: 12px 25px;
-    cursor: pointer;
-    font: weight 700px;
-    border: transparent;
-}
 .login-btn{
+    
     background:#2f5500;
     color:white;
     border:none;
@@ -65,6 +58,10 @@ main{
     left:50%;
     transform:translate(-50%,-50%);
     text-align:center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 main h2{
@@ -121,36 +118,3 @@ main h2{
     background:#396600;
 }
 
-/* Dekoracje */
-
-.shape{
-    z-index: -1;
-    position:absolute;
-    opacity:0.25;
-}
-
-.shape-top{
-    width:250px;
-    height:250px;
-    border:20px solid #9cc46e;
-    border-radius:50%;
-    top:-70px;
-    right:-70px;
-}
-
-.shape-left{
-    width:500px;
-    height:500px;
-    border:30px solid #809267;
-    border-radius:45%;
-    bottom:-260px;
-    left:-200px;
-}
-
-.star{
-    position:absolute;
-    right:60px;
-    bottom:40px;
-    font-size:100px;
-    color:#b9d89b;
-}
