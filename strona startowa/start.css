@@ -13,7 +13,10 @@ body{
     min-height: 100vh;
     overflow:hidden;
     position:relative;
-    background-image: url("Witamy!\ Czego\ się\ dzisiaj\ nauczysz.png");
+    background-image: url('background.png');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
 }
 
 /* Header */
@@ -48,6 +51,9 @@ header{
 /* Main */
 
 main{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
     position:absolute;
     top:50%;
     left:50%;
@@ -64,10 +70,10 @@ main h2{
 .search-box{
     display:flex;
     align-items:center;
-    width:600px;
+    width:800px;
     max-width:90vw;
     background:white;
-    border:8px solid #264500;
+    border:5px solid #264500;
     border-radius:50px;
     overflow:hidden;
 }
@@ -109,35 +115,3 @@ main h2{
     background:#396600;
 }
 
-/* Dekoracje */
-
-.shape{
-    position:absolute;
-    opacity:0.25;
-}
-
-.shape-top{
-    width:250px;
-    height:250px;
-    border:20px solid #9cc46e;
-    border-radius:50%;
-    top:-70px;
-    right:-70px;
-}
-
-.shape-left{
-    width:500px;
-    height:500px;
-    border:30px solid #809267;
-    border-radius:45%;
-    bottom:-260px;
-    left:-200px;
-}
-
-.star{
-    position:absolute;
-    right:60px;
-    bottom:40px;
-    font-size:100px;
-    color:#b9d89b;
-}
