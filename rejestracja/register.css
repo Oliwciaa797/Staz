@@ -11,7 +11,9 @@ body{
     background-size: cover;
 }
 
-.login-container{
+.register-container{
+    display: flex;
+    flex-direction: column;
     width: 450px;
     height: 600px;
     background: #ffffff;
@@ -21,14 +23,14 @@ body{
     
 }
 
-.login-container h1{
+.register-container h1{
     color: #264500;
     font-size: 50px;
     margin-bottom: 40px;
 }
 
-.login-container input[type="email"],
-.login-container input[type="password"]{
+.register-container input[type="email"],
+.register-container input[type="password"]{
     width: 100%;
     border: none;
     border-bottom: 3px solid black;
@@ -39,7 +41,9 @@ body{
     outline: none;
 }
 
-.login-btn{
+.register-btn{
+    width: 200px;
+    align-self: center;
     background: #264500;
     color: white;
     border: none;
@@ -67,7 +71,6 @@ body{
     cursor: pointer;
 }
 
-.login-btn:hover,
 .register-btn:hover{
     background: #356600;
 }
