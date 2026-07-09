@@ -13,18 +13,12 @@ body{
     min-height: 100vh;
     overflow:hidden;
     position:relative;
-
-    background-image: url('background.png');
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: cover;
-
+    background-image: url("Witamy!\ Czego\ się\ dzisiaj\ nauczysz.png");
 }
 
 /* Header */
 
 header{
-    width: auto;
     display:flex;
     justify-content:space-between;
     align-items:center;
@@ -38,7 +32,6 @@ header{
 }
 
 .login-btn{
-    
     background:#2f5500;
     color:white;
     border:none;
@@ -60,10 +53,6 @@ main{
     left:50%;
     transform:translate(-50%,-50%);
     text-align:center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
 }
 
 main h2{
@@ -75,7 +64,7 @@ main h2{
 .search-box{
     display:flex;
     align-items:center;
-    width:800px;
+    width:600px;
     max-width:90vw;
     background:white;
     border:8px solid #264500;
@@ -120,3 +109,35 @@ main h2{
     background:#396600;
 }
 
+/* Dekoracje */
+
+.shape{
+    position:absolute;
+    opacity:0.25;
+}
+
+.shape-top{
+    width:250px;
+    height:250px;
+    border:20px solid #9cc46e;
+    border-radius:50%;
+    top:-70px;
+    right:-70px;
+}
+
+.shape-left{
+    width:500px;
+    height:500px;
+    border:30px solid #809267;
+    border-radius:45%;
+    bottom:-260px;
+    left:-200px;
+}
+
+.star{
+    position:absolute;
+    right:60px;
+    bottom:40px;
+    font-size:100px;
+    color:#b9d89b;
+}
