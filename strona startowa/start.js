@@ -10,7 +10,7 @@ function search() {
 }
 
 function categorySearch() {
-    window.location.href = "filotujm.html";
+    window.location.href = "../filtrowanie/filt.html";
 }
 
 function goToLogin() {
