@@ -1,7 +1,7 @@
 function search() {
     const value = document.getElementById("searchInput").value;
 
-    if(value.trim() === ""){
+    if (value.trim() === "") {
         alert("Wpisz coś do wyszukania.");
         return;
     }
@@ -10,9 +10,15 @@ function search() {
 }
 
 function categorySearch() {
-    alert("Otwieranie kategorii...");
+    window.location.href = "filotujm.html";
 }
 
-document
-    .getElementById("searchBtn")
-    .addEventListener("click", search);
+function goToLogin() {
+    window.location.href = "../logowanie/log.html";
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    document
+        .getElementById("searchBtn")
+        .addEventListener("click", search);
+});

@@ -1,0 +1,70 @@
+body{
+    background: #f4f2ec;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background-image: url("tlo.png");
+}
+
+.login-container{
+    width: 450px;
+    height: 600px;
+    background: #ffffff;
+    border: 8px solid #264500;
+    border-radius: 35px;
+    padding: 40px;
+    
+}
+
+.login-container h1{
+    color: #264500;
+    font-size: 50px;
+    margin-bottom: 40px;
+}
+
+.login-container input[type="email"],
+.login-container input[type="password"]{
+    width: 100%;
+    border: none;
+    border-bottom: 3px solid black;
+    background: transparent;
+    padding: 10px;
+    margin-bottom: 30px;
+    font-size: 20px;
+    outline: none;
+}
+
+.login-btn{
+    background: #264500;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 12px 50px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 25px;
+}
+
+.checkbox{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 40px;
+}
+
+.register-btn{
+    background: #264500;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 15px 25px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.login-btn:hover,
+.register-btn:hover{
+    background: #356600;
+}
