@@ -22,3 +22,9 @@ document.addEventListener("DOMContentLoaded", () => {
         .getElementById("searchBtn")
         .addEventListener("click", search);
 });
+
+
+
+function toggleMenu() {
+    document.getElementById("sidebar").classList.toggle("active");
+}
