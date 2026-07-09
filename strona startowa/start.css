@@ -30,6 +30,19 @@ header{
     font-weight:700;
 }
 
+.login-signup {
+    align-self: left;
+    display: flex;
+    justify-content: left;
+}
+.signup-btn {
+    background: transparent;
+    color: #2f5500;
+    padding: 12px 25px;
+    cursor: pointer;
+    font: weight 700px;
+    border: transparent;
+}
 .login-btn{
     background:#2f5500;
     color:white;
@@ -63,7 +76,7 @@ main h2{
 .search-box{
     display:flex;
     align-items:center;
-    width:600px;
+    width:800px;
     max-width:90vw;
     background:white;
     border:8px solid #264500;
@@ -111,6 +124,7 @@ main h2{
 /* Dekoracje */
 
 .shape{
+    z-index: -1;
     position:absolute;
     opacity:0.25;
 }
