@@ -1,11 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Nazwa strony</title>
+    <link rel="stylesheet" href="start.css">
+    <script src="start.js"></script> 
 </head>
 <body>
-    
+    ok
+
+    <header>
+        <h1 class="logo">Nazwa strony</h1>
+
+        <button class="login-btn">
+            Zaloguj/Zarejestruj się
+        </button>
+    </header>
+
+    <!-- Dekoracje -->
+    <div class="shape shape-top"></div>
+    <div class="shape shape-left"></div>
+    <div class="star">✦</div>
+
+    <main>
+        <h2>Witamy! Czego się dzisiaj nauczysz?</h2>
+
+        <div class="search-box">
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="wpisz coś..."
+            >
+            <button id="searchBtn">🔍</button>
+        </div>
+
+        <div class="buttons">
+            <button onclick="search()">SZUKAJ</button>
+            <button onclick="categorySearch()">
+                SZUKAJ PO KATEGORII
+            </button>
+        </div>
+    </main>
 </body>
 </html>
