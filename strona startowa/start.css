@@ -164,3 +164,7 @@ main h2{
 #sidebar a:hover {
     background-color: #264500;
 }
+
+.lupa{
+    transform: translate(5px -20px);
+}
