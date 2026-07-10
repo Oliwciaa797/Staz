@@ -17,7 +17,7 @@ body{
     width: 450px;
     height: 600px;
     background: #ffffff;
-    border: 8px solid #264500;
+    border: 5px solid #264500;
     border-radius: 35px;
     padding: 40px;
     
@@ -75,4 +75,16 @@ body{
 
 .register-btn:hover{
     background: #356600;
+}
+
+.register-btn:disabled {
+    background-color: gray;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.error {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
 }

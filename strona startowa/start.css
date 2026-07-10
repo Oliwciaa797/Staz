@@ -149,7 +149,7 @@ main h2{
 }
  
 /* Po otwarciu */
-#sidebar.active {
+#sidebar.active {   
     left: 0;
 }
  
@@ -163,4 +163,8 @@ main h2{
  
 #sidebar a:hover {
     background-color: #264500;
+}
+
+.lupa{
+    transform: translate(5px -20px);
 }

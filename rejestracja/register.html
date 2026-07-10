@@ -11,11 +11,22 @@
 <body>
     
     <div class="register-container">
-    <div onclick="back()"><img src="arrow.png" width="20px" height="20px" alt="wróć do strony głównej"></div>
+    <div id="arrow" onclick="back()"><img src="arrow.png" width="20px" height="20px" alt="wróć do strony głównej"></div>
     <h1>Zarejestruj się</h1>
 
     <input type="email" id="email" placeholder="E-mail">
 
+    <input type="password" id="password" placeholder="Hasło (min 8 znaków)">
+    <input type="password" id="password2" placeholder="Powtórz hasło">
+    <p id="passwordError" class="error"></p>
+
+
+    <label class="checkbox">
+        <input type="checkbox" id="agree" onchange="sprawdzCheckbox()">
+        Zgadzam się na warunki użytkowania strony
+    </label>
+
+    <button id="registerBtn" class="register-btn" onclick="checkPasswords()" disabled>Zarejestruj się</button>
     <input type="password" id="password1" id="docel" placeholder="Hasło">
     <input type="password" id="password2" placeholder="Powtórz hasło">
 
