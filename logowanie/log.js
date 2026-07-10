@@ -6,3 +6,7 @@ loginBtn.addEventListener("click", () => {
 function goToLogin() {
     window.location.href = "../rejestracja/register.html";
 }
+
+function back() {
+    window.location.href = "../strona startowa/start.html";
+}
