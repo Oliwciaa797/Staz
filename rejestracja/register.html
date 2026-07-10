@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="register.css">
-    <script src="register.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="register.js" defer></script>
 </head>
 <body>
     
@@ -22,11 +22,13 @@
 
 
     <label class="checkbox">
-        <input type="checkbox" id="check" id="agree" onchange="sprawdzCheckbox()">
+        <input type="checkbox" id="agree" onchange="sprawdzCheckbox()">
         Zgadzam się na warunki użytkowania strony
     </label>
 
-    <button id="registerBtn" /*id="guzik"*/ class="register-btn" onclick="checkPasswords()" disabled>Zarejestruj się</button>
+    <button id="registerBtn" class="register-btn" onclick="checkPasswords()" disabled>
+        Zarejestruj się
+    </button>
     
     <div id="status"></div>
   </div>
