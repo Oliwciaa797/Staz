@@ -74,3 +74,7 @@ body{
 .login-btn:hover{
     background: #356600;
 }
+
+#arrow {
+    cursor: pointer;
+}

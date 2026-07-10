@@ -149,7 +149,7 @@ main h2{
 }
  
 /* Po otwarciu */
-#sidebar.active {
+#sidebar.active {   
     left: 0;
 }
  
