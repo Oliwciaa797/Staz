@@ -200,12 +200,14 @@ main{
     background-color: #ffffff;
     min-width: 800px;
     border-radius: 10px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 8px 16px 0px rgba(104, 117, 80, 0.144);
     z-index: 1;
 }
 
-.dropdown-content * {
-    transition: all 0.5s ease;
+.dropdown-content h3 {
+    color: #264500;
+    margin: 10px 0;
+    font-size: 20px;
 }
 
 .language {
