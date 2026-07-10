@@ -76,3 +76,8 @@ body{
 .register-btn:hover{
     background: #356600;
 }
+
+.wroc{
+    font-size: 50px;
+    color: black;
+}
