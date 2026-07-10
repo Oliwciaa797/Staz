@@ -136,8 +136,8 @@ main h2{
 #sidebar {
     position: fixed;
     top: 0;
-    left: -16.66vw;
-    width: 16.66vw;
+    left: -16.66vw; 
+    width: 16.66vw; 
     height: 100vh;
     background-color: #81926a;
     transition: left 0.3s ease;
