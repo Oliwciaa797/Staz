@@ -278,3 +278,27 @@ main{
 .checkbox__label {
     margin-left: 8px;
 }
+
+#results {
+    margin-top: 50px;
+    width: 1000px;
+    display: grid;
+    gap: 20px;
+}
+
+.video {
+    background:white;
+    padding:20px;
+    border-radius:20px;
+    display:flex;
+    gap:20px;
+}
+
+.video img {
+    width:200px;
+    border-radius:10px;
+}
+
+.video h3 {
+    color:#264500;
+}

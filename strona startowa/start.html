@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nazwa strony</title>   
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.8.1/dist/nouislider.min.css">
+    <link rel="stylesheet" href="nouislider/nouislider.min.css">
     <link rel="stylesheet" href="start.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/nouislider@15.8.1/dist/nouislider.min.js"></script>
+    <script defer src="nouislider/nouislider.min.js"></script>
     <script defer src="start.js"></script> 
 </head>
 <body>
@@ -46,11 +46,13 @@
                 id="searchInput"
                 placeholder="wpisz coś..."
             >
-            <button id="searchBtn" class="lupa"><img src="magnifying-glass.png" height="25px" width="25px"></button>
+            <button id="searchBtn" class="lupa">
+                <img src="magnifying-glass.png" height="25px" width="25px">
+            </button>
         </div>
 
         <div class="buttons">
-            <button onclick="search()" onchange="search()">SZUKAJ</button>
+            <button onclick="search()">SZUKAJ</button>
             <div class="filters">
                 <button id="filtersBtn" onclick="categoryDropdown()">
                     FILTRY
@@ -120,6 +122,8 @@
                 </div>
             </div>
         </div>
+
+        <div id="results"></div>
     </main>
     
     
