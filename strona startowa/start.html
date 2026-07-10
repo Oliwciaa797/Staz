@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nazwa strony</title>
+    <title>Nazwa strony</title>   
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.8.1/dist/nouislider.min.css">
     <link rel="stylesheet" href="start.css">
-    <script src="start.js"></script> 
+    <script defer src="https://cdn.jsdelivr.net/npm/nouislider@15.8.1/dist/nouislider.min.js"></script>
+    <script defer src="start.js"></script> 
 </head>
 <body>
 
@@ -21,7 +23,6 @@
             <a href="../strona startowa/start.html">Strona Startowa</a>
             <a href="../logowanie/log.html">Logowanie</a>
             <a href="../Zapisane materiały/zapis.html">Zapisane materiały</a>
-            <a href="../filtrowanie/filt.html">Kategorie</a>
             <a href="../Profil/prof.html">Profil</a>
         </div>
 
@@ -36,9 +37,10 @@
 
 
 
-    <main>
-        <h2>Witamy! Czego się dzisiaj nauczysz?</h2>
-        <div class="search-box">
+    <main id="mainContent">
+        <h2 id="welcomeText">Witamy! Czego się dzisiaj nauczysz?</h2>
+
+        <div class="search-box" id="searchBox">
             <input
                 type="text"
                 id="searchInput"
@@ -48,13 +50,80 @@
         </div>
 
         <div class="buttons">
-            <button onclick="search()">SZUKAJ</button>
-            <button onclick="categorySearch()">
-                SZUKAJ PO KATEGORII
-            </button>
+            <button onclick="search()" onchange="search()">SZUKAJ</button>
+            <div class="filters">
+                <button id="filtersBtn" onclick="categoryDropdown()">
+                    FILTRY
+                </button>
+                <div id="filtersDropdown" class="dropdown-content">
+                    <div class="language">
+                        <h3>Język</h3>
+                        <label for="polish" class="checkbox">
+                            <input class="checkbox__input" type="checkbox" id="polish">
+                            <svg class="checkbox__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22">
+                                <rect width="21" height="21" x=".5" y=".5"
+                                    fill="#FFF" stroke="#264500" rx="3" />
+                                <path class="tick"
+                                    stroke="#6EA340"
+                                    fill="none"
+                                    stroke-linecap="round"
+                                    stroke-width="4"
+                                    d="M4 10l5 5 9-9" />
+                            </svg>
+                            <span class="checkbox__label">
+                                Język polski
+                            </span>
+                        </label>
+                        <label for="english" class="checkbox">
+                            <input class="checkbox__input" type="checkbox" id="english">
+                            <svg class="checkbox__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22">
+                                <rect width="21" height="21" x=".5" y=".5"
+                                    fill="#FFF" stroke="#264500" rx="3" />
+                                <path class="tick"
+                                    stroke="#6EA340"
+                                    fill="none"
+                                    stroke-linecap="round"
+                                    stroke-width="4"
+                                    d="M4 10l5 5 9-9" />
+                            </svg>
+                            <span class="checkbox__label">
+                                Język angielski
+                            </span>
+                        </label>
+                    </div>
+                    <div class="duration">
+                        <label>
+                            Czas trwania:
+                            <span id="durationValue"></span>
+                        </label>
+                        <div id="slider"></div>
+                        <label for="durationCheckbox" class="checkbox">
+                            <input 
+                                class="checkbox__input" 
+                                type="checkbox" 
+                                id="durationCheckbox"
+                            >
+                            <svg class="checkbox__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22">
+                                <rect width="21" height="21" x=".5" y=".5"
+                                    fill="#FFF" stroke="#264500" rx="3" />
+                                <path class="tick"
+                                    stroke="#6EA340"
+                                    fill="none"
+                                    stroke-linecap="round"
+                                    stroke-width="4"
+                                    d="M4 10l5 5 9-9" />
+                            </svg>
+                            <span class="checkbox__label">
+                                Nie zależy
+                            </span>
+                        </label>
+                    </div>
+                </div>
+                </div>
+            </div>
         </div>
     </main>
-
+    
     
 </body>
 </html>

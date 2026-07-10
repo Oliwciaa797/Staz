@@ -59,6 +59,7 @@ header{
 /* Main */
 
 main{
+    transition: all 0.5s ease;
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -69,16 +70,18 @@ main{
     text-align:center;
 }
 
-main h2{
+#welcomeText{
+    transition: opacity 0.4s ease;
     color:#264500;
     font-size:3rem;
     margin-bottom:25px;
 }
 
 .search-box{
+    transition: all 0.5s ease;
     display:flex;
     align-items:center;
-    width:800px;
+    width:1000px;
     max-width:90vw;
     background:white;
     border:5px solid #264500;
@@ -103,6 +106,7 @@ main h2{
 }
 
 .buttons{
+    transition: all 0.5s ease;
     margin-top:25px;
     display:flex;
     justify-content:center;
@@ -123,6 +127,23 @@ main h2{
     background:#396600;
 }
 
+.search-mode {
+    transform:translate(-50%, -90%);
+}
+
+.search-mode #welcomeText{
+    opacity:0;
+    transform:translateY(-30px);
+    pointer-events:none;
+}
+
+.search-mode .search-box {
+    transform: translateY(-260px);
+}
+
+.search-mode .buttons {
+    transform: translateY(-260px);
+}
 #menuBtn {
     color: #264500;
     top: 15px;
@@ -165,6 +186,93 @@ main h2{
     background-color: #264500;
 }
 
-.lupa{
-    transform: translate(5px -20px);
+.filters {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    text-align: left;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    background-color: #ffffff;
+    min-width: 800px;
+    border-radius: 10px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content * {
+    transition: all 0.5s ease;
+}
+
+.language {
+    line-height : 2;
+}
+
+.duration {
+    margin: auto 30px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+#slider {
+    background: #e0dfdb;
+    width: 400px;
+    margin: 10px auto;
+}
+
+.noUi-connect {
+    background: #2f5500;
+}
+
+.noUi-handle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    top: -7px;
+    cursor: pointer;
+}
+
+.noUi-handle::before,
+.noUi-handle::after {
+    display: none;
+}
+
+.show {
+    display: flex;
+}
+
+.checkbox {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.checkbox__input {
+    position: absolute;
+    opacity: 0;
+}
+
+.checkbox__icon {
+    width: 22px;
+    height: 22px;
+}
+
+.checkbox__icon .tick {
+    stroke-dasharray: 20px;
+    stroke-dashoffset: 20px;
+    transition: .2s;
+}
+
+.checkbox__input:checked + .checkbox__icon .tick {
+    stroke-dashoffset: 0;
+}
+
+.checkbox__label {
+    margin-left: 8px;
 }
