@@ -33,12 +33,12 @@ const statusEl = document.getElementById('status');
 
 document.getElementById('guzik').addEventListener('click', async function() {
   const email = document.getElementById('email').value;
-  const haslo = document.getElementById('password1').value;
+  const haslo = document.getElementById('password').value;
   const haslo2 = document.getElementById('password2').value;
   const zaakceptowano = document.getElementById('check').checked;
 
   // 1. Sprawdzenie hasła
-  if (haslo !== haslo2) {
+  /*if (haslo !== haslo2) {
     statusEl.textContent = 'Błąd: hasła nie są takie same!';
     return;
   }
@@ -52,7 +52,7 @@ document.getElementById('guzik').addEventListener('click', async function() {
   if (!zaakceptowano) {
     statusEl.textContent = 'Musisz zaakceptować regulamin!';
     return;
-  }
+  }*/
 
   // 3. Zapis do bazy (rejestracja przez Supabase Auth)
   const { data, error } = await supabaseClient.auth.signUp({
@@ -66,5 +66,5 @@ document.getElementById('guzik').addEventListener('click', async function() {
   }
 
   // 4. Przekierowanie na kolejną stronę
-  window.location.href = 'kolejna-strona.html';
+  window.location.href = '../Profil/prof.html';
 });
