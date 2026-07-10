@@ -11,23 +11,26 @@
 
 <header>
 
-    <!-- Przycisk menu -->
-    <div id="menuBtn" onclick="toggleMenu()">
-        ☰
+    <div class="top">
+
+        <div id="menuBtn" onclick="toggleMenu()">
+            ☰
+        </div>
+  
+        <div id="sidebar">
+            <a href="../strona startowa/start.html">Strona Startowa</a>
+            <a href="../logowanie/log.html">Logowanie</a>
+            <a href="../Zapisane materiały/zapis.html">Zapisane materiały</a>
+            <a href="../filtrowanie/filt.html">Kategorie</a>
+            <a href="../Profil/prof.html">Profil</a>
+        </div>
+
+        <h1 class="logo">Nazwa strony</h1>
+
+        <button class="login-btn" onclick="goToLogin()">
+            Zaloguj
+        </button>
     </div>
-
-    <!-- Panel boczny -->
-    <div id="sidebar">
-        #
-        #Kategorie</a>
-        #
-    </div>
-
-    <h1 class="logo">Nazwa strony</h1>
-
-    <button class="login-btn" onclick="goToLogin()">
-        Zaloguj
-    </button>
 
 </header>
 
@@ -51,5 +54,7 @@
             </button>
         </div>
     </main>
+
+    
 </body>
 </html>
