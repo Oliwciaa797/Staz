@@ -76,3 +76,9 @@ body{
 .register-btn:hover{
     background: #356600;
 }
+
+.register-btn:disabled {
+    background-color: gray;
+    cursor: not-allowed;
+    opacity: 0.6;
+}

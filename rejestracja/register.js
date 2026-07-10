@@ -6,8 +6,14 @@ function checkPasswords() {
     const password2 = document.getElementById("password2").value;
 
     if (password1 === password2) {
-        alert("Hasła są takie same.");
+        
     } else {
         alert("Hasła nie są takie same!");
     }
+}
+function sprawdzCheckbox() {
+    const checkbox = document.getElementById("agree");
+    const button = document.getElementById("registerBtn");
+
+    button.disabled = !checkbox.checked;
 }
