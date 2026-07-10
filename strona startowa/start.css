@@ -22,13 +22,21 @@ body{
 /* Header */
 
 header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+    background-color: #F9F4EC;
     padding:20px 40px;
+    position: sticky;
+    box-shadow: 5px 5px 5px rgba(104, 117, 80, 0.144);
+}
+
+.top {
+    display: flex;
+    justify-content: space-between;
+    
 }
 
 .logo{
+    align-self: center;
+    /* margin-left: 10px; */
     color:#304f00;
     font-size:2rem;
     font-weight:700;
@@ -114,9 +122,9 @@ main h2{
 .buttons button:hover{
     background:#396600;
 }
-/* Przycisk hamburgera */
+
 #menuBtn {
-    position: fixed;
+    color: #264500;
     top: 15px;
     left: 15px;
     font-size: 32px;
@@ -125,7 +133,6 @@ main h2{
     user-select: none;
 }
 
-/* Panel boczny */
 #sidebar {
     position: fixed;
     top: 0;
@@ -135,17 +142,17 @@ main h2{
     background-color: #81926a;
     transition: left 0.3s ease;
     z-index: 1000;
-
+ 
     display: flex;
     flex-direction: column;
     padding-top: 70px;
 }
-
+ 
 /* Po otwarciu */
 #sidebar.active {
     left: 0;
 }
-
+ 
 /* Linki */
 #sidebar a {
     color: white;
@@ -153,8 +160,7 @@ main h2{
     padding: 15px 20px;
     font-size: 18px;
 }
-
+ 
 #sidebar a:hover {
-    background-color: #34495e;
+    background-color: #264500;
 }
-
