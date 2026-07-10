@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="register.css">
-    <script src="register.js"></script>
+    <script src="register.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     
@@ -13,17 +14,21 @@
     <div id="arrow" onclick="back()"><img src="arrow.png" width="20px" height="20px" alt="wróć do strony głównej"></div>
     <h1>Zarejestruj się</h1>
 
-    <input type="email" placeholder="E-mail">
+    <input type="email" id="email" placeholder="E-mail">
 
-    <input type="password" placeholder="Hasło">
-    <input type="password" placeholder="Powtórz hasło">
+    <input type="password" id="password" placeholder="Hasło (min 8 znaków)">
+    <input type="password" id="password2" placeholder="Powtórz hasło">
+    <p id="passwordError" class="error"></p>
+
 
     <label class="checkbox">
-        <input type="checkbox">
+        <input type="checkbox" id="check" id="agree" onchange="sprawdzCheckbox()">
         Zgadzam się na warunki użytkowania strony
     </label>
 
-    <button class="register-btn">Zarejestruj się</button>
+    <button id="registerBtn" /*id="guzik"*/ class="register-btn" onclick="checkPasswords()" disabled>Zarejestruj się</button>
+    
+    <div id="status"></div>
   </div>
     
 </body>
