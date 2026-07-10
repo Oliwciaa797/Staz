@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nazwa strony</title>   
-    <link rel="stylesheet" href="nouislider/nouislider.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.8.1/dist/nouislider.min.css">
     <link rel="stylesheet" href="start.css">
-    <script defer src="nouislider/nouislider.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/nouislider@15.8.1/dist/nouislider.min.js"></script>
     <script defer src="start.js"></script> 
 </head>
 <body>
@@ -52,7 +52,7 @@
         </div>
 
         <div class="buttons">
-            <button onclick="search()">SZUKAJ</button>
+            <button onclick="search()" onchange="search()">SZUKAJ</button>
             <div class="filters">
                 <button id="filtersBtn" onclick="categoryDropdown()">
                     FILTRY
@@ -94,8 +94,10 @@
                         </label>
                     </div>
                     <div class="duration">
-                        <h3>Czas trwania</h3>
-                        <span id="durationValue"></span>
+                        <label>
+                            Czas trwania:
+                            <span id="durationValue"></span>
+                        </label>
                         <div id="slider"></div>
                         <label for="durationCheckbox" class="checkbox">
                             <input 
@@ -122,8 +124,6 @@
                 </div>
             </div>
         </div>
-
-        <div id="results"></div>
     </main>
     
     

@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Logowanie</title>
     <link rel="stylesheet" href="log.css">
-    <script src="log.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="log.js" defer></script>
 </head>
 <body>
     <div class="login-container">
@@ -14,15 +15,16 @@
 
     <h1>Logowanie</h1>
 
-    <input type="email" placeholder="E-mail">
+    <input type="email" id="email" placeholder="E-mail">
 
-    <input type="password" placeholder="Hasło">
+    <input type="password" id="password" placeholder="Hasło">
+    <p id="loginError" class="error"></p>
 
-    <div class="reset" onclick="reset()">zapomniałeś hasła?</div>
+    <div id="reset" onclick="reset()">zapomniałeś hasła?</div>
 
-    <button class="login-btn">Zaloguj</button>
+    <button id="loginBtn" class="login-btn">Zaloguj</button>
 
-    
+    <div id="status"></div>
 
     <button class="register-btn" onclick="goToLogin()">
         NIE MASZ KONTA? ZAREJESTRUJ SIĘ

@@ -200,14 +200,12 @@ main{
     background-color: #ffffff;
     min-width: 800px;
     border-radius: 10px;
-    box-shadow: 0px 8px 16px 0px rgba(104, 117, 80, 0.144);
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
 }
 
-.dropdown-content h3 {
-    color: #264500;
-    margin: 10px 0;
-    font-size: 20px;
+.dropdown-content * {
+    transition: all 0.5s ease;
 }
 
 .language {
@@ -277,28 +275,4 @@ main{
 
 .checkbox__label {
     margin-left: 8px;
-}
-
-#results {
-    margin-top: 50px;
-    width: 1000px;
-    display: grid;
-    gap: 20px;
-}
-
-.video {
-    background:white;
-    padding:20px;
-    border-radius:20px;
-    display:flex;
-    gap:20px;
-}
-
-.video img {
-    width:200px;
-    border-radius:10px;
-}
-
-.video h3 {
-    color:#264500;
 }
