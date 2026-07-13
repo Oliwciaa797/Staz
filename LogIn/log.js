@@ -1,11 +1,11 @@
 function goToLogin() {
-    window.location.href = "../rejestracja/register.html";
+    window.location.href = "../SignUp/register.html";
 }
 
 function back() {
-    window.location.href = "../strona startowa/start.html";
+    window.location.href = "../HomePage/start.html";
 }
 
 function reset(){
-    window.location.href = "../reset/reset.html";
+    window.location.href = "../ResetPassword/reset.html";
 }

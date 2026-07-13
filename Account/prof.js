@@ -13,7 +13,7 @@ async function init() {
     const { data: { session } } = await supabaseClient.auth.getSession();
 
     if (!session) {
-        window.location.href = '../logowanie/log.html';
+        window.location.href = '../LogIn/log.html';
         return;
     }
 
@@ -28,10 +28,10 @@ async function init() {
     document.getElementById('avatarInput').addEventListener('change', handleAvatarPreview);
     document.getElementById('saveBtn').addEventListener('click', saveProfile);
     document.getElementById('changePasswordBtn').addEventListener('click', () => {
-        window.location.href = '../zmienhaslo/zmien.html';
+        window.location.href = '../ChangePassword/zmien.html';
     });
     document.getElementById('deleteAccountBtn').addEventListener('click', () => {
-        window.location.href = '../usunkonto/usun.html';
+        window.location.href = '../RemoveAccount/usun.html';
     });
 }
 

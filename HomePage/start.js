@@ -260,7 +260,7 @@ async function search() {
                     ${Math.round(minutes)} min
                     </p>
                     <a target="_blank"
-                        href="notes.html?video=${id}">
+                        href="../Video/video.html?video=${id}">
                         Otwórz film
                     </a>
                 </div>
@@ -302,7 +302,7 @@ function categoryDropdown() {
 
 function goToLogin() {
     window.location.href =
-    "../logowanie/log.html";
+    "../LogIn/log.html";
 }
 
 
