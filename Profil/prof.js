@@ -139,3 +139,28 @@ async function saveProfile() {
     statusEl.textContent = 'Dane zostały zapisane!';
     selectedAvatarFile = null;
 }
+
+function goToLogin() {
+
+    window.location.href =
+    "../logowanie/log.html";
+
+}
+
+
+
+
+function toggleMenu() {
+
+
+    const sidebar =
+    document.getElementById("sidebar");
+
+
+    if (sidebar) {
+
+        sidebar.classList.toggle("active");
+
+    }
+
+}
