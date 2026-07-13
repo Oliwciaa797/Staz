@@ -84,8 +84,16 @@ async function saveProfile() {
 
     // Jeśli wybrano nowe zdjęcie -> wgraj je do Supabase Storage
     if (selectedAvatarFile) {
+        // --- DEBUG: sprawdzenie sesji przed uploadem ---
+        const { data: sessionCheck } = await supabaseClient.auth.getSession();
+        console.log('DEBUG sesja aktywna?', sessionCheck.session);
+        console.log('DEBUG user id z sesji:', sessionCheck.session?.user?.id);
+        console.log('DEBUG currentUser.id:', currentUser.id);
+        // --- KONIEC DEBUG ---
+
         const fileExt = selectedAvatarFile.name.split('.').pop();
         const filePath = `${currentUser.id}/avatar.${fileExt}`;
+        console.log('DEBUG filePath:', filePath);
 
         const { error: uploadError } = await supabaseClient
             .storage
@@ -93,9 +101,14 @@ async function saveProfile() {
             .upload(filePath, selectedAvatarFile, { upsert: true });
 
         if (uploadError) {
-            statusEl.textContent = 'Błąd wysyłania zdjęcia: ' + uploadError.message;
-            return;
-        }
+            console.error('UPLOAD ERROR:', uploadError);
+            alert(JSON.stringify(uploadError, null, 2));
+
+            statusEl.textContent =
+            'Błąd wysyłania zdjęcia: ' + uploadError.message;
+
+    return;
+}
 
         const { data: publicUrlData } = supabaseClient
             .storage
