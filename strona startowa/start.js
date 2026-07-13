@@ -335,7 +335,7 @@ async function search() {
 
         await fetch(
 
-        `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${ids}&key=${API_KEY}`
+        `https://www.googleapis.com/youtube/v3/videos?part=contentDetails,localizations,snippet&id=${ids}&key=${API_KEY}`
 
         );
 
@@ -351,6 +351,7 @@ async function search() {
 
 
         const durations = {};
+        const languages = {};
 
 
 
@@ -359,6 +360,11 @@ async function search() {
 
             durations[item.id] =
             item.contentDetails.duration;
+
+            languages[item.id] =
+            item.snippet.defaultAudioLanguage ||
+            item.snippet.defaultLanguage ||
+            " ";
 
 
         });
@@ -383,6 +389,8 @@ async function search() {
             const id =
             video.id.videoId;
 
+            const videoLanguage =
+            languages[id];
 
 
             const minutes =
@@ -409,7 +417,11 @@ async function search() {
 
             }
 
-
+            if(language !== " " && videoLanguage !== "") {
+                if(!videoLanguage.startsWith(language)) {
+                    return;
+                }
+            }
 
 
 
