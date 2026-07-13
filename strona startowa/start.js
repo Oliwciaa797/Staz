@@ -379,4 +379,4 @@ function toProfile(){
     window.location.href = "../Profil/prof.html";
 }
 document.addEventListener("DOMContentLoaded", showUser);
-}
+
