@@ -1,4 +1,4 @@
-console.log("JS działa");
+console.log("JS is working");
 
 const API_KEY = "AIzaSyC3PtOxwiyhM_XW4Qrk-S_U7QilNlePDbI";
 
@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function search() {
 
-    console.log("Funkcja search działa");
+    console.log("Fuction search is working");
 
 
     const input = document.getElementById("searchInput");
@@ -158,7 +158,7 @@ async function search() {
             const id = video.id.videoId;
 
 
-            results.innerHTML += `
+            results.innerHTML = `
 
             <div class="video">
 
