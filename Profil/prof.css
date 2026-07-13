@@ -305,7 +305,9 @@ header{
 
 #deleteAccountBtn {
     color: #d63a3a;
+    cursor: pointer;
 }
 #changePasswordBtn{
     color: #d63a3a;
+    cursor: pointer;
 }
