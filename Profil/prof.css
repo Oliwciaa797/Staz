@@ -125,6 +125,7 @@ body{
 
 #arrow {
     cursor: pointer;
+}
 .top {
     display: flex;
     justify-content: space-between;
