@@ -38,7 +38,7 @@ async function init() {
 async function loadProfile() {
     const { data, error } = await supabaseClient
         .from('profiles')
-        .select('username, projects, avatar_url')
+        .select('profiles, projects, avatar_url')
         .eq('id', currentUser.id)
         .maybeSingle();
 
@@ -48,7 +48,7 @@ async function loadProfile() {
     }
 
     if (data) {
-        document.getElementById('username').value = data.username || '';
+        document.getElementById('username').value = data.profiles || '';
         document.getElementById('projects').value = data.projects || '';
 
         if (data.avatar_url) {
@@ -112,7 +112,7 @@ async function saveProfile() {
         .from('profiles')
         .upsert({
             id: currentUser.id,
-            username: username,
+            profiles: username,
             projects: projects,
             avatar_url: avatarUrl,
             updated_at: new Date().toISOString()
