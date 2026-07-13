@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.8.1/dist/nouislider.min.css">
     <link rel="stylesheet" href="start.css">
     <script defer src="https://cdn.jsdelivr.net/npm/nouislider@15.8.1/dist/nouislider.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="start.js"></script> 
 </head>
 <body>
@@ -24,13 +25,12 @@
             <a href="../logowanie/log.html">Logowanie</a>
             <a href="../Zapisane materiały/zapis.html">Zapisane materiały</a>
             <a href="../Profil/prof.html">Profil</a>
+            <a href="../wylogowywanie/logout.html">Wyloguj się</a>
         </div>
 
         <h1 class="logo">Nazwa strony</h1>
 
-        <button class="login-btn" onclick="goToLogin()">
-            Zaloguj
-        </button>
+         <div id="userArea"></div>
     </div>
 
 </header>
