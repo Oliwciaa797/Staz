@@ -587,7 +587,7 @@ function toggleMenu() {
     }
 
 }
-
+// tutaj sie zaczyna show us
 
 async function showUser() {
 
@@ -611,7 +611,7 @@ async function showUser() {
 
     const { data: profile, error } = await supabaseClient
         .from("profiles")
-        .select("profiles")
+        .select("profiles, avatar_url")
         .eq("id", user.id)
         .single();
 
@@ -624,11 +624,13 @@ async function showUser() {
 
 
 
+   const avatarUrl = profile.avatar_url || "../Profil/avatar.png";
+
     userArea.innerHTML = `
 
         <div class="user-info">
 
-            <img src="../Profil/avatar.png" class="avatar">
+            <img src="${avatarUrl}" class="avatar">
 
             <span>
                 Witaj, ${profile.profiles}
