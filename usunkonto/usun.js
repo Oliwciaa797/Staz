@@ -6,7 +6,7 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 document.addEventListener('DOMContentLoaded', async function () {
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (!session) {
-        window.location.href = '../logowanie/log.html';
+        window.location.href = '../LogIn/log.html';
         return;
     }
 
@@ -26,6 +26,6 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
 
         await supabaseClient.auth.signOut();
-        window.location.href = '../logowanie/log.html';
+        window.location.href = '../LogIn/log.html';
     });
 });

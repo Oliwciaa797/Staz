@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     // Musisz być zalogowany, żeby zmienić hasło
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (!session) {
-        window.location.href = '../logowanie/log.html';
+        window.location.href = '../LogIn/log.html';
         return;
     }
 
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         statusEl.textContent = 'Hasło zostało zmienione!';
         setTimeout(() => {
-            window.location.href = '../Profil/prof.html';
+            window.location.href = '../Account/prof.html';
         }, 1500);
     });
 });
