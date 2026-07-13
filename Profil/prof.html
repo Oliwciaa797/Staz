@@ -9,10 +9,30 @@
     <script src="prof.js" defer></script>
 </head>
 <body>
+<header>
+    <div class="top">
 
+        <div id="menuBtn" onclick="toggleMenu()">
+            ☰
+        </div>
+  
+        <div id="sidebar">
+            <a href="../strona startowa/start.html">Strona Startowa</a>
+            <a href="../logowanie/log.html">Logowanie</a>
+            <a href="../Zapisane materiały/zapis.html">Zapisane materiały</a>
+            <a href="../Profil/prof.html">Profil</a>
+            <a href="../wylogowywanie/logout.html">Wyloguj się</a>
+        </div>
+
+        <h1 class="logo">Nazwa strony</h1>
+    </div>
+
+</header>
+<div class="page">
 <div class="profile-container">
 
     <div class="left-section">
+        <div id="arrow" onclick="back()"><img src="arrow.png" width="20px" height="20px" alt="wróć do strony głównej"></div>
         <h1>Twój profil</h1>
 
         <div class="field">
@@ -30,8 +50,9 @@
             <input type="text" id="projects">
         </div>
 
-        <button type="button" id="changePasswordBtn" class="link-btn">Zmień hasło</button>
-        <button type="button" id="deleteAccountBtn" class="link-btn danger">Usuń konto</button>
+        <div id="changePasswordBtn" class="link-btn">Zmień hasło</div>
+        <div id="deleteAccountBtn" class="link-btn danger">Usuń konto</div><br>
+        <div type="button"><a href="../wylogowywanie/logout.html">Wyloguj się</a></div>
     </div>
 
     <div class="right-section">
@@ -49,6 +70,6 @@
     </div>
 
 </div>
-
+</div>
 </body>
 </html>

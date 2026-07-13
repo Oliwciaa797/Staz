@@ -9,12 +9,26 @@
 body{
     background:#f2eee7;
     font-family:Arial, sans-serif;
+    min-height:100vh;
+    background-image:url('../strona startowa/background.png');
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+    background-size:cover;
+}
+header{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    padding:15px 20px;
+    z-index:1002;
+}
+.page{
+    min-height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
-    min-height:100vh;
 }
-
 .profile-container{
     width:1000px;
     height:700px;
@@ -25,7 +39,6 @@ body{
     justify-content:space-between;
     padding:40px;
 }
-
 .left-section{
     width:55%;
 }
@@ -99,6 +112,7 @@ body{
 
 .avatar span{
     padding:20px;
+    cursor: pointer;
 }
 
 #saveBtn{
@@ -116,4 +130,184 @@ body{
 
 #saveBtn:hover{
     background:#2f6100;
+}
+
+#arrow {
+    cursor: pointer;
+}
+.top {
+    display: flex;
+    justify-content: space-between;
+    
+}
+
+.logo{
+    align-self: center;
+    /* margin-left: 10px; */
+    color:#304f00;
+    font-size:2rem;
+    font-weight:700;
+}
+
+#menuBtn {
+    color: #264500;
+    top: 15px;
+    left: 15px;
+    font-size: 32px;
+    cursor: pointer;
+    z-index: 1001;
+    user-select: none;
+}
+
+#sidebar {
+    position: fixed;
+    top: 0;
+    left: -16.66vw; 
+    width: 16.66vw; 
+    height: 100vh;
+    background-color: #81926a;
+    transition: left 0.3s ease;
+    z-index: 1000;
+ 
+    display: flex;
+    flex-direction: column;
+    padding-top: 70px;
+}
+ 
+/* Po otwarciu */
+#sidebar.active {   
+    left: 0;
+}
+ 
+/* Linki */
+#sidebar a {
+    color: white;
+    text-decoration: none;
+    padding: 15px 20px;
+    font-size: 18px;
+}
+ 
+#sidebar a:hover {
+    background-color: #264500;
+}
+
+.top {
+    display: flex;
+    justify-content: space-between;
+    
+}
+
+.logo{
+    align-self: center;
+    /* margin-left: 10px; */
+    color:#304f00;
+    font-size:2rem;
+    font-weight:700;
+}
+
+#menuBtn {
+    color: #264500;
+    top: 15px;
+    left: 15px;
+    font-size: 32px;
+    cursor: pointer;
+    z-index: 1001;
+    user-select: none;
+}
+
+#sidebar {
+    position: fixed;
+    top: 0;
+    left: -16.66vw; 
+    width: 16.66vw; 
+    height: 100vh;
+    background-color: #81926a;
+    transition: left 0.3s ease;
+    z-index: 1000;
+ 
+    display: flex;
+    flex-direction: column;
+    padding-top: 70px;
+}
+ 
+/* Po otwarciu */
+#sidebar.active {   
+    left: 0;
+}
+ 
+/* Linki */
+#sidebar a {
+    color: white;
+    text-decoration: none;
+    padding: 15px 20px;
+    font-size: 18px;
+}
+ 
+#sidebar a:hover {
+    background-color: #264500;
+}
+
+.top {
+    display: flex;
+    justify-content: space-between;
+    
+}
+
+.logo{
+    align-self: center;
+    /* margin-left: 10px; */
+    color:#304f00;
+    font-size:2rem;
+    font-weight:700;
+}
+
+#menuBtn {
+    color: #264500;
+    top: 15px;
+    left: 15px;
+    font-size: 32px;
+    cursor: pointer;
+    z-index: 1001;
+    user-select: none;
+}
+
+#sidebar {
+    position: fixed;
+    top: 0;
+    left: -16.66vw; 
+    width: 16.66vw; 
+    height: 100vh;
+    background-color: #81926a;
+    transition: left 0.3s ease;
+    z-index: 1000;
+ 
+    display: flex;
+    flex-direction: column;
+    padding-top: 70px;
+}
+ 
+/* Po otwarciu */
+#sidebar.active {   
+    left: 0;
+}
+ 
+/* Linki */
+#sidebar a {
+    color: white;
+    text-decoration: none;
+    padding: 15px 20px;
+    font-size: 18px;
+}
+ 
+#sidebar a:hover {
+    background-color: #264500;
+}
+
+#deleteAccountBtn {
+    color: #d63a3a;
+    cursor: pointer;
+}
+#changePasswordBtn{
+    color: #d63a3a;
+    cursor: pointer;
 }

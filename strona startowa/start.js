@@ -1,8 +1,14 @@
 console.log("JS is working");
 
+const SUPABASE_URL = 'https://yewyjfcrwwmftovbobwl.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlld3lqZmNyd3dtZnRvdmJvYndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2NTk0MDYsImV4cCI6MjA5OTIzNTQwNn0.-IEcT_EfGqxjS4AAIKIbmTOonaXtF0MorQ74hEXzVrQ';
+
+const supabaseClient = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
 const cache = {};
 const API_KEY = "AIzaSyCTX8K53tIFW1_vUY828xfjYkvuGygnX_w";
-
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -313,4 +319,64 @@ function toggleMenu() {
     if (sidebar) {
         sidebar.classList.toggle("active");
     }
+
+}
+// tutaj sie zaczyna show us
+
+async function showUser() {
+
+    const userArea = document.getElementById("userArea");
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+
+    if (!user) {
+
+        userArea.innerHTML = `
+            <button class="login-btn" onclick="goToLogin()">
+                Zaloguj
+            </button>
+        `;
+
+        return;
+    }
+
+
+
+    const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("profiles, avatar_url")
+        .eq("id", user.id)
+        .single();
+
+
+
+    if (error) {
+        console.log(error);
+        return;
+    }
+
+
+
+   const avatarUrl = profile.avatar_url || "../Profil/avatar.png";
+
+    userArea.innerHTML = `
+
+        <div onclick="toProfile()" class="user-info">
+
+            <img src="${avatarUrl}" class="avatar">
+
+            <span>
+                Witaj, ${profile.profiles}
+            </span>
+
+        </div>
+
+    `;
+}
+
+function toProfile(){
+    window.location.href = "../Profil/prof.html";
+}
+document.addEventListener("DOMContentLoaded", showUser);
 }

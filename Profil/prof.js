@@ -1,3 +1,7 @@
+function back() {
+    window.location.href = "../strona startowa/start.html";
+}
+
 const SUPABASE_URL = 'https://yewyjfcrwwmftovbobwl.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlld3lqZmNyd3dtZnRvdmJvYndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2NTk0MDYsImV4cCI6MjA5OTIzNTQwNn0.-IEcT_EfGqxjS4AAIKIbmTOonaXtF0MorQ74hEXzVrQ';
 
@@ -119,6 +123,8 @@ async function saveProfile() {
     }
 
     const username = document.getElementById('username').value;
+
+
     const projects = document.getElementById('projects').value;
 
     const { error } = await supabaseClient
@@ -138,4 +144,29 @@ async function saveProfile() {
 
     statusEl.textContent = 'Dane zostały zapisane!';
     selectedAvatarFile = null;
+}
+
+function goToLogin() {
+
+    window.location.href =
+    "../logowanie/log.html";
+
+}
+
+
+
+
+function toggleMenu() {
+
+
+    const sidebar =
+    document.getElementById("sidebar");
+
+
+    if (sidebar) {
+
+        sidebar.classList.toggle("active");
+
+    }
+
 }
