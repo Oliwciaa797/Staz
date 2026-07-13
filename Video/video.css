@@ -94,3 +94,21 @@ header{
 #sidebar a:hover {
     background-color: #264500;
 }
+
+.middleSection {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.notes {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    align-items: center;
+    flex-wrap: wrap;
+    text-align: left;
+    width: 1000px;
+    height: auto;
+    background-color: #f4f2ec;
+}
