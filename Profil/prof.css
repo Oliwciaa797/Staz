@@ -9,16 +9,26 @@
 body{
     background:#f2eee7;
     font-family:Arial, sans-serif;
+    min-height:100vh;
+    background-image:url('../strona startowa/background.png');
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+    background-size:cover;
+}
+header{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    padding:15px 20px;
+    z-index:1002;
+}
+.page{
+    min-height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
-    min-height:100vh;
-    background-image: url('../strona\ startowa/background.png');
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: cover;
 }
-
 .profile-container{
     width:1000px;
     height:700px;
@@ -29,7 +39,6 @@ body{
     justify-content:space-between;
     padding:40px;
 }
-
 .left-section{
     width:55%;
 }
