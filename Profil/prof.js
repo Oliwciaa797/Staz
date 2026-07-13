@@ -110,6 +110,8 @@ async function saveProfile() {
     }
 
     const username = document.getElementById('username').value;
+
+
     const projects = document.getElementById('projects').value;
 
     const { error } = await supabaseClient
