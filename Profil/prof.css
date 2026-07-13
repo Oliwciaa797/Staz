@@ -83,6 +83,7 @@ body{
     color:white;
     padding:20px;
     font-size:20px;
+    cursor: pointer;
 }
 
 #saveBtn{
@@ -100,4 +101,8 @@ body{
 
 #saveBtn:hover{
     background:#2f6100;
+}
+
+#arrow {
+    cursor: pointer;
 }
