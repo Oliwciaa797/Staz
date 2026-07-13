@@ -368,4 +368,5 @@ main{
 .user-info span{
     color: #264500;
     font-weight: 700;
+    cursor: pointer;
 }
