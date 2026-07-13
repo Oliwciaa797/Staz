@@ -1,9 +1,14 @@
 console.log("JS is working");
 
-const cache = {};
+const SUPABASE_URL = 'https://yewyjfcrwwmftovbobwl.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlld3lqZmNyd3dtZnRvdmJvYndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2NTk0MDYsImV4cCI6MjA5OTIzNTQwNn0.-IEcT_EfGqxjS4AAIKIbmTOonaXtF0MorQ74hEXzVrQ';
 
-const API_KEY = "AIzaSyCTX8K53tIFW1_vUY828xfjYkvuGygnX_w";
+const supabaseClient = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
 
+const API_KEY = "AIzaSyC3PtOxwiyhM_XW4Qrk-S_U7QilNlePDbI";
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -581,5 +586,58 @@ function toggleMenu() {
 
     }
 
-
 }
+
+
+async function showUser() {
+
+    const userArea = document.getElementById("userArea");
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+
+    if (!user) {
+
+        userArea.innerHTML = `
+            <button class="login-btn" onclick="goToLogin()">
+                Zaloguj
+            </button>
+        `;
+
+        return;
+    }
+
+
+
+    const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("profiles")
+        .eq("id", user.id)
+        .single();
+
+
+
+    if (error) {
+        console.log(error);
+        return;
+    }
+
+
+
+    userArea.innerHTML = `
+
+        <div class="user-info">
+
+            <img src="../Profil/avatar.png" class="avatar">
+
+            <span>
+                Witaj, ${profile.profiles}
+            </span>
+
+        </div>
+
+    `;
+}
+
+
+document.addEventListener("DOMContentLoaded", showUser);

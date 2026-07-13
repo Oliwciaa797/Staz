@@ -67,6 +67,8 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        console.log("Zapisano:", localStorage.getItem("username"));
+
         // Zalogowano poprawnie -> przekierowanie
         window.location.href = '../Profil/prof.html';
     });
