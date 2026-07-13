@@ -29,14 +29,22 @@ body{
     margin-bottom: 40px;
 }
 
-.login-container input[type="email"],
-.login-container input[type="password"]{
+.login-container input[type="email"]{
     width: 100%;
     border: none;
     border-bottom: 3px solid black;
     background: transparent;
     padding: 10px;
     margin-bottom: 30px;
+    font-size: 20px;
+    outline: none;
+}
+.login-container input[type="password"]{
+    width: 100%;
+    border: none;
+    border-bottom: 3px solid black;
+    background: transparent;
+    padding: 10px;
     font-size: 20px;
     outline: none;
 }
@@ -82,4 +90,10 @@ body{
 #reset{
     cursor: pointer;
     text-align: right;
+    margin-bottom: 25px;
+    color: #264500;
+}
+
+#reset:hover{
+    color: #356600;
 }
