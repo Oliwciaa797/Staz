@@ -350,3 +350,7 @@ main{
 .video a:hover{
     background:#3b6600;
 }
+
+.user-info{
+    cursor: pointer;
+}
