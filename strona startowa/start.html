@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.8.1/dist/nouislider.min.css">
     <link rel="stylesheet" href="start.css">
     <script defer src="https://cdn.jsdelivr.net/npm/nouislider@15.8.1/dist/nouislider.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="start.js"></script> 
 </head>
 <body>
@@ -28,9 +29,7 @@
 
         <h1 class="logo">Nazwa strony</h1>
 
-        <button class="login-btn" onclick="goToLogin()">
-            Zaloguj
-        </button>
+         <div id="userArea"></div>
     </div>
 
 </header>
@@ -94,16 +93,16 @@
                             </label>
                         </div>
                         <div class="duration">
-                            <label>
-                                Czas trwania:
+                            <h3>Czas trwania</h3>
                                 <span id="durationValue"></span>
-                            </label>
+                            
                             <div id="slider"></div>
                             <label for="durationCheckbox" class="checkbox">
                                 <input 
                                     class="checkbox__input" 
                                     type="checkbox" 
                                     id="durationCheckbox"
+                                    checked
                                 >
                                 <svg class="checkbox__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22">
                                     <rect width="21" height="21" x=".5" y=".5"
