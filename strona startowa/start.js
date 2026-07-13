@@ -302,7 +302,7 @@ function categoryDropdown() {
 
 function goToLogin() {
     window.location.href =
-    "../LogIn/log.html";
+    "../logowanie/log.html";
 }
 
 

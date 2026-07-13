@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         statusEl.textContent = 'Hasło zostało zmienione!';
         setTimeout(() => {
-            window.location.href = '../Account/prof.html';
+            window.location.href = '../Profil/prof.html';
         }, 1500);
     });
 });
