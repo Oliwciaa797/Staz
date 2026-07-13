@@ -103,6 +103,7 @@ body{
 
 .avatar span{
     padding:20px;
+    cursor: pointer;
 }
 
 #saveBtn{
