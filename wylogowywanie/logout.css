@@ -1,0 +1,165 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #faf3e8;
+    font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Dekoracyjne kształty w tle, jak na wzorze */
+body::before {
+    content: "";
+    position: absolute;
+    top: -60px;
+    right: 60px;
+    width: 200px;
+    height: 200px;
+    background:
+        radial-gradient(circle at 50% 50%, transparent 30%, #9caf88 31% 33%, transparent 34%),
+        conic-gradient(from 0deg, #9caf88 0 10deg, transparent 10deg 50deg,
+                        #9caf88 50deg 60deg, transparent 60deg 100deg,
+                        #9caf88 100deg 110deg, transparent 110deg 150deg,
+                        #9caf88 150deg 160deg, transparent 160deg 200deg,
+                        #9caf88 200deg 210deg, transparent 210deg 250deg,
+                        #9caf88 250deg 260deg, transparent 260deg 300deg,
+                        #9caf88 300deg 310deg, transparent 310deg 360deg);
+    border-radius: 50%;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+body::after {
+    content: "";
+    position: absolute;
+    bottom: -80px;
+    left: -80px;
+    width: 320px;
+    height: 320px;
+    border: 24px solid #c3d3ae;
+    border-radius: 50%;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.profile-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.left-section {
+    background: #ffffff;
+    border: 2px solid #2f4b1f;
+    border-radius: 28px;
+    padding: 40px 44px;
+    width: 100%;
+    max-width: 420px;
+    position: relative;
+}
+
+#arrow {
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+h1 {
+    margin: 0 0 30px 0;
+    font-size: 32px;
+    font-weight: 800;
+    color: #2f4b1f;
+}
+
+.left-section p {
+    color: #4a4a4a;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 28px;
+}
+
+.field {
+    margin-bottom: 26px;
+    display: flex;
+    flex-direction: column;
+}
+
+.field label {
+    font-size: 13px;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.field input {
+    border: none;
+    border-bottom: 2px solid #1a1a1a;
+    padding: 6px 2px 10px 2px;
+    font-size: 15px;
+    outline: none;
+    background: transparent;
+    color: #1a1a1a;
+}
+
+.field input::placeholder {
+    color: #999;
+}
+
+.field input:focus {
+    border-bottom-color: #2f4b1f;
+}
+
+.error {
+    color: #c0392b;
+    font-size: 13px;
+    margin: -14px 0 14px 0;
+    min-height: 16px;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 30px;
+    background: #2f4b1f;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+    margin-top: 10px;
+}
+
+button:hover {
+    background: #24380f;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+button:disabled {
+    background: #a9b89a;
+    cursor: not-allowed;
+}
+
+#status {
+    margin-top: 18px;
+    text-align: center;
+    font-size: 14px;
+    color: #2f4b1f;
+    min-height: 18px;
+}
