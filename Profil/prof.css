@@ -292,3 +292,10 @@ body{
 #sidebar a:hover {
     background-color: #264500;
 }
+
+#deleteAccountBtn {
+    color: #d63a3a;
+}
+#changePasswordBtn{
+    color: #d63a3a;
+}
