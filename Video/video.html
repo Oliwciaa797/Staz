@@ -31,37 +31,39 @@
     </header>
 
     <main>
-    <div class="video-container">
+        <div class="middleSection">
+            <div class="video-container">
 
-        <iframe
-            id="youtubeVideo"
-            width="900"
-            height="500"
-            src=""
-            title="YouTube video player"
-            frameborder="0"
-            allowfullscreen>
-        </iframe>
+                <iframe
+                    id="youtubeVideo"
+                    width="900"
+                    height="500"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
 
+            </div>
+
+            <div class="sidepanel">
+
+                <div class="buttons">
+                    <button id="ainotes" onclick="showTab('generated')">Notatki AI</button>
+                    <button id="personalnotes" onclick="showTab('personal')">Własne notatki</button>
+                    <button id="quiztab" onclick="showTab('quiz')">Quiz</button>
+                </div>
+                <div class="sidepanelcontent">
+                    <div id="generated" class="tab">
+                        <button id="gennotes" onclick="generateNotes()">
+                            Generuj notatki
+                        </button>
+                        <div id="notesContent"></div>
+                    </div>
+                    <div id="personal" class="tab">Własne notatki</div>
+                    <div id="quiz" class="tab">halo</div>
+                </div>
+            </div>
     </div>
-
-    <section class="notes">
-
-        <h2>Notatki</h2>
-
-        <button onclick="generateNotes()">
-            Generuj notatki AI
-        </button>
-
-
-        <div id="notesContent">
-
-            Tutaj pojawią się notatki...
-
-        </div>
-
-    </section>
-
 
 </main>
 
