@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <script defer src="video.js"></script>
+    <link rel="stylesheet" href="video.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nazwa strony</title>
+</head>
+<body>
+    <header>
+        <div class="top">
+
+            <div id="menuBtn" onclick="toggleMenu()">
+                ☰
+            </div>
+    
+            <div id="sidebar">
+                <a href="../HomePage/start.html">Strona Startowa</a>
+                <a href="../LogIn/log.html">Logowanie</a>
+                <a href="../SavedMaterials/zapis.html">Zapisane materiały</a>
+                <a href="../Account/prof.html">Profil</a>
+            </div>
+
+            <h1 class="logo">Nazwa strony</h1>
+
+            <button class="login-btn" onclick="goToLogin()">
+                Zaloguj
+            </button>
+        </div>
+    </header>
+
+    <main>
+    <div class="video-container">
+
+        <iframe
+            id="youtubeVideo"
+            width="900"
+            height="500"
+            src=""
+            title="YouTube video player"
+            frameborder="0"
+            allowfullscreen>
+        </iframe>
+
+    </div>
+
+    <section class="notes">
+
+        <h2>Notatki</h2>
+
+        <button onclick="generateNotes()">
+            Generuj notatki AI
+        </button>
+
+
+        <div id="notesContent">
+
+            Tutaj pojawią się notatki...
+
+        </div>
+
+    </section>
+
+
+</main>
+
+</body>
+</html>

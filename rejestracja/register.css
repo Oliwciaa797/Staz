@@ -83,8 +83,10 @@ body{
     opacity: 0.6;
 }
 
-.error {
-    color: red;
-    font-size: 14px;
-    margin-top: 5px;
+.resultBox {
+    display : flex;
+    justify-content: center;
+    position: absolute;
+    margin: 10px;
+    padding: 10px;
 }
