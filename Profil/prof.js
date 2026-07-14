@@ -155,24 +155,6 @@ function goToLogin() {
 
 }
 
-
-
-
-function toggleMenu() {
-
-
-    const sidebar =
-    document.getElementById("sidebar");
-
-
-    if (sidebar) {
-
-        sidebar.classList.toggle("active");
-
-    }
-
-}
-
 async function updateSidebar() {
 
     const { data: { user } } = await supabaseClient.auth.getUser();
@@ -193,3 +175,19 @@ async function updateSidebar() {
         `;
     }
 }
+
+document.getElementById("menuBtn").addEventListener("click", (e) => {
+    e.stopPropagation();
+    document.getElementById("sidebar").classList.toggle("active");
+});
+
+document.addEventListener("click", (e) => {
+    const sidebar = document.getElementById("sidebar");
+
+    if (
+        sidebar.classList.contains("active") &&
+        !sidebar.contains(e.target)
+    ) {
+        sidebar.classList.remove("active");
+    }
+});
