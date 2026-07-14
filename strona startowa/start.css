@@ -11,7 +11,7 @@
 body{
     background:#f4f2ec;
     min-height: 100vh;
-    overflow:hidden;
+    overflow:auto; /* allow page scrolling when search mode is active */
     position:relative;
     background-image: url('background.png');
     background-repeat: no-repeat;
@@ -25,6 +25,8 @@ header{
     background-color: #F9F4EC;
     padding:20px 40px;
     position: sticky;
+    top: 0; /* keep header at the top */
+    z-index: 1002; /* ensure header sits above sticky search bar */
     box-shadow: 5px 5px 5px rgba(104, 117, 80, 0.144);
 }
 
@@ -65,13 +67,19 @@ main{
     flex-direction:column;
     align-items:center;
 
-    position:absolute;
-    left:50%;
-    top:50%;
+    /* Use normal document flow so the page can scroll. Centering adjusted with margins */
+    position:relative;
+    margin: 6vh auto;
 
-    transform:translate(-50%,-50%);
     width:95%;
     text-align:center;
+}
+
+/* When search-mode is active we expand main to full width and allow results to scroll beneath the sticky search bar */
+main.search-mode{
+    align-items: stretch;
+    width:100%;
+    margin-top: 0;
 }
 
 #welcomeText{
@@ -140,24 +148,40 @@ main{
     transform:translateX(-50%);
 } */
 
-.search-mode .search-box{
-    transform:none;
-}
-
-.search-mode .buttons{
-    transform:none;
-}
-
-.search-mode #results{
-    margin-top:40px;
-}
-
 .search-mode #welcomeText{
     display:none;
 }
 
 .search-mode .searchSection {
     position: sticky;
+    top: 80px; /* sit just below the header (header padding + probable height) */
+    z-index: 1001; /* below header but above content */
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background: rgba(249, 244, 236, 0.727);
+    backdrop-filter: blur(21px);
+    -webkit-backdrop-filter: blur(21px);
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 0 25px -23px rgba(121, 134, 101, 0.37);
+}
+
+/* Make the search box/buttons span and remain centered when sticky */
+.search-mode .search-box{
+    width:100%;
+    max-width:1200px;
+    margin: 0 auto;
+}
+
+.search-mode .buttons{
+    justify-content:center;
+    margin-top:12px;
+}
+
+/* Ensure results are below the sticky area and scroll normally */
+.search-mode #results{
+    margin: 18px auto 0; /* center horizontally when in search-mode */
+    padding-top:6px;
 }
 
 #menuBtn {
@@ -296,7 +320,7 @@ main{
 #results{
     width: 100%;
     max-width: 1400px;
-    margin-top: 40px;
+    margin: 40px auto 0; /* center horizontally */
 
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px,1fr));
@@ -351,7 +375,6 @@ main{
 .video a:hover{
     background:#3b6600;
 }
-
 .user-info{
     display: flex;
     align-items: center;
