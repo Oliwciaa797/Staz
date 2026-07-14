@@ -27,3 +27,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         window.location.href = '../logowanie/log.html';
     });
 });
+
+function back(){
+    window.location.href='../Profil/prof.html'
+}
