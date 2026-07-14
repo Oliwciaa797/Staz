@@ -42,6 +42,7 @@ header{
     color:#304f00;
     font-size:2rem;
     font-weight:700;
+    cursor: pointer;
 }
 
 .login-btn{

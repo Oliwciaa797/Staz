@@ -6,7 +6,7 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 document.addEventListener('DOMContentLoaded', async function () {
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (!session) {
-        window.location.href = '../LogIn/log.html';
+        window.location.href = '../logowanie/log.html';
         return;
     }
 
@@ -14,11 +14,9 @@ document.addEventListener('DOMContentLoaded', async function () {
         const statusEl = document.getElementById('status');
         statusEl.textContent = 'Usuwanie konta...';
 
-        // UWAGA: usunięcie konta z auth.users wymaga uprawnień administratora
-        // (service_role key), których nie wolno umieszczać w kodzie frontendowym.
-        // Dlatego to wywołanie odpala funkcję Edge Function o nazwie "delete-user",
-        // którą trzeba samodzielnie utworzyć w Supabase (patrz instrukcja w czacie).
-        const { error } = await supabaseClient.functions.invoke('delete-user');
+        // Wywołuje funkcję SQL "delete_user" (security definer) utworzoną w Supabase,
+        // która usuwa konto TYLKO osoby aktualnie zalogowanej.
+        const { error } = await supabaseClient.rpc('delete_user');
 
         if (error) {
             statusEl.textContent = 'Błąd: ' + error.message;
@@ -26,6 +24,10 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
 
         await supabaseClient.auth.signOut();
-        window.location.href = '../LogIn/log.html';
+        window.location.href = '../logowanie/log.html';
     });
 });
+
+function back(){
+    window.location.href='../Profil/prof.html'
+}
