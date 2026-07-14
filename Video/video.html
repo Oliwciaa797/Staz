@@ -45,21 +45,23 @@
 
             </div>
 
-            <div class="notes">
+            <div class="sidepanel">
 
-                <h2>Notatki</h2>
-
-                <button onclick="generateNotes()">
-                    Generuj notatki AI
-                </button>
-
-
-                <div id="notesContent">
-
-                    Tutaj pojawią się notatki...
-
+                <div class="buttons">
+                    <button id="ainotes" onclick="showTab('generated')">Notatki AI</button>
+                    <button id="personalnotes" onclick="showTab('personal')">Własne notatki</button>
+                    <button id="quiztab" onclick="showTab('quiz')">Quiz</button>
                 </div>
-
+                <div class="sidepanelcontent">
+                    <div id="generated" class="tab">
+                        <button id="gennotes" onclick="generateNotes()">
+                            Generuj notatki
+                        </button>
+                        <div id="notesContent"></div>
+                    </div>
+                    <div id="personal" class="tab">Własne notatki</div>
+                    <div id="quiz" class="tab">halo</div>
+                </div>
             </div>
     </div>
 
