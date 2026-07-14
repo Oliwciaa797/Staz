@@ -147,29 +147,22 @@ main.search-mode{
     transform:translateX(-50%);
 } */
 
-.search-mode .search-box{
-    transform:none;
-}
-
-.search-mode .buttons{
-    transform:none;
-}
-
-.search-mode #results{
-    margin-top:40px;
-}
-
 .search-mode #welcomeText{
     display:none;
 }
 
 .search-mode .searchSection {
     position: sticky;
-    top: 72px; /* sit just below the header (header padding + probable height) */
+    top: 80px; /* sit just below the header (header padding + probable height) */
     z-index: 1001; /* below header but above content */
-    background: rgba(249,244,236,0.98); /* keep it visibly separate from results */
     padding-top: 10px;
     padding-bottom: 10px;
+    background: rgba(249, 244, 236, 0.727);
+    backdrop-filter: blur(21px);
+    -webkit-backdrop-filter: blur(21px);
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 0 25px -23px rgba(121, 134, 101, 0.37);
 }
 
 /* Make the search box/buttons span and remain centered when sticky */
