@@ -21,8 +21,6 @@ function sprawdzCheckbox() {
 
 
 async function checkPasswords() {
-
-    const username = document.getElementById("username").value;
     const email = document.getElementById("email").value;
     const password1 = document.getElementById("password").value;
     const password2 = document.getElementById("password2").value;
@@ -34,11 +32,6 @@ async function checkPasswords() {
     error.textContent = "";
     status.textContent = "";
 
-
-    if (!username) {
-        error.textContent = "Podaj nazwę użytkownika.";
-        return;
-    }
 
 
     if (password1.length < 8) {
@@ -75,7 +68,7 @@ async function checkPasswords() {
         .insert([
             {
                 id: data.user.id,
-                profiles: username
+                
             }
         ]);
 

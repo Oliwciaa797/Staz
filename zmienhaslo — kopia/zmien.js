@@ -3,15 +3,9 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-document.addEventListener('DOMContentLoaded', async function () {
-    // Musisz być zalogowany, żeby zmienić hasło
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    if (!session) {
-        window.location.href = '../logowanie/log.html';
-        return;
-    }
-
+document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('changeBtn').addEventListener('click', async function () {
+        const email = document.getElementById('email').value;
         const pass1 = document.getElementById('newPassword').value;
         const pass2 = document.getElementById('newPassword2').value;
         const errorEl = document.getElementById('error');
@@ -20,6 +14,10 @@ document.addEventListener('DOMContentLoaded', async function () {
         errorEl.textContent = '';
         statusEl.textContent = '';
 
+        if (!email) {
+            errorEl.textContent = 'Podaj adres e-mail.';
+            return;
+        }
         if (pass1.length < 8) {
             errorEl.textContent = 'Hasło musi mieć co najmniej 8 znaków.';
             return;
@@ -31,7 +29,9 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         statusEl.textContent = 'Zapisywanie...';
 
-        const { error } = await supabaseClient.auth.updateUser({ password: pass1 });
+        const { data, error } = await supabaseClient.functions.invoke('set-password-direct', {
+            body: { email: email, password: pass1 }
+        });
 
         if (error) {
             errorEl.textContent = 'Błąd: ' + error.message;
@@ -41,11 +41,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         statusEl.textContent = 'Hasło zostało zmienione!';
         setTimeout(() => {
-            window.location.href = '../Account/prof.html';
+            window.location.href = '../logowanie/log.html';
         }, 1500);
     });
 });
-
-function back(){
-    window.location.href='../Profil/prof.html'
-}
