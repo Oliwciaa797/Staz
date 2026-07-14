@@ -311,16 +311,6 @@ function goToLogin() {
     "../logowanie/log.html";
 }
 
-
-function toggleMenu() {
-    const sidebar =
-    document.getElementById("sidebar");
-
-    if (sidebar) {
-        sidebar.classList.toggle("active");
-    }
-
-}
 // tutaj sie zaczyna show us
 
 async function showUser() {
@@ -408,3 +398,19 @@ document.addEventListener("DOMContentLoaded", () => {
 function back(){
     window.location.href = "../strona startowa/start.html";
 }
+
+document.getElementById("menuBtn").addEventListener("click", (e) => {
+    e.stopPropagation();
+    document.getElementById("sidebar").classList.toggle("active");
+});
+
+document.addEventListener("click", (e) => {
+    const sidebar = document.getElementById("sidebar");
+
+    if (
+        sidebar.classList.contains("active") &&
+        !sidebar.contains(e.target)
+    ) {
+        sidebar.classList.remove("active");
+    }
+});
