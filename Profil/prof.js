@@ -13,6 +13,8 @@ let selectedAvatarFile = null;
 document.addEventListener('DOMContentLoaded', init);
 
 async function init() {
+
+    await updateSidebar();
     // 1. Sprawdzenie, czy ktoś jest zalogowany
     const { data: { session } } = await supabaseClient.auth.getSession();
 
@@ -171,3 +173,23 @@ function toggleMenu() {
 
 }
 
+async function updateSidebar() {
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    const sidebar = document.getElementById("sidebar");
+
+    if (user) {
+        sidebar.innerHTML = `
+            <a href="../strona startowa/start.html">Strona Startowa</a>
+            <a href="../Zapisane materiały/zapis.html">Zapisane materiały</a>
+            <a href="../Profil/prof.html">Profil</a>
+            <a href="../wylogowywanie/logout.html">Wyloguj się</a>
+        `;
+    } else {
+        sidebar.innerHTML = `
+            <a href="../strona startowa/start.html">Strona Startowa</a>
+            <a href="../logowanie/log.html">Logowanie</a>
+        `;
+    }
+}

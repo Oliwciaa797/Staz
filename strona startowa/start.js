@@ -404,3 +404,7 @@ document.addEventListener("DOMContentLoaded", () => {
     showUser();
     updateSidebar();
 });
+
+function back(){
+    window.location.href = "../strona startowa/start.html";
+}
