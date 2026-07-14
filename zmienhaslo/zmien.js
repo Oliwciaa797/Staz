@@ -45,3 +45,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         }, 1500);
     });
 });
+
+function back(){
+    window.location.href='../Profil/prof.html'
+}
