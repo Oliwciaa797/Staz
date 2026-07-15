@@ -4,19 +4,18 @@
    ============================================================ */
 const SUPABASE_URL = 'https://yewyjfcrwwmftovbobwl.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlld3lqZmNyd3dtZnRvdmJvYndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2NTk0MDYsImV4cCI6MjA5OTIzNTQwNn0.-IEcT_EfGqxjS4AAIKIbmTOonaXtF0MorQ74hEXzVrQ';
+const SUPABASE_ANON_KEY =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlld3lqZmNyd3dtZnRvdmJvYndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2NTk0MDYsImV4cCI6MjA5OTIzNTQwNn0.-IEcT_EfGqxjS4AAIKIbmTOonaXtF0MorQ74hEXzVrQ";
 
 
 const isConfigured = !SUPABASE_URL.includes("TWOJ_") && !SUPABASE_ANON_KEY.includes("TWOJ_");
 
-let supabase = null;
-if (isConfigured) {
-  try {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  } catch (e) {
-    console.error("Błąd inicjalizacji Supabase:", e);
-  }
-}
 
+const supabase =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+);
 /* ============================================================
    Struktura tabeli "notes" w Supabase (SQL do uruchomienia raz):
 
@@ -77,24 +76,36 @@ if (!isConfigured) {
 
 /* ---------- Auth: pobranie aktualnego użytkownika ---------- */
 async function loadUser(){
-  try {
-    const { data: { user }, error } = await supabase.auth.getUser();
-    if(error || !user){
-      document.getElementById('profileName').textContent = 'Zaloguj się';
-      document.getElementById('saveNoteBtn').disabled = true;
-      document.getElementById('myNotesLoading').textContent = 'Zaloguj się, aby zobaczyć swoje notatki.';
-      loadPublicNotes();
-      return;
+
+    try {
+        const { data:{user}, error } = await supabase.auth.getUser();
+
+        if(error || !user){
+            document.getElementById("profileName").textContent = "Zaloguj się";
+            return;
+        }
+
+        currentUser = user;
+
+        const { data: profile } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", user.id)
+            .single();
+
+        document.getElementById("profileName").textContent =
+            profile?.profiles || user.email;
+
+        document.getElementById("profileAvatar").src =
+            profile?.avatar_url || "../Profil/avatar.png";
+
+        loadMyNotes();
+        loadPublicNotes();
+
+    } catch(e){
+        console.error(e);
     }
-    currentUser = user;
-    const displayName = user.user_metadata?.username || user.email;
-    document.getElementById('profileName').textContent = displayName;
-    loadMyNotes();
-    loadPublicNotes();
-  } catch (e) {
-    console.error(e);
-    showToast('Nie udało się połączyć z Supabase.');
-  }
+
 }
 
 /* ---------- Renderowanie karty notatki (widok) ---------- */
@@ -324,3 +335,44 @@ async function toggleVisibility(id, currentlyPublic){
   loadMyNotes();
   loadPublicNotes();
 }
+document.addEventListener("DOMContentLoaded", () => {
+
+    // SIDEBAR
+
+    const menuBtn = document.getElementById("menuBtn");
+    const sidebar = document.getElementById("sidebar");
+
+    menuBtn.addEventListener("click", (e)=>{
+
+        e.stopPropagation();
+
+        sidebar.classList.toggle("active");
+
+    });
+
+    // MENU PROFILU
+
+    const profileChip = document.querySelector(".profile-chip");
+    const userMenu = document.querySelector(".user-menu");
+
+    profileChip.addEventListener("click",(e)=>{
+
+        e.stopPropagation();
+
+        userMenu.classList.toggle("active");
+
+    });
+
+    // zamykanie po kliknięciu poza
+
+    document.addEventListener("click",(e)=>{
+
+        if(!sidebar.contains(e.target) && !menuBtn.contains(e.target))
+            sidebar.classList.remove("active");
+
+        if(!document.getElementById("userArea").contains(e.target))
+            userMenu.classList.remove("active");
+
+    });
+
+});

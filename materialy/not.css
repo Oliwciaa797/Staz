@@ -319,3 +319,156 @@ main{
   .panel{ padding: 28px 22px 32px; border-radius: 20px; }
   .panel h1{ font-size: 30px; }
 }
+
+/* ===== SIDEBAR ===== */
+
+#sidebar{
+    position:fixed;
+    top:0;
+    left:-280px;
+    width:260px;
+    height:100vh;
+
+    background:#81926a;
+
+    transition:.3s;
+
+    display:flex;
+    flex-direction:column;
+
+    padding-top:90px;
+
+    z-index:1000;
+}
+
+#sidebar.active{
+    left:0;
+}
+
+#sidebar a{
+    color:white;
+    text-decoration:none;
+    padding:18px 24px;
+}
+
+#sidebar a:hover{
+    background:#33411C;
+}
+
+/* ===== USER ===== */
+
+.user-area{
+    position:relative;
+}
+
+.user-menu{
+
+    position:absolute;
+
+    right:0;
+    top:110%;
+
+    width:180px;
+
+    background:white;
+
+    border-radius:12px;
+
+    overflow:hidden;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.2);
+
+    display:none;
+}
+
+.user-menu.active{
+    display:block;
+}
+
+.user-menu a{
+
+    display:block;
+
+    padding:14px;
+
+    color:#222;
+
+    text-decoration:none;
+}
+
+.user-menu a:hover{
+
+    background:#f2f2f2;
+}
+
+#sidebar.active{
+    left:0;
+}
+
+#sidebar a{
+    color:white;
+    text-decoration:none;
+    padding:18px 25px;
+    font-weight:700;
+}
+
+#sidebar a:hover{
+    background:#33411C;
+}
+#sidebar{
+    position:fixed;
+    top:0;
+    left:-250px;
+    width:250px;
+    height:100vh;
+    background:#81926a;
+    transition:0.3s;
+    z-index:9999;
+
+    display:flex;
+    flex-direction:column;
+    padding-top:80px;
+}
+
+#sidebar.active{
+    left:0;
+}
+
+#sidebar a{
+    color:white;
+    padding:15px;
+    text-decoration:none;
+}
+
+.user-area{
+    position:relative;
+}
+
+.user-menu{
+    position:absolute;
+    right:0;
+    top:60px;
+    width:180px;
+    background:white;
+    border-radius:10px;
+    box-shadow:0 5px 20px rgba(0,0,0,.2);
+    display:none;
+    overflow:hidden;
+    z-index:9999;
+}
+
+
+.user-menu.active{
+    display:block;
+}
+
+.user-menu a{
+    display:block;
+    padding:12px;
+    color:#264500;
+    text-decoration:none;
+}
+
+.user-menu a:hover{
+    background:#eee;
+}

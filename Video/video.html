@@ -1,34 +1,35 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
+
     <link rel="stylesheet" href="video.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="video.js"></script>
     <title>Nazwa strony</title>
+    <link rel="stylesheet" href="video.css"> 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="video.js" defer></script>   
 </head>
 <body>
     <header>
         <div class="top">
 
-            <div id="menuBtn" onclick="toggleMenu()">
+            <div id="menuBtn">
                 ☰
             </div>
     
             <div id="sidebar">
                 <a href="../strona startowa/start.html">Strona Startowa</a>
                 <a href="../logowanie/log.html">Logowanie</a>
-                <a href="../Zapisane materiały/zapis.html">Zapisane materiały</a>
+                <a href="../materialy/not.html">Zapisane materiały</a>
                 <a href="../Profil/prof.html">Profil</a>
             </div>
 
-            <h1 class="logo">Nazwa strony</h1>
+            <h1 class="logo" onclick="back()">Nazwa strony</h1>
 
-            <button class="login-btn" onclick="goToLogin()">
-                Zaloguj
-            </button>
-        </div>
+            <div id="userArea"></div>
     </header>
 
     <main>

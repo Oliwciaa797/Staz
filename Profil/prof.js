@@ -165,7 +165,7 @@ async function updateSidebar() {
     if (user) {
         sidebar.innerHTML = `
             <a href="../strona startowa/start.html">Strona Startowa</a>
-            <a href="../Zapisane materiały/zapis.html">Zapisane materiały</a>
+            <a href="../materialy/not.html">Zapisane materiały</a>
             <a href="../Profil/prof.html">Profil</a>
             <a href="../wylogowywanie/logout.html">Wyloguj się</a>
         `;
@@ -237,4 +237,9 @@ async function loadUserStats() {
 
     document.getElementById('projects').value =
         count || 0;
+}
+
+function goToProjects(){
+    window.location.href =
+    "../zapisane materialy/mat.html";
 }

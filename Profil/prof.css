@@ -52,6 +52,7 @@ header{
 
 .field{
     margin-bottom:35px;
+
 }
 
 .field label{
@@ -115,10 +116,19 @@ header{
     cursor: pointer;
 }
 
+
+.saveSection {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
 #saveBtn{
     width:270px;
     height:55px;
     border:none;
+    text-align: center;
     border-radius:30px;
     background:#204400;
     color:white;
@@ -312,4 +322,18 @@ header{
     color: #d63a3a;
     cursor: pointer;
     margin-bottom: 15px;
+}
+
+#projectsField, #projects {
+    cursor: pointer;
+}
+
+#arrowToProjects {
+    position: absolute;
+    -webkit-transform: scaleX(-1);
+    transform:
+        scaleX(-1)
+        translateX(100%);
+    height: 20px;
+    width: auto;
 }

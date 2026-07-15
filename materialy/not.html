@@ -10,19 +10,32 @@
 <!-- Klient Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <!-- Logika strony -->
-<script src="not.js"></script>
+<script src="not.js" defer></script>
 </head>
 <body>
 
 <header>
-  <button class="menu-btn" aria-label="Menu">
+  <button class="menu-btn" id="menuBtn" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
-  <div class="site-title">Nazwa strony</div>
-  <button class="profile-chip" id="profileChip">
-    <img src="https://api.dicebear.com/7.x/initials/svg?seed=U" alt="">
-    <span id="profileName">Ładowanie…</span>
-  </button>
+  <div id="sidebar">
+      <a href="../strona startowa/start.html">Strona startowa</a>
+      <a href="../materialy/not.html">Zapisane materiały</a>
+      <a href="../Profil/prof.html">Profil</a>
+      <a href="../wylogowywanie/logout.html">Wyloguj się</a>
+  </div>
+  <div id="userArea" class="user-area">
+
+    <div class="profile-chip">
+        <img id="profileAvatar" src="../Profil/avatar.png">
+        <span id="profileName"></span>
+    </div>
+
+    <div class="user-menu">
+        <a href="../Profil/prof.html">Profil</a>
+        <a href="../wylogowywanie/logout.html">Wyloguj się</a>
+    </div>
+</div>
 </header>
 
 <main>
@@ -40,13 +53,31 @@
 
     <!-- ===== QUIZY ===== -->
     <section class="tab-panel active" id="tab-quizy">
-      <div class="section-label">Twoje quizy</div>
-      <div class="card-grid" id="quizyGrid">
-        <div class="empty-state" style="grid-column:1/-1;">
-          <strong>Brak quizów — na razie</strong>
-          Ta zakładka jest gotowa pod integrację z bazą quizów. Podłącz tu swoje zapytanie, tak jak zrobiliśmy to dla notatek.
+
+      <form class="note-form" id="quizForm">
+        <h2>Nowy quiz</h2>
+        <div class="field">
+          <label for="quizTitle">Tytuł</label>
+          <input type="text" id="quizTitle" placeholder="np. Quiz ze stolic Europy" required>
         </div>
-      </div>
+        <div class="field">
+          <label for="quizDescription">Opis</label>
+          <textarea id="quizDescription" placeholder="Krótki opis quizu..." required></textarea>
+        </div>
+        <div class="visibility-toggle">
+          <input type="checkbox" id="quizPublic">
+          <label for="quizPublic">Quiz publiczny (widoczny dla innych)</label>
+        </div>
+        <button type="submit" class="btn-primary" id="saveQuizBtn">ZAPISZ QUIZ</button>
+      </form>
+
+      <div class="section-label">Twoje quizy</div>
+      <div id="myQuizyLoading" class="loading-msg">Wczytywanie quizów…</div>
+      <div class="card-grid" id="myQuizyGrid"></div>
+
+      <div class="section-label">Quizy publiczne innych użytkowników</div>
+      <div id="publicQuizyLoading" class="loading-msg">Wczytywanie…</div>
+      <div class="card-grid" id="publicQuizyGrid"></div>
     </section>
 
     <!-- ===== NOTATKI ===== -->
@@ -91,9 +122,39 @@
 
   </div>
 </main>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
 
+    const buttons = document.querySelectorAll(".tab-btn");
+    const panels = document.querySelectorAll(".tab-panel");
+
+    buttons.forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            buttons.forEach(btn =>
+                btn.classList.remove("active")
+            );
+
+            panels.forEach(panel =>
+                panel.classList.remove("active")
+            );
+
+            button.classList.add("active");
+
+            const tabName = button.dataset.tab;
+
+            document
+                .getElementById("tab-" + tabName)
+                .classList.add("active");
+
+        });
+
+    });
+
+});
+</script>
 <div id="toast"></div>
-
 
 </body>
 </html>
