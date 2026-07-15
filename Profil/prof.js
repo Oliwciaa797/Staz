@@ -238,3 +238,8 @@ async function loadUserStats() {
     document.getElementById('projects').value =
         count || 0;
 }
+
+function goToProjects(){
+    window.location.href =
+    "../zapisane materialy/mat.html";
+}
