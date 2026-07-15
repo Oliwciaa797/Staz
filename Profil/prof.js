@@ -81,7 +81,18 @@ function handleAvatarPreview(e) {
 
 async function saveProfile() {
     const statusEl = document.getElementById('status');
-    statusEl.textContent = 'Zapisywanie...';
+    const btnText = document.getElementById('btnText');
+    const loader = document.getElementById('loader');
+    const saveBtn = document.getElementById('saveBtn');
+
+    if (saveBtn.disabled) return;
+
+    btnText.style.display = "none";
+    loader.style.display = "block";
+    saveBtn.disabled = true;
+
+
+    // statusEl.textContent = 'Zapisywanie...';
 
     let avatarUrl = null;
     const currentSrc = document.getElementById('avatarImg').src;
@@ -114,7 +125,11 @@ async function saveProfile() {
             statusEl.textContent =
             'Błąd wysyłania zdjęcia: ' + uploadError.message;
 
-    return;
+            btnText.style.display = "block";
+            loader.style.display = "none";  
+            saveBtn.disabled = false;
+
+            return;
 }
 
         const { data: publicUrlData } = supabaseClient
@@ -142,11 +157,31 @@ async function saveProfile() {
 
     if (error) {
         statusEl.textContent = 'Błąd zapisu: ' + error.message;
+
+        btnText.style.display = "block";
+        loader.style.display = "none";
+        saveBtn.disabled = false;
+
         return;
     }
 
+   statusEl.style.display = "inline";
     statusEl.textContent = 'Dane zostały zapisane!';
     selectedAvatarFile = null;
+
+    // ukryj tekst przycisku
+    btnText.style.display = "none";
+    loader.style.display = "none";
+    saveBtn.disabled = true;
+
+    setTimeout(() => {
+        statusEl.style.display = "none";
+
+        // przywróć przycisk
+        btnText.style.display = "block";
+        saveBtn.disabled = false;
+
+    }, 1000);
 }
 
 function goToLogin() {
@@ -197,49 +232,41 @@ async function loadUserStats() {
 
     const notesPromise = supabaseClient
         .from('notes')
-        .select('id', { count: 'exact', head: true })
+        .select('id', { count:'exact', head:true })
         .eq('user_id', currentUser.id);
 
     const quizPromise = supabaseClient
         .from('quizes')
-        .select('id', { count: 'exact', head: true })
+        .select('id', { count:'exact', head:true })
         .eq('user_id', currentUser.id);
 
     const savedPromise = supabaseClient
         .from('saved_items')
-        .select('id', { count: 'exact', head: true })
+        .select('id', { count:'exact', head:true })
         .eq('user_id', currentUser.id);
 
+
     const [
-        { count: notesCount },
-        { count: quizCount },
-        { count: savedCount }
+        {count: notesCount},
+        {count: quizCount},
+        {count: savedCount}
     ] = await Promise.all([
         notesPromise,
         quizPromise,
         savedPromise
     ]);
 
+
     const total =
         (notesCount || 0) +
         (quizCount || 0) +
         (savedCount || 0);
 
+
     document.getElementById('projects').value = total;
-}
-
-async function loadUserStats() {
-
-    const { count } = await supabaseClient
-        .from('notes')
-        .select('id', { count: 'exact', head: true })
-        .eq('user_id', currentUser.id);
-
-    document.getElementById('projects').value =
-        count || 0;
 }
 
 function goToProjects(){
     window.location.href =
-    "../zapisane materialy/mat.html";
+    "../materialy/not.html";
 }
