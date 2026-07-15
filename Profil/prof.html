@@ -45,9 +45,10 @@
             <input type="email" id="email" readonly>
         </div>
 
-        <div class="field">
-        <label>Twoje materiały</label>
-        <input type="text" id="projects" readonly>
+        <div class="field" id="projectsField" onclick="goToProjects()">
+            <label>Twoje materiały</label>
+            <input type="text" id="projects" readonly>
+            <img src="arrow.png" alt="arrow" id="arrowToProjects">
         </div>
 
 
@@ -63,10 +64,10 @@
             <span id="avatarPlaceholder">Kliknij, aby dodać zdjęcie</span>
         </div>
         <input type="file" id="avatarInput" accept="image/*" style="display:none;">
-
-        <button id="saveBtn">ZATWIERDŹ</button>
-
-        <div id="status"></div>
+        <div class="saveSection">
+            <button id="saveBtn">ZATWIERDŹ</button>
+            <div id="status"></div>
+        </div>
 
     </div>
 
