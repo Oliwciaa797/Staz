@@ -6,7 +6,6 @@
     box-sizing: border-box;
     font-family: 'Montserrat', sans-serif;
 }
-/* hej */
 
 body{
     background:#f4f2ec;
@@ -25,8 +24,8 @@ header{
     background-color: #F9F4EC;
     padding:20px 40px;
     position: sticky;
-    top: 0; /* keep header at the top */
-    z-index: 1002; /* ensure header sits above sticky search bar */
+    top: 0; 
+    z-index: 1002; 
     box-shadow: 5px 5px 5px rgba(104, 117, 80, 0.144);
 }
 
