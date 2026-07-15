@@ -1,13 +1,10 @@
-﻿console.log("video.js loaded");
+const SUPABASE_URL = 'https://yewyjfcrwwmftovbobwl.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlld3lqZmNyd3dtZnRvdmJvYndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2NTk0MDYsImV4cCI6MjA5OTIzNTQwNn0.-IEcT_EfGqxjS4AAIKIbmTOonaXtF0MorQ74hEXzVrQ';
 
-const API_KEY = "AIzaSyCTX8K53tIFW1_vUY828xfjYkvuGygnX_w";
-
-function toggleMenu() {
-    const sidebar = document.getElementById("sidebar");
-    if (sidebar) {
-        sidebar.classList.toggle("active");
-    }
-}
+const supabaseClient = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
 
 function goToLogin() {
     window.location.href = "../logowanie/log.html";
@@ -87,103 +84,142 @@ function showTab(tabId) {
 // Domyślnie pokaż pierwszą zakładkę
 showTab("generated");
 
-let userRating = 0;
-const videoId = new URLSearchParams(window.location.search).get('video');
+async function updateSidebar() {
 
-// Set star rating
-function setRating(stars) {
-    userRating = stars;
-    const starElements = document.querySelectorAll('.rating-stars .star');
-    starElements.forEach((star, index) => {
-        if (index < stars) {
-            star.classList.add('active');
-        } else {
-            star.classList.remove('active');
-        }
-    });
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    const sidebar = document.getElementById("sidebar");
+
+    if (user) {
+
+        sidebar.innerHTML = `
+            <a href="../strona startowa/start.html">Strona Startowa</a>
+            <a href="../Zapisane materiały/zapis.html">Zapisane materiały</a>
+            <a href="../Profil/prof.html">Profil</a>
+            <a href="../wylogowywanie/logout.html">Wyloguj się</a>
+        `;
+
+    } else {
+
+        sidebar.innerHTML = `
+            <a href="../strona startowa/start.html">Strona Startowa</a>
+            <a href="../logowanie/log.html">Logowanie</a>
+        `;
+
+    }
 }
 
-// Submit review
-async function submitReview() {
-    const grade = document.getElementById('gradeSelect').value;
-    const reviewText = document.getElementById('reviewText').value;
-    
-    if (userRating === 0) {
-        alert('Proszę wybrać ocenę');
+document.addEventListener("DOMContentLoaded", async () => {
+
+    await showUser();
+    await updateSidebar();
+
+    showTab("generated");
+
+});
+
+document.getElementById("menuBtn").addEventListener("click", (e) => {
+
+    e.stopPropagation();
+
+    document.getElementById("sidebar").classList.toggle("active");
+
+});
+
+document.addEventListener("click", (e) => {
+
+    const sidebar = document.getElementById("sidebar");
+
+    if (
+        sidebar.classList.contains("active") &&
+        !sidebar.contains(e.target)
+    ) {
+
+        sidebar.classList.remove("active");
+
+    }
+
+});
+
+async function showUser() {
+
+    const userArea = document.getElementById("userArea");
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    if (!user) {
+
+        userArea.innerHTML = `
+            <button class="login-btn" onclick="goToLogin()">
+                Zaloguj
+            </button>
+        `;
+
         return;
     }
-    
-    if (!grade) {
-        alert('Proszę wybrać ocenę (A-F)');
+
+    const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("profiles, avatar_url")
+        .eq("id", user.id)
+        .single();
+
+    if (error) {
+        console.error(error);
         return;
     }
-    
-    if (reviewText.trim() === '') {
-        alert('Proszę napisać opinię');
-        return;
-    }
-    
-    const review = {
-        videoId: videoId,
-        rating: userRating,
-        grade: grade,
-        comment: reviewText,
-        timestamp: new Date().toISOString()
-    };
-    
-    // Save to localStorage (client-side) or send to backend
-    const reviews = JSON.parse(localStorage.getItem(`reviews_${videoId}`) || '[]');
-    reviews.push(review);
-    localStorage.setItem(`reviews_${videoId}`, JSON.stringify(reviews));
-    
-    alert('Dziękujemy za opinię!');
-    loadReviews();
-    
-    // Clear form
-    userRating = 0;
-    document.getElementById('gradeSelect').value = '';
-    document.getElementById('reviewText').value = '';
-    document.querySelectorAll('.rating-stars .star').forEach(s => s.classList.remove('active'));
+
+    const avatarUrl = profile.avatar_url || "../Profil/avatar.png";
+
+    userArea.innerHTML = `
+<div class="user-area">
+
+    <div class="user-info" id="userInfo">
+
+        <img src="${avatarUrl}" class="avatar">
+
+        <span>Witaj, ${profile.profiles}</span>
+
+    </div>
+
+    <div class="user-menu" id="userMenu">
+
+        <a href="../Profil/prof.html">Profil</a>
+
+        <a href="../wylogowywanie/logout.html">Wyloguj się</a>
+
+    </div>
+
+</div>
+
+`;
+
+const info = document.getElementById("userInfo");
+const menu = document.getElementById("userMenu");
+
+info.addEventListener("click", (e) => {
+
+    e.stopPropagation();
+
+    menu.classList.toggle("active");
+
+});
 }
 
-// Load and display reviews
-function loadReviews() {
-    const reviews = JSON.parse(localStorage.getItem(`reviews_${videoId}`) || '[]');
-    const container = document.getElementById('reviewsContainer');
-    
-    if (reviews.length === 0) {
-        container.innerHTML = '<p>Brak opinii. Bądź pierwszy!</p>';
-        return;
-    }
-    
-    const averageRating = (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1);
-    const gradeCounts = {};
-    
-    reviews.forEach(r => {
-        gradeCounts[r.grade] = (gradeCounts[r.grade] || 0) + 1;
-    });
-    
-    const dominantGrade = Object.keys(gradeCounts).reduce((a, b) => 
-        gradeCounts[a] > gradeCounts[b] ? a : b
-    );
-    
-    // Update summary
-    document.querySelector('.grade-letter').textContent = dominantGrade;
-    document.querySelector('.grade-avg').textContent = `Średnia ocena: ${averageRating}/5 ⭐`;
-    document.querySelector('.review-count').textContent = `${reviews.length} opinii`;
-    
-    // Display reviews
-    container.innerHTML = reviews.map(review => `
-        <div class="review-item">
-            <div class="review-header">
-                <span class="review-author">Użytkownik (${review.timestamp.split('T')[0]})</span>
-                <span class="review-grade">${review.grade}</span>
-            </div>
-            <div class="review-rating">${'⭐'.repeat(review.rating)}</div>
-            <div class="review-text">${review.comment}</div>
-        </div>
-    `).join('');
+function toProfile() {
+    window.location.href = "../Profil/prof.html";
 }
 
-// Load reviews when page loads
-document.addEventListener('DOMContentLoaded', loadReviews);
+function back(){
+    window.location.href = "../strona startowa/start.html";
+}
+
+document.addEventListener("click", () => {
+
+    const menu = document.getElementById("userMenu");
+
+    if(menu){
+        menu.classList.remove("active");
+    }
+
+});
