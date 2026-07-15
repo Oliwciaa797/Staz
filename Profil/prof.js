@@ -27,6 +27,7 @@ async function init() {
     document.getElementById('email').value = currentUser.email;
 
     await loadProfile();
+    await loadUserStats();
 
     document.getElementById('avatarWrapper').addEventListener('click', () => {
         document.getElementById('avatarInput').click();
@@ -191,3 +192,49 @@ document.addEventListener("click", (e) => {
         sidebar.classList.remove("active");
     }
 });
+
+async function loadUserStats() {
+
+    const notesPromise = supabaseClient
+        .from('notes')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', currentUser.id);
+
+    const quizPromise = supabaseClient
+        .from('quizes')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', currentUser.id);
+
+    const savedPromise = supabaseClient
+        .from('saved_items')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', currentUser.id);
+
+    const [
+        { count: notesCount },
+        { count: quizCount },
+        { count: savedCount }
+    ] = await Promise.all([
+        notesPromise,
+        quizPromise,
+        savedPromise
+    ]);
+
+    const total =
+        (notesCount || 0) +
+        (quizCount || 0) +
+        (savedCount || 0);
+
+    document.getElementById('projects').value = total;
+}
+
+async function loadUserStats() {
+
+    const { count } = await supabaseClient
+        .from('notes')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', currentUser.id);
+
+    document.getElementById('projects').value =
+        count || 0;
+}
