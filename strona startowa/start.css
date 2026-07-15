@@ -374,3 +374,22 @@ main.search-mode{
 .video a:hover{
     background:#3b6600;
 }
+.user-info{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-info .avatar{
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #264500;
+}
+
+.user-info span{
+    color: #264500;
+    font-weight: 700;
+    cursor: pointer;
+}
