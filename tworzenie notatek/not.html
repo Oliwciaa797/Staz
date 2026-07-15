@@ -10,7 +10,7 @@
 <!-- Klient Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <!-- Logika strony -->
-<script src="not.js"></script>
+<script src="not.js" defer></script>
 </head>
 <body>
 
@@ -40,13 +40,31 @@
 
     <!-- ===== QUIZY ===== -->
     <section class="tab-panel active" id="tab-quizy">
-      <div class="section-label">Twoje quizy</div>
-      <div class="card-grid" id="quizyGrid">
-        <div class="empty-state" style="grid-column:1/-1;">
-          <strong>Brak quizów — na razie</strong>
-          Ta zakładka jest gotowa pod integrację z bazą quizów. Podłącz tu swoje zapytanie, tak jak zrobiliśmy to dla notatek.
+
+      <form class="note-form" id="quizForm">
+        <h2>Nowy quiz</h2>
+        <div class="field">
+          <label for="quizTitle">Tytuł</label>
+          <input type="text" id="quizTitle" placeholder="np. Quiz ze stolic Europy" required>
         </div>
-      </div>
+        <div class="field">
+          <label for="quizDescription">Opis</label>
+          <textarea id="quizDescription" placeholder="Krótki opis quizu..." required></textarea>
+        </div>
+        <div class="visibility-toggle">
+          <input type="checkbox" id="quizPublic">
+          <label for="quizPublic">Quiz publiczny (widoczny dla innych)</label>
+        </div>
+        <button type="submit" class="btn-primary" id="saveQuizBtn">ZAPISZ QUIZ</button>
+      </form>
+
+      <div class="section-label">Twoje quizy</div>
+      <div id="myQuizyLoading" class="loading-msg">Wczytywanie quizów…</div>
+      <div class="card-grid" id="myQuizyGrid"></div>
+
+      <div class="section-label">Quizy publiczne innych użytkowników</div>
+      <div id="publicQuizyLoading" class="loading-msg">Wczytywanie…</div>
+      <div class="card-grid" id="publicQuizyGrid"></div>
     </section>
 
     <!-- ===== NOTATKI ===== -->
@@ -91,9 +109,39 @@
 
   </div>
 </main>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
 
+    const buttons = document.querySelectorAll(".tab-btn");
+    const panels = document.querySelectorAll(".tab-panel");
+
+    buttons.forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            buttons.forEach(btn =>
+                btn.classList.remove("active")
+            );
+
+            panels.forEach(panel =>
+                panel.classList.remove("active")
+            );
+
+            button.classList.add("active");
+
+            const tabName = button.dataset.tab;
+
+            document
+                .getElementById("tab-" + tabName)
+                .classList.add("active");
+
+        });
+
+    });
+
+});
+</script>
 <div id="toast"></div>
-
 
 </body>
 </html>

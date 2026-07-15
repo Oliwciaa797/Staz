@@ -4,6 +4,8 @@
    ============================================================ */
 const SUPABASE_URL = 'https://yewyjfcrwwmftovbobwl.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlld3lqZmNyd3dtZnRvdmJvYndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2NTk0MDYsImV4cCI6MjA5OTIzNTQwNn0.-IEcT_EfGqxjS4AAIKIbmTOonaXtF0MorQ74hEXzVrQ';
+const SUPABASE_ANON_KEY =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlld3lqZmNyd3dtZnRvdmJvYndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2NTk0MDYsImV4cCI6MjA5OTIzNTQwNn0.-IEcT_EfGqxjS4AAIKIbmTOonaXtF0MorQ74hEXzVrQ";
 
 
 const isConfigured = !SUPABASE_URL.includes("TWOJ_") && !SUPABASE_ANON_KEY.includes("TWOJ_");
@@ -16,7 +18,11 @@ if (isConfigured) {
     console.error("Błąd inicjalizacji Supabase:", e);
   }
 }
-
+const supabase =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+);
 /* ============================================================
    Struktura tabeli "notes" w Supabase (SQL do uruchomienia raz):
 
@@ -87,7 +93,14 @@ async function loadUser(){
       return;
     }
     currentUser = user;
-    const displayName = user.user_metadata?.username || user.email;
+    const { data: profile } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+
+document.getElementById("profileName").textContent =
+    profile?.profiles || profile?.email || user.email;
     document.getElementById('profileName').textContent = displayName;
     loadMyNotes();
     loadPublicNotes();
