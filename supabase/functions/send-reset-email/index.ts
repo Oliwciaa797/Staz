@@ -3,10 +3,10 @@
 // This enables autocomplete, go to definition, etc.
 
 // Setup type definitions for built-in Supabase Runtime APIs
-import "@supabase/functions-js/edge-runtime.d.ts";
+ import "@supabase/functions-js/edge-runtime.d.ts";
 import { withSupabase } from "@supabase/server";
 
-console.log("Hello from Functions!");
+ /*console.log("Hello from Functions!");
 
 // This endpoint uses 'publishable' | 'secret' access, apiKey is required.
 // Use publishable for Client-facing, key-validated endpoints
@@ -15,7 +15,7 @@ export default {
   fetch: withSupabase({ auth: ["publishable", "secret"] }, async (req, ctx) => {
     // Called by another service with a secret key
     // ctx.supabaseAdmin bypasses RLS — use for privileged operations
-    /*
+  
     if (ctx.authMode === "secret") {
       const { user_id } = await req.json();
       const { data } = await ctx.supabaseAdmin.auth.admin.getUserById(user_id);
@@ -25,7 +25,7 @@ export default {
       });
     }
     */
-
+/* 
     const { name } = await req.json();
 
     return Response.json({
@@ -34,7 +34,7 @@ export default {
   }),
 };
 
-/* To invoke locally:
+To invoke locally:
 
   1. Run `supabase start` (see: https://supabase.com/docs/reference/cli/supabase-start)
   2. Make an HTTP request:
@@ -73,6 +73,9 @@ Deno.serve(async (req: Request) => {
             },
         });
 
+        console.log("LINK ERROR:", linkError);
+        console.log("LINK DATA:", data);
+
         if (linkError) {
             return jsonResponse({ error: linkError.message }, 400);
         }
@@ -81,6 +84,8 @@ Deno.serve(async (req: Request) => {
 
         // 2. Wyślij ten link przez Resend, w ładnym szablonie HTML
         const emailHtml = buildEmailHtml(resetLink);
+
+        
 
         const resendRes = await fetch('https://api.resend.com/emails', {
             method: 'POST',
@@ -95,7 +100,9 @@ Deno.serve(async (req: Request) => {
                 html: emailHtml,
             }),
         });
-
+        console.log('EMAIL:', email);
+        console.log('RESEND STATUS:', resendRes.status);
+        console.log('RESEND DATA:', resendData);
         const resendData = await resendRes.json();
 
         if (!resendRes.ok) {
@@ -105,8 +112,13 @@ Deno.serve(async (req: Request) => {
         return jsonResponse({ success: true, id: resendData.id }, 200);
 
     } catch (err) {
-        return jsonResponse({ error: String(err) }, 500);
-    }
+    console.error("CATCH ERROR:", err);
+
+    return jsonResponse({
+        error: String(err)
+    }, 500);
+}
+
 });
 
 function buildEmailHtml(resetLink: string) {

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nazwa strony — Twój panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="not.css">
+<!-- Klient Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- Logika strony -->
+<script src="not.js"></script>
+</head>
+<body>
+
+<header>
+  <button class="menu-btn" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="site-title">Nazwa strony</div>
+  <button class="profile-chip" id="profileChip">
+    <img src="https://api.dicebear.com/7.x/initials/svg?seed=U" alt="">
+    <span id="profileName">Ładowanie…</span>
+  </button>
+</header>
+
+<main>
+  <div class="panel">
+    <div class="panel-top">
+      <button class="back-btn" aria-label="Wstecz" onclick="history.back()">←</button>
+      <h1>Twój panel</h1>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab-btn active" data-tab="quizy" role="tab">Quizy</button>
+      <button class="tab-btn" data-tab="notatki" role="tab">Notatki</button>
+      <button class="tab-btn" data-tab="zapisane" role="tab">Zapisane</button>
+    </div>
+
+    <!-- ===== QUIZY ===== -->
+    <section class="tab-panel active" id="tab-quizy">
+      <div class="section-label">Twoje quizy</div>
+      <div class="card-grid" id="quizyGrid">
+        <div class="empty-state" style="grid-column:1/-1;">
+          <strong>Brak quizów — na razie</strong>
+          Ta zakładka jest gotowa pod integrację z bazą quizów. Podłącz tu swoje zapytanie, tak jak zrobiliśmy to dla notatek.
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== NOTATKI ===== -->
+    <section class="tab-panel" id="tab-notatki">
+
+      <form class="note-form" id="noteForm">
+        <h2>Nowa notatka</h2>
+        <div class="field">
+          <label for="noteTitle">Tytuł</label>
+          <input type="text" id="noteTitle" placeholder="np. Najlepsze combo na start" required>
+        </div>
+        <div class="field">
+          <label for="noteContent">Treść</label>
+          <textarea id="noteContent" placeholder="Treść notatki..." required></textarea>
+        </div>
+        <div class="visibility-toggle">
+          <input type="checkbox" id="notePublic">
+          <label for="notePublic">Notatka publiczna (widoczna dla innych)</label>
+        </div>
+        <button type="submit" class="btn-primary" id="saveNoteBtn">ZAPISZ NOTATKĘ</button>
+      </form>
+
+      <div class="section-label">Twoje notatki</div>
+      <div id="myNotesLoading" class="loading-msg">Wczytywanie notatek…</div>
+      <div class="card-grid" id="myNotesGrid"></div>
+
+      <div class="section-label">Notatki publiczne innych użytkowników</div>
+      <div id="publicNotesLoading" class="loading-msg">Wczytywanie…</div>
+      <div class="card-grid" id="publicNotesGrid"></div>
+    </section>
+
+    <!-- ===== ZAPISANE ===== -->
+    <section class="tab-panel" id="tab-zapisane">
+      <div class="section-label">Zapisane materiały</div>
+      <div class="card-grid" id="savedGrid">
+        <div class="empty-state" style="grid-column:1/-1;">
+          <strong>Nic tu jeszcze nie ma</strong>
+          Miejsce na filmy / poradniki oznaczone przez użytkownika jako „Zapisz". Podłącz własną tabelę np. <code>saved_items</code>.
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<div id="toast"></div>
+
+
+</body>
+</html>
