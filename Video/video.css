@@ -37,7 +37,6 @@ header{
     color:#304f00;
     font-size:2rem;
     font-weight:700;
-    cursor: pointer;
 }
 
 .login-btn{
@@ -238,83 +237,6 @@ header{
     border-radius: 10px;
     cursor: pointer;
 }
-
-.user-info{
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-}
-
-.user-info .avatar{
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #264500;
-}
-
-.user-info span{
-    color: #264500;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.user-area{
-    position:relative;
-    display:inline-block;
-}
-
-.user-menu{
-
-    position:absolute;
-    top:calc(100% + 10px);
-    right:0;
-
-    width:190px;
-
-    background:white;
-
-    border-radius:10px;
-
-    box-shadow:0 8px 20px rgba(0,0,0,.2);
-
-    opacity:0;
-    visibility:hidden;
-    transform:translateY(-8px);
-
-    transition:.2s;
-
-    z-index:2000;
-
-}
-
-.user-menu.active{
-
-    opacity:1;
-    visibility:visible;
-    transform:translateY(0);
-
-}
-
-.user-menu a{
-
-    display:block;
-
-    padding:14px;
-
-    text-decoration:none;
-
-    color:#222;
-
-    transition:.2s;
-
-}
-
-.user-menu a:hover{
-
-    background:#f4f2ec;
-
 .reviews-grading {
     margin-top: 40px;
     padding: 20px;
@@ -424,4 +346,91 @@ header{
 .review-text {
     color: #333;
     line-height: 1.6;
+}
+
+.user-info .avatar{
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #264500;
+}
+
+.user-info span{
+    color: #264500;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.user-area{
+    position:relative;
+    display:inline-block;
+}
+
+.user-info{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    cursor:pointer;
+}
+
+.avatar{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    object-fit:cover;
+}
+
+.user-menu{
+
+    position:absolute;
+    right:0;
+    top:calc(100% + 10px);
+
+    width:190px;
+
+    background:white;
+
+    border-radius:10px;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.2);
+
+    opacity:0;
+    visibility:hidden;
+    transform:translateY(-8px);
+
+    transition:.2s;
+
+    z-index:2000;
+}
+
+.user-menu.active{
+
+    opacity:1;
+    visibility:visible;
+    transform:translateY(0);
+
+}
+
+.user-menu.active{
+    display:block;
+}
+
+.user-menu a{
+
+    display:block;
+
+    padding:14px;
+
+    text-decoration:none;
+
+    color:#222;
+
+    transition:.2s;
+}
+
+.user-menu a:hover{
+
+    background:#f3f3f3;
+
 }

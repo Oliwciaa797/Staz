@@ -267,3 +267,140 @@ async function submitReview() {
 
     loadReviews();
 }
+
+async function showUser() {
+
+    const userArea = document.getElementById("userArea");
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+
+    if (!user) {
+
+        userArea.innerHTML = `
+            <button class="login-btn" onclick="goToLogin()">
+                Zaloguj
+            </button>
+        `;
+
+        return;
+    }
+
+
+
+    const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("profiles, avatar_url")
+        .eq("id", user.id)
+        .single();
+
+
+
+    if (error) {
+        console.log(error);
+        return;
+    }
+
+
+
+   const avatarUrl = profile.avatar_url || "../Profil/avatar.png";
+
+    userArea.innerHTML = `
+
+    <div class="user-area">
+
+    <div class="user-info" id="userInfo">
+
+        <img src="${avatarUrl}" class="avatar">
+
+        <span>Witaj, ${profile.profiles}</span>
+
+    </div>
+
+    <div class="user-menu" id="userMenu">
+
+        <a href="../Profil/prof.html">
+            Profil
+        </a>
+
+        <a href="../wylogowywanie/logout.html">
+            Wyloguj się
+        </a>
+
+    </div>
+
+</div>
+
+`;
+
+const info = document.getElementById("userInfo");
+const menu = document.getElementById("userMenu");
+
+info.addEventListener("click", (e) => {
+
+    e.stopPropagation();
+
+    menu.classList.toggle("active");
+
+});
+}
+
+function toProfile(){
+    window.location.href = "../Profil/prof.html";
+}
+document.addEventListener("DOMContentLoaded", showUser);
+
+async function updateSidebar() {
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    const sidebar = document.getElementById("sidebar");
+
+    if (user) {
+        sidebar.innerHTML = `
+            <a href="../strona startowa/start.html">Strona Startowa</a>
+            <a href="../materialy/not.html">Zapisane materiały</a>
+            <a href="../Profil/prof.html">Profil</a>
+            <a href="../wylogowywanie/logout.html">Wyloguj się</a>
+        `;
+    } else {
+        sidebar.innerHTML = `
+            <a href="../strona startowa/start.html">Strona Startowa</a>
+            <a href="../logowanie/log.html">Logowanie</a>
+        `;
+    }
+}
+document.addEventListener("DOMContentLoaded", () => {
+    showUser();
+    updateSidebar();
+});
+
+function back(){
+    window.location.href = "../strona startowa/start.html";
+}
+
+document.getElementById("menuBtn").addEventListener("click", (e) => {
+    e.stopPropagation();
+    document.getElementById("sidebar").classList.toggle("active");
+});
+
+document.addEventListener("click", (e) => {
+    const sidebar = document.getElementById("sidebar");
+
+    if (
+        sidebar.classList.contains("active") &&
+        !sidebar.contains(e.target)
+    ) {
+        sidebar.classList.remove("active");
+    }
+});
+
+document.addEventListener("click", () => {
+
+    const menu = document.getElementById("userMenu");
+
+    if(menu){
+        menu.classList.remove("active");
+    }
+
+});
