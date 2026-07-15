@@ -353,17 +353,42 @@ async function showUser() {
 
     userArea.innerHTML = `
 
-        <div onclick="toProfile()" class="user-info">
+    <div class="user-area">
 
-            <img src="${avatarUrl}" class="avatar">
+    <div class="user-info" id="userInfo">
 
-            <span>
-                Witaj, ${profile.profiles}
-            </span>
+        <img src="${avatarUrl}" class="avatar">
 
-        </div>
+        <span>Witaj, ${profile.profiles}</span>
 
-    `;
+    </div>
+
+    <div class="user-menu" id="userMenu">
+
+        <a href="../Profil/prof.html">
+            Profil
+        </a>
+
+        <a href="../wylogowywanie/logout.html">
+            Wyloguj się
+        </a>
+
+    </div>
+
+</div>
+
+`;
+
+const info = document.getElementById("userInfo");
+const menu = document.getElementById("userMenu");
+
+info.addEventListener("click", (e) => {
+
+    e.stopPropagation();
+
+    menu.classList.toggle("active");
+
+});
 }
 
 function toProfile(){
@@ -380,7 +405,7 @@ async function updateSidebar() {
     if (user) {
         sidebar.innerHTML = `
             <a href="../strona startowa/start.html">Strona Startowa</a>
-            <a href="../Zapisane materiały/zapis.html">Zapisane materiały</a>
+            <a href="../materialy/not.html">Zapisane materiały</a>
             <a href="../Profil/prof.html">Profil</a>
             <a href="../wylogowywanie/logout.html">Wyloguj się</a>
         `;
@@ -414,4 +439,14 @@ document.addEventListener("click", (e) => {
     ) {
         sidebar.classList.remove("active");
     }
+});
+
+document.addEventListener("click", () => {
+
+    const menu = document.getElementById("userMenu");
+
+    if(menu){
+        menu.classList.remove("active");
+    }
+
 });
