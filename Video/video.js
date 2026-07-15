@@ -211,18 +211,38 @@ async function showUser() {
     const avatarUrl = profile.avatar_url || "../Profil/avatar.png";
 
     userArea.innerHTML = `
+<div class="user-area">
 
-        <div class="user-info" onclick="toProfile()">
+    <div class="user-info" id="userInfo">
 
-            <img src="${avatarUrl}" class="avatar">
+        <img src="${avatarUrl}" class="avatar">
 
-            <span>
-                Witaj, ${profile.profiles}
-            </span>
+        <span>Witaj, ${profile.profiles}</span>
 
-        </div>
+    </div>
 
-    `;
+    <div class="user-menu" id="userMenu">
+
+        <a href="../Profil/prof.html">Profil</a>
+
+        <a href="../wylogowywanie/logout.html">Wyloguj się</a>
+
+    </div>
+
+</div>
+
+`;
+
+const info = document.getElementById("userInfo");
+const menu = document.getElementById("userMenu");
+
+info.addEventListener("click", (e) => {
+
+    e.stopPropagation();
+
+    menu.classList.toggle("active");
+
+});
 }
 
 function toProfile() {
@@ -232,3 +252,13 @@ function toProfile() {
 function back(){
     window.location.href = "../strona startowa/start.html";
 }
+
+document.addEventListener("click", () => {
+
+    const menu = document.getElementById("userMenu");
+
+    if(menu){
+        menu.classList.remove("active");
+    }
+
+});
