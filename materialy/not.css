@@ -38,8 +38,18 @@ header{
 .menu-btn{
   background:none; border:none; cursor:pointer;
   display:flex; flex-direction:column; gap:5px; padding:6px;
+  position: relative;
+  z-index: 1001;
 }
-.menu-btn span{ width:26px; height:3px; background: var(--green-deep); border-radius:2px; display:block;}
+.menu-btn span{ 
+  width:26px; 
+  height:3px; 
+  background: 
+  var(--green-deep); 
+  border-radius:2px; 
+  display:block;
+}
+
 .site-title{
   font-family:'Baloo 2', sans-serif;
   font-weight:800;
@@ -320,41 +330,96 @@ main{
   .panel h1{ font-size: 30px; }
 }
 
-/* ===== SIDEBAR ===== */
+/* ===== SIDEBAR (taki sam jak start.css) ===== */
 
-#sidebar{
-    position:fixed;
-    top:0;
-    left:-280px;
-    width:260px;
-    height:100vh;
+#sidebar {
+    position: fixed;
+    top: 0;
+    left: -16.66vw;
+    width: 16.66vw;
+    height: 100vh;
 
-    background:#81926a;
+    background-color: #81926a;
 
-    transition:.3s;
+    transition: left 0.3s ease;
+
+    z-index: 1000;
 
     display:flex;
     flex-direction:column;
 
-    padding-top:90px;
-
-    z-index:1000;
+    padding-top:70px;
 }
 
-#sidebar.active{
+
+/* otwarte menu */
+#sidebar.active {
     left:0;
 }
 
-#sidebar a{
+
+/* linki */
+#sidebar a {
     color:white;
     text-decoration:none;
-    padding:18px 24px;
+
+    padding:15px 20px;
+
+    font-size:18px;
+    font-weight:700;
 }
 
-#sidebar a:hover{
-    background:#33411C;
+
+#sidebar a:hover {
+    background-color:#264500;
 }
 
+
+/* ===== KRESKI MENU ===== */
+
+.menu-btn {
+
+    background:none;
+    border:none;
+
+    cursor:pointer;
+
+    display:flex;
+    flex-direction:column;
+
+    gap:5px;
+
+    padding:6px;
+
+    position:relative;
+
+    z-index:1002;
+}
+
+
+.menu-btn span {
+
+    width:26px;
+    height:3px;
+
+    background:#264500;
+
+    border-radius:3px;
+
+    display:block;
+
+}
+
+
+/* ===== HEADER MUSI BYĆ NAD SIDEBAR ===== */
+
+header {
+
+    position:relative;
+
+    z-index:1001;
+
+}
 /* ===== USER ===== */
 
 .user-area{
@@ -362,111 +427,31 @@ main{
 }
 
 .user-menu{
-
     position:absolute;
-
     right:0;
     top:110%;
-
     width:180px;
-
     background:white;
-
     border-radius:12px;
-
     overflow:hidden;
-
     box-shadow:0 10px 30px rgba(0,0,0,.2);
-
     display:none;
 }
 
-.user-menu.active{
-    display:block;
-}
-
 .user-menu a{
-
     display:block;
-
     padding:14px;
-
     color:#222;
-
     text-decoration:none;
-}
-
-.user-menu a:hover{
-
-    background:#f2f2f2;
-}
-
-#sidebar.active{
-    left:0;
-}
-
-#sidebar a{
-    color:white;
-    text-decoration:none;
-    padding:18px 25px;
-    font-weight:700;
-}
-
-#sidebar a:hover{
-    background:#33411C;
-}
-#sidebar{
-    position:fixed;
-    top:0;
-    left:-250px;
-    width:250px;
-    height:100vh;
-    background:#81926a;
-    transition:0.3s;
-    z-index:9999;
-
-    display:flex;
-    flex-direction:column;
-    padding-top:80px;
-}
-
-#sidebar.active{
-    left:0;
-}
-
-#sidebar a{
-    color:white;
-    padding:15px;
-    text-decoration:none;
-}
-
-.user-area{
-    position:relative;
 }
 
 .user-menu{
-    position:absolute;
-    right:0;
-    top:60px;
-    width:180px;
-    background:white;
-    border-radius:10px;
-    box-shadow:0 5px 20px rgba(0,0,0,.2);
-    display:none;
-    overflow:hidden;
-    z-index:9999;
+  display: none;
 }
 
 
 .user-menu.active{
     display:block;
-}
-
-.user-menu a{
-    display:block;
-    padding:12px;
-    color:#264500;
-    text-decoration:none;
 }
 
 .user-menu a:hover{
