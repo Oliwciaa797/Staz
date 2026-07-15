@@ -237,3 +237,113 @@ header{
     border-radius: 10px;
     cursor: pointer;
 }
+.reviews-grading {
+    margin-top: 40px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.grade-summary {
+    display: flex;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.grade-box {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.grade-letter {
+    font-size: 48px;
+    font-weight: bold;
+    color: #4CAF50;
+    margin: 0;
+}
+
+.grade-avg {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+.review-count {
+    color: #999;
+    font-size: 14px;
+}
+
+.user-review {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.rating-stars {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.star {
+    font-size: 30px;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+}
+
+.star.active {
+    opacity: 1;
+}
+
+.grade-input,
+.user-review textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.reviews-list {
+    margin-top: 30px;
+}
+
+.review-item {
+    background: white;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 4px;
+    border-left: 4px solid #4CAF50;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.review-author {
+    font-weight: bold;
+}
+
+.review-grade {
+    background: #4CAF50;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.review-rating {
+    color: #FF9800;
+    margin: 5px 0;
+}
+
+.review-text {
+    color: #333;
+    line-height: 1.6;
+}
