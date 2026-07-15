@@ -7,116 +7,77 @@ const supabaseClient = supabase.createClient(
 );
 
 function goToLogin() {
-    window.location.href =
-    "../logowanie/log.html";
+    window.location.href = "../logowanie/log.html";
 }
 
-const params =
-new URLSearchParams(window.location.search);
-
-
-const videoId =
-params.get("video");
-
-
-
-const player =
-document.getElementById("youtubeVideo");
-
-
+const params = new URLSearchParams(window.location.search);
+const videoId = params.get("video");
+const player = document.getElementById("youtubeVideo");
 
 if (videoId) {
-
     console.log("Video ID:", videoId);
-
-    player.src =
-    `https://www.youtube.com/embed/${videoId}?rel=0`;
-
-}
-else {
-
+    player.src = `https://www.youtube.com/embed/${videoId}?rel=0`;
+} else {
     console.error("Brak video ID");
-
-    document.getElementById("notesContent").innerHTML =
-    "Nie znaleziono filmu.";
-
+    document.getElementById("notesContent").innerHTML = "Nie znaleziono filmu.";
 }
 
+async function generateNotes() {
+    const notes = document.getElementById("notesContent");
+    notes.innerHTML = "Generowanie notatek...";
 
-
-
-
-async function generateNotes(){
-
-
-    const notes =
-    document.getElementById("notesContent");
-
-
-    notes.innerHTML =
-    "Generowanie notatek...";
-
+    if (!videoId) {
+        notes.innerHTML = "Brak ID wideo.";
+        return;
+    }
 
     try {
-
-
-        const response =
-        await fetch(
-            "http://localhost:5000/generate",
-            {
-
-                method:"POST",
-
-                headers:{
-                    "Content-Type":"application/json"
-                },
-
-
-                body:JSON.stringify({
-
-                    videoId: videoId
-
-                })
-
-            }
+        const detailsResponse = await fetch(
+            `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${API_KEY}`
         );
+        const detailsData = await detailsResponse.json();
 
+        if (!detailsResponse.ok || !detailsData.items || detailsData.items.length === 0) {
+            console.error(detailsData);
+            notes.innerHTML = "Nie można pobrać danych filmu z YouTube.";
+            return;
+        }
 
+        const snippet = detailsData.items[0].snippet || {};
+        const title = snippet.title || "";
+        const description = snippet.description || "";
 
-        const data =
-        await response.json();
+        const response = await fetch("http://localhost:5000/generate", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                videoId,
+                title,
+                description
+            })
+        });
 
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({ error: "Błąd serwera" }));
+            notes.innerHTML = errorData.error || "Błąd serwera.";
+            return;
+        }
 
-
-        notes.innerHTML =
-        data.notes;
-
-
-
-    }
-
-
-    catch(error){
-
-
+        const data = await response.json();
+        notes.innerHTML = data.notes || "Brak notatek.";
+    } catch (error) {
         console.error(error);
-
-
-        notes.innerHTML =
-        "Nie udało się wygenerować notatek.";
-
+        notes.innerHTML = "Nie udało się wygenerować notatki.";
     }
-
-
 }
 
 function showTab(tabId) {
     const tabs = document.querySelectorAll(".tab");
-
     tabs.forEach(tab => {
         tab.classList.remove("active");
     });
-
     document.getElementById(tabId).classList.add("active");
 }
 
