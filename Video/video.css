@@ -173,7 +173,7 @@ header{
 }
 
 .tab.active {
-    display: flex;
+    display: block;
 }
 * {
   scrollbar-width: 10px;
@@ -221,7 +221,6 @@ header{
 
 #generated{
     flex-direction: column;
-    display: flex;
     justify-content: flex-start;
     align-items: center;
 }
@@ -433,4 +432,39 @@ header{
 
     background:#f3f3f3;
 
+}
+
+#addNoteBtn{
+
+    background:#81926a;
+    color:white;
+    border:none;
+    padding:10px 20px;
+    border-radius:10px;
+    cursor:pointer;
+    margin-bottom:20px;
+
+}
+
+.note-card{
+
+    background:white;
+    border:1px solid #ddd;
+    border-radius:10px;
+    padding:15px;
+    margin-bottom:15px;
+
+}
+
+.note-card textarea{
+
+    width:100%;
+    min-height:120px;
+    resize:vertical;
+    padding:10px;
+
+}
+.tab.active {
+    display: flex;
+    flex-direction: column;
 }
