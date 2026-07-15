@@ -1,4 +1,15 @@
-﻿console.log("video.js loaded");
+﻿const SUPABASE_URL = 'https://yewyjfcrwwmftovbobwl.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlld3lqZmNyd3dtZnRvdmJvYndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2NTk0MDYsImV4cCI6MjA5OTIzNTQwNn0.-IEcT_EfGqxjS4AAIKIbmTOonaXtF0MorQ74hEXzVrQ';
+
+const supabaseClient =
+supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+
+console.log("video.js loaded");
 
 const API_KEY = "AIzaSyCTX8K53tIFW1_vUY828xfjYkvuGygnX_w";
 
@@ -88,102 +99,171 @@ function showTab(tabId) {
 showTab("generated");
 
 let userRating = 0;
-const videoId = new URLSearchParams(window.location.search).get('video');
+//const videoId = new URLSearchParams(window.location.search).get('video');
 
 // Set star rating
-function setRating(stars) {
+async function setRating(stars) {
+
     userRating = stars;
-    const starElements = document.querySelectorAll('.rating-stars .star');
-    starElements.forEach((star, index) => {
-        if (index < stars) {
+
+    const starElements =
+    document.querySelectorAll(
+        '.rating-stars .star'
+    );
+
+    starElements.forEach((star,index) => {
+
+        if(index < stars){
             star.classList.add('active');
+
+            star.animate([
+                { transform:'scale(1)' },
+                { transform:'scale(1.3)' },
+                { transform:'scale(1)' }
+            ],{
+                duration:300
+            });
+
         } else {
             star.classList.remove('active');
         }
+
     });
+
+    //const audio =
+   // new Audio('happy.mp3');
+
+   // audio.play();
+
 }
 
-// Submit review
-async function submitReview() {
-    const grade = document.getElementById('gradeSelect').value;
-    const reviewText = document.getElementById('reviewText').value;
-    
-    if (userRating === 0) {
-        alert('Proszę wybrać ocenę');
-        return;
-    }
-    
-    if (!grade) {
-        alert('Proszę wybrać ocenę (A-F)');
-        return;
-    }
-    
-    if (reviewText.trim() === '') {
-        alert('Proszę napisać opinię');
-        return;
-    }
-    
-    const review = {
-        videoId: videoId,
-        rating: userRating,
-        grade: grade,
-        comment: reviewText,
-        timestamp: new Date().toISOString()
-    };
-    
-    // Save to localStorage (client-side) or send to backend
-    const reviews = JSON.parse(localStorage.getItem(`reviews_${videoId}`) || '[]');
-    reviews.push(review);
-    localStorage.setItem(`reviews_${videoId}`, JSON.stringify(reviews));
-    
-    alert('Dziękujemy za opinię!');
-    loadReviews();
-    
-    // Clear form
-    userRating = 0;
-    document.getElementById('gradeSelect').value = '';
-    document.getElementById('reviewText').value = '';
-    document.querySelectorAll('.rating-stars .star').forEach(s => s.classList.remove('active'));
-}
 
 // Load and display reviews
-function loadReviews() {
-    const reviews = JSON.parse(localStorage.getItem(`reviews_${videoId}`) || '[]');
-    const container = document.getElementById('reviewsContainer');
-    
-    if (reviews.length === 0) {
-        container.innerHTML = '<p>Brak opinii. Bądź pierwszy!</p>';
+async function loadReviews() {
+
+    const { data, error } =
+    await supabaseClient
+    .from('video_reviews')
+    .select('*')
+    .eq('video_id', videoId)
+    .order(
+        'created_at',
+        { ascending:false }
+    );
+
+    if(error){
+        console.error(error);
         return;
     }
-    
-    const averageRating = (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1);
-    const gradeCounts = {};
-    
-    reviews.forEach(r => {
-        gradeCounts[r.grade] = (gradeCounts[r.grade] || 0) + 1;
-    });
-    
-    const dominantGrade = Object.keys(gradeCounts).reduce((a, b) => 
-        gradeCounts[a] > gradeCounts[b] ? a : b
+
+    const reviews = data || [];
+
+    const container =
+    document.getElementById(
+        'reviewsContainer'
     );
-    
-    // Update summary
-    document.querySelector('.grade-letter').textContent = dominantGrade;
-    document.querySelector('.grade-avg').textContent = `Średnia ocena: ${averageRating}/5 ⭐`;
-    document.querySelector('.review-count').textContent = `${reviews.length} opinii`;
-    
-    // Display reviews
-    container.innerHTML = reviews.map(review => `
+
+    if(reviews.length === 0){
+
+        container.innerHTML =
+        '<p>Brak opinii.</p>';
+
+        return;
+    }
+
+    const averageRating =
+    (
+        reviews.reduce(
+            (sum,r)=>
+            sum+r.rating,0
+        ) / reviews.length
+    ).toFixed(1);
+
+    document.querySelector(
+        '.grade-avg'
+    ).textContent =
+    `Średnia ocena: ${averageRating}/5 ⭐`;
+
+    document.querySelector(
+        '.review-count'
+    ).textContent =
+    `${reviews.length} opinii`;
+
+    container.innerHTML =
+    reviews.map(review => `
+
         <div class="review-item">
-            <div class="review-header">
-                <span class="review-author">Użytkownik (${review.timestamp.split('T')[0]})</span>
-                <span class="review-grade">${review.grade}</span>
+
+            <div class="review-rating">
+            ${'⭐'.repeat(review.rating)}
             </div>
-            <div class="review-rating">${'⭐'.repeat(review.rating)}</div>
-            <div class="review-text">${review.comment}</div>
+
+            <div class="review-text">
+            ${review.comment || ''}
+            </div>
+
         </div>
+
     `).join('');
 }
 
 // Load reviews when page loads
 document.addEventListener('DOMContentLoaded', loadReviews);
+
+async function submitReview() {
+
+    const {
+        data: { user }
+    } = await supabaseClient.auth.getUser();
+
+    if (!user) {
+        alert("Zaloguj się");
+        return;
+    }
+
+    const grade =
+        document.getElementById("gradeSelect").value;
+
+    const reviewText =
+        document.getElementById("reviewText").value;
+
+    if (userRating === 0) {
+        alert("Wybierz ocenę");
+        return;
+    }
+
+    if (!grade) {
+        alert("Wybierz ocenę A-F");
+        return;
+    }
+
+    const { error } =
+        await supabaseClient
+            .from("video_reviews")
+            .insert({
+                video_id: videoId,
+                user_id: user.id,
+                rating: userRating,
+                grade: grade,
+                comment: reviewText
+            });
+
+    if (error) {
+        console.error(error);
+        alert(error.message);
+        return;
+    }
+
+    alert("Opinia dodana!");
+
+    document.getElementById("gradeSelect").value = "";
+    document.getElementById("reviewText").value = "";
+
+    userRating = 0;
+
+    document
+        .querySelectorAll(".rating-stars .star")
+        .forEach(star => star.classList.remove("active"));
+
+    loadReviews();
+}
