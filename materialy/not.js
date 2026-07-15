@@ -3,19 +3,18 @@
    Znajdziesz je w: Project Settings → API
    ============================================================ */
 const SUPABASE_URL = 'https://yewyjfcrwwmftovbobwl.supabase.co';
+
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlld3lqZmNyd3dtZnRvdmJvYndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2NTk0MDYsImV4cCI6MjA5OTIzNTQwNn0.-IEcT_EfGqxjS4AAIKIbmTOonaXtF0MorQ74hEXzVrQ';
 const SUPABASE_ANON_KEY =
 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlld3lqZmNyd3dtZnRvdmJvYndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2NTk0MDYsImV4cCI6MjA5OTIzNTQwNn0.-IEcT_EfGqxjS4AAIKIbmTOonaXtF0MorQ74hEXzVrQ";
 
+const supabaseClient = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
 
 const isConfigured = !SUPABASE_URL.includes("TWOJ_") && !SUPABASE_ANON_KEY.includes("TWOJ_");
 
-
-const supabase =
-window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-);
 /* ============================================================
    Struktura tabeli "notes" w Supabase (SQL do uruchomienia raz):
 
@@ -76,36 +75,43 @@ if (!isConfigured) {
 
 /* ---------- Auth: pobranie aktualnego użytkownika ---------- */
 async function loadUser(){
+    const { data:{ user } } =
+    await supabaseClient.auth.getUser();
 
-    try {
-        const { data:{user}, error } = await supabase.auth.getUser();
+    const profileName =
+    document.getElementById("profileName");
 
-        if(error || !user){
-            document.getElementById("profileName").textContent = "Zaloguj się";
-            return;
-        }
+    const avatar =
+    document.getElementById("profileAvatar");
 
-        currentUser = user;
-
-        const { data: profile } = await supabase
-            .from("profiles")
-            .select("*")
-            .eq("id", user.id)
-            .single();
-
-        document.getElementById("profileName").textContent =
-            profile?.profiles || user.email;
-
-        document.getElementById("profileAvatar").src =
-            profile?.avatar_url || "../Profil/avatar.png";
-
-        loadMyNotes();
-        loadPublicNotes();
-
-    } catch(e){
-        console.error(e);
+    if(!user){
+        profileName.textContent="Zaloguj";
+        avatar.src="../Profil/avatar.png";
+        return;
     }
 
+    currentUser=user;
+
+    const {data:profile,error}=await supabaseClient
+    .from("profiles")
+    .select("profiles,avatar_url")
+    .eq("id",user.id)
+    .single();
+
+    if(error){
+        console.log(error);
+        return;
+    }
+
+    profileName.textContent =
+    profile.profiles;
+
+    avatar.src =
+    profile.avatar_url ||
+    "../Profil/avatar.png";
+
+    loadMyNotes();
+    loadPublicNotes();
 }
 
 /* ---------- Renderowanie karty notatki (widok) ---------- */
@@ -286,7 +292,7 @@ document.getElementById('noteForm').addEventListener('submit', async (e)=>{
   btn.disabled = true;
   btn.textContent = 'ZAPISYWANIE…';
 
-  const { error } = await supabase.from('notes').insert({
+  const { error } = await supabaseClient.from('notes').insert({
     user_id: currentUser.id,
     author_name: currentUser.user_metadata?.username || currentUser.email,
     title,
@@ -311,7 +317,7 @@ document.getElementById('noteForm').addEventListener('submit', async (e)=>{
 /* ---------- Usuwanie notatki ---------- */
 async function deleteNote(id){
   if(!confirm('Na pewno usunąć tę notatkę?')) return;
-  const { error } = await supabase.from('notes').delete().eq('id', id);
+  const { error } = await supabaseClient.from('notes').delete().eq('id', id);
   if(error){
     showToast('Nie udało się usunąć notatki.');
     return;
@@ -337,7 +343,7 @@ async function toggleVisibility(id, currentlyPublic){
 }
 document.addEventListener("DOMContentLoaded", () => {
 
-    // SIDEBAR
+    loadUser();
 
     const menuBtn = document.getElementById("menuBtn");
     const sidebar = document.getElementById("sidebar");
