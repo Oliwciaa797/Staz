@@ -88,10 +88,15 @@ async function generateNotes() {
 }
 
 function showTab(tabId) {
+
+    console.log("Przełączam na:", tabId);
+
     const tabs = document.querySelectorAll(".tab");
+
     tabs.forEach(tab => {
         tab.classList.remove("active");
     });
+
     document.getElementById(tabId).classList.add("active");
 }
 
@@ -267,3 +272,278 @@ async function submitReview() {
 
     loadReviews();
 }
+
+async function showUser() {
+
+    const userArea = document.getElementById("userArea");
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+
+    if (!user) {
+
+        userArea.innerHTML = `
+            <button class="login-btn" onclick="goToLogin()">
+                Zaloguj
+            </button>
+        `;
+
+        return;
+    }
+
+
+
+    const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("profiles, avatar_url")
+        .eq("id", user.id)
+        .single();
+
+
+
+    if (error) {
+        console.log(error);
+        return;
+    }
+
+
+
+   const avatarUrl = profile.avatar_url || "../Profil/avatar.png";
+
+    userArea.innerHTML = `
+
+    <div class="user-area">
+
+    <div class="user-info" id="userInfo">
+
+        <img src="${avatarUrl}" class="avatar">
+
+        <span>Witaj, ${profile.profiles}</span>
+
+    </div>
+
+    <div class="user-menu" id="userMenu">
+
+        <a href="../Profil/prof.html">
+            Profil
+        </a>
+
+        <a href="../wylogowywanie/logout.html">
+            Wyloguj się
+        </a>
+
+    </div>
+
+</div>
+
+`;
+
+const info = document.getElementById("userInfo");
+const menu = document.getElementById("userMenu");
+
+info.addEventListener("click", (e) => {
+
+    e.stopPropagation();
+
+    menu.classList.toggle("active");
+
+});
+}
+
+function toProfile(){
+    window.location.href = "../Profil/prof.html";
+}
+document.addEventListener("DOMContentLoaded", showUser);
+
+async function updateSidebar() {
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    const sidebar = document.getElementById("sidebar");
+
+    if (user) {
+        sidebar.innerHTML = `
+            <a href="../strona startowa/start.html">Strona Startowa</a>
+            <a href="../materialy/not.html">Zapisane materiały</a>
+            <a href="../Profil/prof.html">Profil</a>
+            <a href="../wylogowywanie/logout.html">Wyloguj się</a>
+        `;
+    } else {
+        sidebar.innerHTML = `
+            <a href="../strona startowa/start.html">Strona Startowa</a>
+            <a href="../logowanie/log.html">Logowanie</a>
+        `;
+    }
+}
+document.addEventListener("DOMContentLoaded", () => {
+    showUser();
+    updateSidebar();
+    loadPersonalNotes();
+});
+
+function back(){
+    window.location.href = "../strona startowa/start.html";
+}
+
+document.getElementById("menuBtn").addEventListener("click", (e) => {
+    e.stopPropagation();
+    document.getElementById("sidebar").classList.toggle("active");
+});
+
+document.addEventListener("click", (e) => {
+    const sidebar = document.getElementById("sidebar");
+
+    if (
+        sidebar.classList.contains("active") &&
+        !sidebar.contains(e.target)
+    ) {
+        sidebar.classList.remove("active");
+    }
+});
+
+document.addEventListener("click", () => {
+
+    const menu = document.getElementById("userMenu");
+
+    if(menu){
+        menu.classList.remove("active");
+    }
+
+});
+
+function createPersonalNote() {
+
+    const container =
+    document.getElementById(
+        "personalNotesContainer"
+    );
+
+    const emptyText =
+    container.querySelector("p");
+
+    if(emptyText){
+        emptyText.remove();
+    }
+
+    const div =
+    document.createElement("div");
+
+    div.className = "note-card";
+
+    div.innerHTML = `
+
+        <textarea
+            placeholder="Napisz swoją notatkę..."
+        ></textarea>
+
+        <button class="saveNoteBtn">
+            Zapisz
+        </button>
+
+    `;
+
+    container.appendChild(div);
+
+}
+
+async function loadPersonalNotes(){
+
+    const {
+        data:{user}
+    } = await supabaseClient.auth.getUser();
+
+    if(!user){
+        return;
+    }
+
+    const { data, error } =
+await supabaseClient
+.from("notes")
+.select("*")
+.eq("user_id", user.id)
+.eq("video_id", videoId)
+.order("created_at", { ascending: false });
+
+    if(error){
+        console.error(error);
+        return;
+    }
+
+    const container =
+        document.getElementById(
+            "personalNotesContainer"
+        );
+
+    if(data.length === 0){
+
+        container.innerHTML =
+        "<p>Brak notatek.</p>";
+
+        return;
+
+    }
+
+    container.innerHTML =
+    data.map(note => `
+        <div class="note-card">
+            <textarea>${note.content}</textarea>
+        </div>
+    `).join("");
+
+}
+
+document.addEventListener("click", async (e) => {
+
+    if(
+        !e.target.classList.contains(
+            "saveNoteBtn"
+        )
+    ){
+        return;
+    }
+
+    const textarea =
+    e.target.parentElement
+    .querySelector("textarea");
+
+    const content =
+    textarea.value.trim();
+
+    if(!content){
+        alert("Wpisz treść notatki");
+        return;
+    }
+
+    const {
+        data:{user}
+    } = await supabaseClient.auth.getUser();
+
+    if(!user){
+        alert("Zaloguj się");
+        return;
+    }
+
+    const { error } =
+    await supabaseClient
+    .from("notes")
+    .insert({
+    user_id: user.id,
+    video_id: videoId,
+    title: "Notatka do filmu",
+    content: content,
+    is_public: false
+});
+
+    if(error){
+
+        console.error(error);
+        alert(error.message);
+        return;
+
+    }
+
+    alert("Notatka zapisana");
+
+    loadPersonalNotes();
+
+});

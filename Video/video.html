@@ -5,8 +5,6 @@
     <link rel="stylesheet" href="video.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script defer src="video.js"></script>
     <title>Nazwa strony</title>
     <link rel="stylesheet" href="video.css"> 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -16,7 +14,7 @@
     <header>
         <div class="top">
 
-            <div id="menuBtn">
+            <div id="menuBtn" onclick="toggleMenu()">
                 ☰
             </div>
     
@@ -29,7 +27,20 @@
 
             <h1 class="logo" onclick="back()">Nazwa strony</h1>
 
-            <div id="userArea"></div>
+            <div id="userArea" class="user-area">
+
+            <div class="user-info">
+                <img src="avatar.png" class="avatar">
+                <span>Witaj, </span>
+            </div>
+
+        <div class="user-menu">
+
+            <a href="../Profil/prof.html">Profil</a>
+
+            <a href="../wylogowywanie/logout.html">Wyloguj się</a>
+
+        </div></div></div>
     </header>
 
     <main>
@@ -61,8 +72,16 @@
                         </button>
                         <div id="notesContent"></div>
                     </div>
-                    <div id="personal" class="tab">Własne notatki</div>
-                    <div id="quiz" class="tab">halo</div>
+                    <div id="personal" class="tab">
+                    <button id="addNoteBtn" onclick="createPersonalNote()">+ Dodaj notatkę</button>
+                    <div id="personalNotesContainer">
+                    <p>Brak notatek.</p>
+                    </div>
+                    </div>
+                    <div id="quiz" class="tab">
+                        <h3>Quiz</h3>
+                        <p>Tutaj będzie quiz generowany automatycznie.</p>
+                    </div>
                 </div>
             </div>
     </div>
