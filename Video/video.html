@@ -2,19 +2,18 @@
 <html lang="pl">
 <head>
 
-    <link rel="stylesheet" href="video.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nazwa strony</title>
-    <link rel="stylesheet" href="video.css"> 
+    <link rel="stylesheet" href="video.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="video.js" defer></script>   
+    <script src="video.js" defer></script>
 </head>
 <body>
     <header>
         <div class="top">
 
-            <div id="menuBtn">
+            <div id="menuBtn" onclick="toggleMenu()">
                 ☰
             </div>
     
@@ -62,7 +61,7 @@
 
                 <div class="buttons">
                     <button id="ainotes" onclick="showTab('generated')">Notatki AI</button>
-                    <button id="personalnotes" onclick="showTab('personal')">Własne notatki</button>
+                    <button id="personalnotes" onclick="showTab('personal')">Własne materiały</button>
                     <button id="quiztab" onclick="showTab('quiz')">Quiz</button>
                 </div>
                 <div class="sidepanelcontent">
@@ -72,12 +71,31 @@
                         </button>
                         <div id="notesContent"></div>
                     </div>
+
+                    <!-- ===== WŁASNE MATERIAŁY ===== -->
                     <div id="personal" class="tab">
-                    <button id="addNoteBtn" onclick="createPersonalNote()">+ Dodaj notatkę</button>
-                    <div id="personalNotesContainer">
-                    <p>Brak notatek.</p>
+
+                        <div class="sub-tabs">
+                            <button class="sub-tab-btn active" data-subtab="personalNotes" onclick="showSubTab('personalNotes')">Notatki</button>
+                            <button class="sub-tab-btn" data-subtab="personalQuizy" onclick="showSubTab('personalQuizy')">Quizy</button>
+                        </div>
+
+                        <div id="personalNotes" class="sub-tab-panel active">
+                            <button id="addNoteBtn" onclick="createPersonalNote()">+ Dodaj notatkę</button>
+                            <div id="personalNotesContainer">
+                                <p>Brak notatek.</p>
+                            </div>
+                        </div>
+
+                        <div id="personalQuizy" class="sub-tab-panel">
+                            <button id="addQuizBtn" onclick="window.location.href='../kreator quizow/quiz.html'">+ Nowy quiz</button>
+                            <div id="personalQuizyContainer">
+                                <p>Brak quizów.</p>
+                            </div>
+                        </div>
+
                     </div>
-                    </div>
+
                     <div id="quiz" class="tab">
                         <h3>Quiz</h3>
                         <p>Tutaj będzie quiz generowany automatycznie.</p>
@@ -91,7 +109,6 @@
     <!-- Overall Grade -->
     <div class="grade-summary">
         <div class="grade-box">
-            <p class="grade-letter">A</p>
             <p class="grade-avg">Średnia ocena: 4.5/5 ⭐</p>
             <p class="review-count">245 opinii</p>
         </div>
