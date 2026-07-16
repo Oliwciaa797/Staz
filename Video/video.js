@@ -146,15 +146,43 @@ async function setRating(stars) {
 // Load and display reviews
 async function loadReviews() {
 
-    const { data, error } =
-    await supabaseClient
-    .from('video_reviews')
-    .select('*')
-    .eq('video_id', videoId)
-    .order(
-        'created_at',
-        { ascending:false }
-    );
+    const sort =
+        document.getElementById("sortReviews")?.value || "newest";
+
+    let query =
+        supabaseClient
+        .from("video_reviews")
+        .select(`*`)
+        .eq("video_id", videoId);
+
+    switch(sort){
+
+        case "oldest":
+            query = query.order("created_at", {
+                ascending: true
+            });
+            break;
+
+        case "highest":
+            query = query.order("rating", {
+                ascending: false
+            });
+            break;
+
+        case "lowest":
+            query = query.order("rating", {
+                ascending: true
+            });
+            break;
+
+        default:
+            query = query.order("created_at", {
+                ascending: false
+            });
+
+    }
+
+    const { data, error } = await query;
 
     if(error){
         console.error(error);
@@ -164,52 +192,85 @@ async function loadReviews() {
     const reviews = data || [];
 
     const container =
-    document.getElementById(
-        'reviewsContainer'
-    );
+        document.getElementById("reviewsContainer");
 
     if(reviews.length === 0){
 
         container.innerHTML =
-        '<p>Brak opinii.</p>';
+            "<p>Brak opinii.</p>";
+
+        document.querySelector(".grade-avg").textContent =
+            "Średnia ocena: 0/5 ⭐";
+
+        document.querySelector(".review-count").textContent =
+            "0 opinii";
 
         return;
     }
 
-    const averageRating =
-    (
-        reviews.reduce(
-            (sum,r)=>
-            sum+r.rating,0
-        ) / reviews.length
+    const formatDate = (date) => {
+
+    return new Date(date).toLocaleDateString("pl-PL", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+
+};
+
+    const averageRating = (
+        reviews.reduce((sum, r) => sum + r.rating, 0) /
+        reviews.length
     ).toFixed(1);
 
-    document.querySelector(
-        '.grade-avg'
-    ).textContent =
-    `Średnia ocena: ${averageRating}/5 ⭐`;
+    document.querySelector(".grade-avg").textContent =
+        `Średnia ocena: ${averageRating}/5 ⭐`;
 
-    document.querySelector(
-        '.review-count'
-    ).textContent =
-    `${reviews.length} opinii`;
+    document.querySelector(".review-count").textContent =
+        `${reviews.length} opinii`;
 
-    container.innerHTML =
-    reviews.map(review => `
+    container.innerHTML = reviews.map(review => `
 
-        <div class="review-item">
+<div class="review-item">
 
-            <div class="review-rating">
-            ${'⭐'.repeat(review.rating)}
-            </div>
+    <div class="review-header">
 
-            <div class="review-text">
-            ${review.comment || ''}
+        <div class="review-user">
+
+            <img
+                src="${review.profiles?.avatar_url || '../Profil/avatar.png'}"
+                class="review-avatar"
+            >
+
+            <div>
+
+                <strong>
+                    ${review.profiles?.profiles || "Użytkownik"}
+                </strong>
+
+                <div class="review-date">
+                    ${formatDate(review.created_at)}
+                </div>
+
             </div>
 
         </div>
 
-    `).join('');
+        <div class="review-rating">
+            ${"⭐".repeat(review.rating)}
+        </div>
+
+    </div>
+
+    <div class="review-text">
+        ${review.comment || ""}
+    </div>
+
+</div>
+
+`).join("");
 }
 
 // Load reviews when page loads
@@ -226,19 +287,12 @@ async function submitReview() {
         return;
     }
 
-    const grade =
-        document.getElementById("gradeSelect").value;
 
     const reviewText =
         document.getElementById("reviewText").value;
 
     if (userRating === 0) {
         alert("Wybierz ocenę");
-        return;
-    }
-
-    if (!grade) {
-        alert("Wybierz ocenę A-F");
         return;
     }
 
@@ -249,7 +303,6 @@ async function submitReview() {
                 video_id: videoId,
                 user_id: user.id,
                 rating: userRating,
-                grade: grade,
                 comment: reviewText
             });
 
@@ -261,7 +314,6 @@ async function submitReview() {
 
     alert("Opinia dodana!");
 
-    document.getElementById("gradeSelect").value = "";
     document.getElementById("reviewText").value = "";
 
     userRating = 0;
@@ -414,35 +466,122 @@ document.addEventListener("click", () => {
 function createPersonalNote() {
 
     const container =
-    document.getElementById(
-        "personalNotesContainer"
-    );
+        document.getElementById("personalNotesContainer");
 
     const emptyText =
-    container.querySelector("p");
+        container.querySelector("p");
 
     if(emptyText){
         emptyText.remove();
     }
 
-    const div =
-    document.createElement("div");
 
-    div.className = "note-card";
+    const div = document.createElement("div");
+
+    div.className = "note-card new-note";
 
     div.innerHTML = `
 
-        <textarea
+        <textarea 
             placeholder="Napisz swoją notatkę..."
+            class="note-textarea"
         ></textarea>
 
-        <button class="saveNoteBtn">
-            Zapisz
-        </button>
+        <div class="note-buttons">
+
+            <button onclick="saveNewNote(this)">
+                Zapisz
+            </button>
+
+            <button onclick="cancelNewNote(this)">
+                Anuluj
+            </button>
+
+        </div>
 
     `;
 
-    container.appendChild(div);
+
+    container.prepend(div);
+
+}
+
+function cancelNewNote(button){
+
+    const note =
+        button.closest(".note-card");
+
+    note.remove();
+
+
+    const container =
+        document.getElementById("personalNotesContainer");
+
+
+    if(container.children.length === 0){
+
+        container.innerHTML =
+        "<p>Brak notatek.</p>";
+
+    }
+
+}
+
+async function saveNewNote(button){
+
+    const note =
+        button.closest(".note-card");
+
+
+    const textarea =
+        note.querySelector("textarea");
+
+
+    const content =
+        textarea.value.trim();
+
+
+    if(!content){
+        alert("Wpisz treść notatki");
+        return;
+    }
+
+
+    const {
+        data:{user}
+    } = await supabaseClient.auth.getUser();
+
+
+    if(!user){
+        alert("Zaloguj się");
+        return;
+    }
+
+
+    const {error} =
+    await supabaseClient
+    .from("notes")
+    .insert({
+
+        user_id:user.id,
+        video_id:videoId,
+        title:"Notatka do filmu",
+        content:content,
+        is_public:false
+
+    });
+
+
+    if(error){
+
+        console.error(error);
+        alert(error.message);
+        return;
+
+    }
+
+
+    loadPersonalNotes();
 
 }
 
@@ -484,11 +623,101 @@ await supabaseClient
     }
 
     container.innerHTML =
-    data.map(note => `
-        <div class="note-card">
-            <textarea>${note.content}</textarea>
-        </div>
-    `).join("");
+data.map(note => `
+
+<div class="note-card">
+
+    <textarea 
+        class="note-textarea"
+        disabled
+    >${note.content}</textarea>
+
+
+    <div class="note-buttons">
+
+        <button onclick="editNote(this)">
+            Edytuj
+        </button>
+
+    </div>
+
+
+</div>
+
+`).join("");
+
+}
+
+function editNote(button){
+
+    const card =
+        button.closest(".note-card");
+
+
+    const textarea =
+        card.querySelector("textarea");
+
+
+    textarea.disabled = false;
+
+    textarea.focus();
+
+
+    button.parentElement.innerHTML = `
+
+        <button onclick="updateNote(this)">
+            Zapisz
+        </button>
+
+
+        <button onclick="loadPersonalNotes()">
+            Anuluj
+        </button>
+
+    `;
+
+}
+
+async function updateNote(button){
+
+    const card =
+        button.closest(".note-card");
+
+
+    const textarea =
+        card.querySelector("textarea");
+
+
+    const content =
+        textarea.value.trim();
+
+
+    const {
+        data:{user}
+    } = await supabaseClient.auth.getUser();
+
+
+    const {error} =
+    await supabaseClient
+    .from("notes")
+    .update({
+        content:content
+    })
+    .eq("user_id",user.id)
+    .eq("video_id",videoId)
+    .eq("content",textarea.defaultValue);
+
+
+    if(error){
+
+        console.error(error);
+        alert(error.message);
+        return;
+
+    }
+
+
+    loadPersonalNotes();
 
 }
 
