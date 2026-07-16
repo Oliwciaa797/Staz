@@ -468,6 +468,11 @@ function createPersonalNote() {
         <textarea
             placeholder="Napisz swoją notatkę..."
         ></textarea>
+        
+        <div class="visibility-toggle">
+            <input type="checkbox" class="notePublicInput">
+            <label>Notatka publiczna (widoczna dla innych)</label>
+        </div>
 
         <button class="saveNoteBtn">
             Zapisz
@@ -520,7 +525,15 @@ async function loadPersonalNotes(){
         <div class="note-card">
             <h4 class="note-card-title">${escapeHtml(note.title || "Bez tytułu")}</h4>
             <textarea>${escapeHtml(note.content)}</textarea>
-        </div>
+            <span class="note-card-badge ${note.is_public ? 'public' : 'private'}">
+            ${note.is_public ? 'Publiczna' : 'Prywatna'}
+            </span>
+        <div class="note-card-actions">
+            <button class="toggle-note-vis" data-id="${note.id}" data-public="${note.is_public}">
+            ${note.is_public ? 'Ukryj' : 'Upublicznij'}
+            </button>
+            <button class="delete-note" data-id="${note.id}">Usuń</button>
+        </div></div>
     `).join("");
 
 }
@@ -548,6 +561,10 @@ document.addEventListener("click", async (e) => {
 
     const content =
     textarea.value.trim();
+    const publicInput = card.querySelector(".notePublicInput");
+const isPublic = publicInput ? publicInput.checked : false;
+// ...
+is_public: isPublic   // zamiast is_public: false
 
     if(!content){
         alert("Wpisz treść notatki");
@@ -570,7 +587,7 @@ document.addEventListener("click", async (e) => {
         user_id: user.id,
         title: title || "Notatka do filmu",
         content: content,
-        is_public: false
+        is_public: isPublic
     });
 
     if(error){
@@ -644,6 +661,9 @@ async function loadUserQuizy(){
                     <button class="deleteQuizBtn" data-id="${quiz.id}">Usuń</button>
                 </div>
             </div>
+            <button class="toggle-quiz-vis" data-id="${quiz.id}" data-public="${quiz.is_public}">
+            ${quiz.is_public ? 'Ukryj' : 'Upublicznij'}
+            </button>
         `;
     }).join("");
 
@@ -669,3 +689,31 @@ async function deleteUserQuiz(id){
 
     loadUserQuizy();
 }
+
+document.addEventListener("click", async (e) => {
+
+    if (!e.target.classList.contains("toggle-note-vis")) {
+        return;
+    }
+
+    const noteId = e.target.dataset.id;
+
+    const currentState =
+        e.target.dataset.public === "true";
+
+    const { error } =
+        await supabaseClient
+        .from("notes")
+        .update({
+            is_public: !currentState
+        })
+        .eq("id", noteId);
+
+    if (error) {
+        console.error(error);
+        alert("Nie udało się zmienić widoczności.");
+        return;
+    }
+
+    loadPersonalNotes();
+});
