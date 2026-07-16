@@ -165,43 +165,6 @@ async function setRating(stars) {
 /* ---------- Wczytanie i wyświetlenie recenzji ---------- */
 async function loadReviews() {
 
-    const sort =
-        document.getElementById("sortReviews")?.value || "newest";
-
-    let query =
-        supabaseClient
-        .from("video_reviews")
-        .select(`*`)
-        .eq("video_id", videoId);
-
-    switch(sort){
-
-        case "oldest":
-            query = query.order("created_at", {
-                ascending: true
-            });
-            break;
-
-        case "highest":
-            query = query.order("rating", {
-                ascending: false
-            });
-            break;
-
-        case "lowest":
-            query = query.order("rating", {
-                ascending: true
-            });
-            break;
-
-        default:
-            query = query.order("created_at", {
-                ascending: false
-            });
-
-    }
-
-    const { data, error } = await query;
     const { data, error } =
     await supabaseClient
     .from('video_reviews')
@@ -223,44 +186,35 @@ async function loadReviews() {
     const reviews = data || [];
 
     const container =
-        document.getElementById("reviewsContainer");
+    document.getElementById(
+        'reviewsContainer'
+    );
 
     if(reviews.length === 0){
 
         container.innerHTML =
-            "<p>Brak opinii.</p>";
-
-        document.querySelector(".grade-avg").textContent =
-            "Średnia ocena: 0/5 ⭐";
-
-        document.querySelector(".review-count").textContent =
-            "0 opinii";
+        '<p>Brak opinii.</p>';
 
         return;
     }
 
-    const formatDate = (date) => {
-
-    return new Date(date).toLocaleDateString("pl-PL", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-    });
-
-};
-
-    const averageRating = (
-        reviews.reduce((sum, r) => sum + r.rating, 0) /
-        reviews.length
+    const averageRating =
+    (
+        reviews.reduce(
+            (sum,r)=>
+            sum+r.rating,0
+        ) / reviews.length
     ).toFixed(1);
 
-    document.querySelector(".grade-avg").textContent =
-        `Średnia ocena: ${averageRating}/5 ⭐`;
+    document.querySelector(
+        '.grade-avg'
+    ).textContent =
+    `Średnia ocena: ${averageRating}/5 ⭐`;
 
-    document.querySelector(".review-count").textContent =
-        `${reviews.length} opinii`;
+    document.querySelector(
+        '.review-count'
+    ).textContent =
+    `${reviews.length} opinii`;
 
     container.innerHTML =
     reviews.map(review => {
@@ -310,6 +264,8 @@ async function submitReview() {
         return;
     }
 
+    const grade =
+        document.getElementById("gradeSelect").value;
 
     const reviewText =
         document.getElementById("reviewText").value;
@@ -326,6 +282,7 @@ async function submitReview() {
                 video_id: videoId,
                 user_id: user.id,
                 rating: userRating,
+                grade: grade,
                 comment: reviewText
             });
 
@@ -337,6 +294,7 @@ async function submitReview() {
 
     alert("Opinia dodana!");
 
+    document.getElementById("gradeSelect").value = "";
     document.getElementById("reviewText").value = "";
 
     userRating = 0;
