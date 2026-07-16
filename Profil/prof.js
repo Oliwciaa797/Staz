@@ -236,7 +236,7 @@ async function loadUserStats() {
         .eq('user_id', currentUser.id);
 
     const quizPromise = supabaseClient
-        .from('quizes')
+        .from('quizzes')
         .select('id', { count:'exact', head:true })
         .eq('user_id', currentUser.id);
 
@@ -256,6 +256,9 @@ async function loadUserStats() {
         savedPromise
     ]);
 
+    console.log("Notatki:", notesCount);
+    console.log("Quizy:", quizCount);
+    console.log("Zapisane:", savedCount);
 
     const total =
         (notesCount || 0) +
