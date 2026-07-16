@@ -107,27 +107,32 @@
     <section class="reviews-grading">
     <h2>Recenzje i Ocena</h2>
     
-    <div class="reviews-top">
-        <div class="grade-summary">
-            <div class="grade-box">
-                <p class="grade-avg">Średnia ocena: 4.5/5 ⭐</p>
-                <p class="review-count">245 opinii</p>
-            </div>
-        </div>
-        
-        <div class="user-review">
-            <h3>Twoja ocena</h3>
-            <div class="rating-stars">
-                <span class="star" onclick="setRating(1)">⭐</span>
-                <span class="star" onclick="setRating(2)">⭐</span>
-                <span class="star" onclick="setRating(3)">⭐</span>
-                <span class="star" onclick="setRating(4)">⭐</span>
-                <span class="star" onclick="setRating(5)">⭐</span>
-            </div>
-            <textarea id="reviewText" placeholder="Dodaj swoją opinię..."></textarea>
-        <div class="visibility-toggle">
+    <!-- Overall Grade -->
+    <div class="grade-summary">
+        <div class="grade-box">
+            <p class="grade-avg">Średnia ocena: 4.5/5 ⭐</p>
+            <p class="review-count">245 opinii</p>
         </div>
     </div>
+     <button id="saveMaterialBtn" onclick="saveMaterial()">
+            ❤️ Zapisz
+        </button>
+    <!-- User Rating Input -->
+    <div class="user-review">
+        <h3>Twoja ocena</h3>
+        <div class="rating-stars">
+            <span class="star" onclick="setRating(1)">⭐</span>
+            <span class="star" onclick="setRating(2)">⭐</span>
+            <span class="star" onclick="setRating(3)">⭐</span>
+            <span class="star" onclick="setRating(4)">⭐</span>
+            <span class="star" onclick="setRating(5)">⭐</span>
+        </div>
+        
+        
+        <textarea id="reviewText" placeholder="Dodaj swoją opinię..."></textarea>
+        <div class="visibility-toggle">
+        </div>
+        <button onclick="submitReview()">Prześlij opinię</button>
     </div>
         <label for="sortReviews">Sortuj:</label>
     <select id="sortReviews" onchange="loadReviews()">
