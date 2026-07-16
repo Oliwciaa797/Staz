@@ -168,52 +168,53 @@ async function loadReviews() {
     const sort =
         document.getElementById("sortReviews")?.value || "newest";
 
+
     let query =
         supabaseClient
         .from("video_reviews")
-        .select(`*`)
+        .select(`
+            *,
+            profiles!user_id (
+                profiles,
+                avatar_url
+            )
+        `)
         .eq("video_id", videoId);
+
 
     switch(sort){
 
         case "oldest":
             query = query.order("created_at", {
-                ascending: true
+                ascending:true
             });
             break;
+
 
         case "highest":
             query = query.order("rating", {
-                ascending: false
+                ascending:false
             });
             break;
+
 
         case "lowest":
             query = query.order("rating", {
-                ascending: true
+                ascending:true
             });
             break;
 
+
         default:
             query = query.order("created_at", {
-                ascending: false
+                ascending:false
             });
 
     }
 
+
     const { data, error } = await query;
-    const { data, error } =
-    await supabaseClient
-    .from('video_reviews')
-    .select(`
-        *,
-        profiles!user_id (
-            profiles,
-            avatar_url
-        )
-    `)
-    .eq('video_id', videoId)
-    .order('created_at', { ascending:false });
+
 
     if(error){
         console.error(error);
@@ -521,6 +522,73 @@ function createPersonalNote() {
 
 }
 
+function timeAgo(date){
+
+    const seconds =
+        Math.floor((new Date() - new Date(date)) / 1000);
+
+
+    const intervals = {
+        rok: 31536000,
+        miesiąc: 2592000,
+        dzień: 86400,
+        godzina: 3600,
+        minuta: 60
+    };
+
+
+    if(seconds < 60){
+        return "przed chwilą";
+    }
+
+
+    if(seconds < intervals.godzina){
+
+        const min =
+            Math.floor(seconds / intervals.minuta);
+
+        return `${min} min temu`;
+
+    }
+
+
+    if(seconds < intervals.dzień){
+
+        const hours =
+            Math.floor(seconds / intervals.godzina);
+
+        return `${hours} godz. temu`;
+
+    }
+
+
+    if(seconds < intervals.miesiąc){
+
+        const days =
+            Math.floor(seconds / intervals.dzień);
+
+        return `${days} dni temu`;
+
+    }
+
+
+    if(seconds < intervals.rok){
+
+        const months =
+            Math.floor(seconds / intervals.miesiąc);
+
+        return `${months} mies. temu`;
+
+    }
+
+
+    const years =
+        Math.floor(seconds / intervals.rok);
+
+    return `${years} lat temu`;
+
+}
+
 async function loadPersonalNotes(){
 
     const {
@@ -557,13 +625,107 @@ async function loadPersonalNotes(){
 
     }
 
-    container.innerHTML =
-    data.map(note => `
-        <div class="note-card">
-            <h4 class="note-card-title">${escapeHtml(note.title || "Bez tytułu")}</h4>
-            <textarea>${escapeHtml(note.content)}</textarea>
-        </div>
-    `).join("");
+container.innerHTML =
+data.map(note => `
+
+<div class="note-card">
+
+    <div class="note-date">
+        ${timeAgo(note.created_at)}
+    </div>
+
+
+    <textarea 
+        class="note-textarea"
+        disabled
+    >${note.content}</textarea>
+
+
+    <div class="note-buttons">
+
+        <button onclick="editNote(this)">
+            Edytuj
+        </button>
+
+    </div>
+
+
+</div>
+
+`).join("");
+
+}
+
+function editNote(button){
+
+    const card =
+        button.closest(".note-card");
+
+
+    const textarea =
+        card.querySelector("textarea");
+
+
+    textarea.disabled = false;
+
+    textarea.focus();
+
+
+    button.parentElement.innerHTML = `
+
+        <button onclick="updateNote(this)">
+            Zapisz
+        </button>
+
+
+        <button onclick="loadPersonalNotes()">
+            Anuluj
+        </button>
+
+    `;
+
+}
+
+async function updateNote(button){
+
+    const card =
+        button.closest(".note-card");
+
+
+    const textarea =
+        card.querySelector("textarea");
+
+
+    const content =
+        textarea.value.trim();
+
+
+    const {
+        data:{user}
+    } = await supabaseClient.auth.getUser();
+
+
+    const {error} =
+    await supabaseClient
+    .from("notes")
+    .update({
+        content:content
+    })
+    .eq("user_id",user.id)
+    .eq("video_id",videoId)
+    .eq("content",textarea.defaultValue);
+
+
+    if(error){
+
+        console.error(error);
+        alert(error.message);
+        return;
+
+    }
+
+
+    loadPersonalNotes();
 
 }
 
@@ -610,6 +772,7 @@ document.addEventListener("click", async (e) => {
     .from("notes")
     .insert({
         user_id: user.id,
+        video_id: videoId,
         title: title || "Notatka do filmu",
         content: content,
         is_public: false
@@ -624,6 +787,8 @@ document.addEventListener("click", async (e) => {
     }
 
     alert("Notatka zapisana");
+
+    const id = card.dataset.id;
 
     loadPersonalNotes();
 
