@@ -1,14 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+@import url('../main.css');
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Montserrat', sans-serif;
 }
 
 body{
-    background:#f4f2ec;
+    background:var(--background);
     min-height: 100vh;
     overflow:auto; /* allow page scrolling when search mode is active */
     position:relative;
@@ -20,32 +19,37 @@ body{
 
 /* Header */
 
-header{
-    background-color: #F9F4EC;
-    padding:20px 40px;
+header {
+    
+    background-color: var(--background);
+    padding: 20px 40px;
     position: sticky;
-    top: 0; 
-    z-index: 1002; 
-    box-shadow: 5px 5px 5px rgba(104, 117, 80, 0.144);
+    top: 0;
+    z-index: 1002;
+    box-shadow: 5px 5px 5px var(--shadow);
 }
 
 .top {
+    position: relative;
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    
 }
 
-.logo{
-    align-self: center;
-    /* margin-left: 10px; */
-    color:#304f00;
-    font-size:2rem;
-    font-weight:700;
+.logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+
+    color: var(--primary-color);
+    font-size: 2rem;
+    font-weight: 700;
     cursor: pointer;
+    white-space: nowrap;
 }
 
 .login-btn{
-    background:#2f5500;
+    background:var(--primary-color);
     color:white;
     border:none;
     padding:12px 25px;
@@ -55,8 +59,48 @@ header{
 }
 
 .login-btn:hover{
-    background:#406f00;
+    background:var(--hover-dark);
 }
+
+.user-area {
+    margin-left: auto;
+    position: relative;
+}
+
+.user-info .avatar{
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary-color);
+}
+
+.user-info span{
+    color: var(--primary-color);
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.user-area{
+    max-width: 200px;
+    position:relative;
+    display:inline-block;
+}
+
+.user-info{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    cursor:pointer;
+}
+
+.avatar{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    object-fit:cover;
+}
+
 
 /* Main */
 
@@ -66,7 +110,6 @@ main{
     flex-direction:column;
     align-items:center;
 
-    /* Use normal document flow so the page can scroll. Centering adjusted with margins */
     position:relative;
     margin: 6vh auto;
 
@@ -74,7 +117,6 @@ main{
     text-align:center;
 }
 
-/* When search-mode is active we expand main to full width and allow results to scroll beneath the sticky search bar */
 main.search-mode{
     align-items: stretch;
     width:100%;
@@ -83,7 +125,7 @@ main.search-mode{
 
 #welcomeText{
     transition: opacity 0.4s ease;
-    color:#264500;
+    color:var(--primary-color);
     font-size:3rem;
     margin-bottom:25px;
 }
@@ -99,7 +141,7 @@ main.search-mode{
     width:1000px;
     max-width:90vw;
     background:white;
-    border:5px solid #264500;
+    border:5px solid var(--primary-color);
     border-radius:50px;
     overflow:hidden;
 }
@@ -129,7 +171,7 @@ main.search-mode{
 }
 
 .buttons button{
-    background:#264500;
+    background: var(--primary-color);
     color:white;
     border:none;
     padding:15px 35px;
@@ -139,7 +181,7 @@ main.search-mode{
 }
 
 .buttons button:hover{
-    background:#396600;
+    background: var(--hover-dark);
 }
 
 /* .search-mode{
@@ -153,16 +195,16 @@ main.search-mode{
 
 .search-mode .searchSection {
     position: sticky;
-    top: 80px; /* sit just below the header (header padding + probable height) */
-    z-index: 1001; /* below header but above content */
+    top: 80px; 
+    z-index: 1001;
     padding-top: 10px;
     padding-bottom: 10px;
-    background: rgba(249, 244, 236, 0.727);
+    background: var(--background);
     backdrop-filter: blur(21px);
     -webkit-backdrop-filter: blur(21px);
     border-radius: 16px;
     border: none;
-    box-shadow: 0 0 25px -23px rgba(121, 134, 101, 0.37);
+    box-shadow: 0 0 25px -23px var(--shadow);
 }
 
 /* Make the search box/buttons span and remain centered when sticky */
@@ -184,45 +226,13 @@ main.search-mode{
 }
 
 #menuBtn {
-    color: #264500;
+    color: var(--primary-color);
     top: 15px;
     left: 15px;
     font-size: 32px;
     cursor: pointer;
     z-index: 1001;
     user-select: none;
-}
-
-#sidebar {
-    position: fixed;
-    top: 0;
-    left: -16.66vw; 
-    width: 16.66vw; 
-    height: 100vh;
-    background-color: #81926a;
-    transition: left 0.3s ease;
-    z-index: 1000;
- 
-    display: flex;
-    flex-direction: column;
-    padding-top: 70px;
-}
- 
-/* Po otwarciu */
-#sidebar.active {   
-    left: 0;
-}
- 
-/* Linki */
-#sidebar a {
-    color: white;
-    text-decoration: none;
-    padding: 15px 20px;
-    font-size: 18px;
-}
- 
-#sidebar a:hover {
-    background-color: #264500;
 }
 
 .filters {
@@ -236,10 +246,10 @@ main.search-mode{
     justify-content: center;
     align-items: center;
     position: absolute;
-    background-color: #ffffff;
+    background-color: #fff;
     min-width: 800px;
     border-radius: 10px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 8px 16px 0px var(--shadow);
     z-index: 1;
 }
 
@@ -259,13 +269,13 @@ main.search-mode{
 }
 
 #slider {
-    background: #e0dfdb;
+    background: #fff;
     width: 400px;
     margin: 10px auto;
 }
 
 .noUi-connect {
-    background: #2f5500;
+    background: var(--primary-color);
 }
 
 .noUi-handle {
@@ -332,7 +342,7 @@ main.search-mode{
     background: white;
     border-radius: 15px;
     overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0,0,0,.15);
+    box-shadow: 0 5px 15px var(--shadow);
 
     transition: .3s;
 }
@@ -354,7 +364,7 @@ main.search-mode{
 .video h3{
     font-size:18px;
     margin-bottom:10px;
-    color:#264500;
+    color:var(--primary-color);
 }
 
 .video p{
@@ -365,70 +375,30 @@ main.search-mode{
 .video a{
     text-decoration:none;
     color:white;
-    background:#264500;
+    background:var(--primary-color);
     padding:10px 18px;
     border-radius:8px;
     display:inline-block;
 }
 
 .video a:hover{
-    background:#3b6600;
+    background:var(--hover-dark);
 }
 
-
-.user-info .avatar{
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #264500;
-}
-
-.user-info span{
-    color: #264500;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.user-area{
-    position:relative;
-    display:inline-block;
-}
-
-.user-info{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    cursor:pointer;
-}
-
-.avatar{
-    width:42px;
-    height:42px;
-    border-radius:50%;
-    object-fit:cover;
-}
 
 .user-menu{
 
     position:absolute;
     right:0;
     top:calc(100% + 10px);
-
     width:190px;
-
-    background:white;
-
+    background:#fff;
     border-radius:10px;
-
-    box-shadow:0 8px 20px rgba(0,0,0,.2);
-
+    box-shadow:0 8px 20px var(--shadow);
     opacity:0;
     visibility:hidden;
     transform:translateY(-8px);
-
     transition:.2s;
-
     z-index:2000;
 }
 
@@ -447,18 +417,14 @@ main.search-mode{
 .user-menu a{
 
     display:block;
-
     padding:14px;
-
     text-decoration:none;
-
     color:#222;
-
     transition:.2s;
 }
 
 .user-menu a:hover{
 
-    background:#f3f3f3;
+    background:var(--hover-white);
 
 }
