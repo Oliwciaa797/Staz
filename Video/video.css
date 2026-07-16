@@ -524,9 +524,16 @@ header{
     background:none;
     border:none;
     cursor:pointer;
-    color:#B23B2E;
-    font-weight:700;
+}
+
+.note-textarea{
+    width:100%;
+    min-height:100px;
+    resize:vertical;
+}
+
+.note-date{
     font-size:13px;
-    text-decoration:underline;
-    white-space:nowrap;
+    color:#777;
+    margin-bottom:8px;
 }
