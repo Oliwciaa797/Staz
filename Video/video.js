@@ -830,3 +830,36 @@ document.addEventListener("click", async (e) => {
 
     loadPersonalNotes();
 });
+
+async function saveMaterial() {
+
+    const { data: { user } } =
+        await supabaseClient.auth.getUser();
+
+    if (!user) {
+        alert("Zaloguj się");
+        return;
+    }
+
+    const { error } =
+        await supabaseClient
+            .from("saved_materials")
+            .insert({
+                user_id: user.id,
+                video_id: videoId
+            });
+
+if (error) {
+
+    if (error.code === "23505") {
+        alert("Ten materiał jest już zapisany.");
+        return;
+    }
+
+    console.error(error);
+    alert(error.message);
+    return;
+}
+
+    alert("Materiał zapisany!");
+}

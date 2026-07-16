@@ -112,6 +112,13 @@ async function loadUser(){
 
     loadMyNotes();
     loadPublicNotes();
+
+    
+loadMyQuizy();
+loadPublicQuizy();
+
+loadSavedMaterials();
+
 }
 
 /* ---------- Renderowanie karty notatki (widok) ---------- */
@@ -382,3 +389,178 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 });
+
+async function loadMyQuizy(){
+
+    const grid =
+    document.getElementById("myQuizyGrid");
+
+    grid.innerHTML = "";
+
+    const { data, error } =
+    await supabaseClient
+    .from("quizzes")
+    .select("*")
+    .eq("user_id", currentUser.id)
+    .order("created_at",{ascending:false});
+  
+    if(error){
+        console.error(error);
+        return;
+    }
+
+    if(!data || data.length === 0){
+
+        grid.innerHTML = `
+            <div class="empty-state">
+                Brak quizów.
+            </div>
+        `;
+
+        return;
+    }
+
+    data.forEach(quiz => {
+
+        const count =
+        Array.isArray(quiz.questions)
+        ? quiz.questions.length
+        : 0;
+
+        grid.innerHTML += `
+            <div class="item-card">
+
+                <span class="badge ${
+                    quiz.is_public
+                    ? "public"
+                    : "private"
+                }">
+
+                    ${
+                        quiz.is_public
+                        ? "Publiczny"
+                        : "Prywatny"
+                    }
+                </span> 
+            <h3>${quiz.title}</h3>
+            <p>${count} pytań</p>
+            <button class="go-btn" onclick="openQuiz('${quiz.id}')">
+            Rozwiąż quiz</button>
+            </div>
+        `;
+    });
+}
+
+async function loadPublicQuizy(){
+
+    const grid =
+    document.getElementById("publicQuizyGrid");
+
+    grid.innerHTML = "";
+
+    const { data, error } =
+    await supabaseClient
+    .from("quizzes")
+    .select("*")
+    .eq("is_public", true)
+    .order("created_at",{ascending:false});
+
+    if(error){
+        console.error(error);
+        return;
+    }
+
+    const filtered =
+    data.filter(
+        q => q.user_id !== currentUser.id
+    );
+
+    if(filtered.length === 0){
+
+        grid.innerHTML = `
+            <div class="empty-state">
+                Brak publicznych quizów.
+            </div>
+        `;
+
+        return;
+    }
+
+    filtered.forEach(quiz => {
+
+        const count =
+        Array.isArray(quiz.questions)
+        ? quiz.questions.length
+        : 0;
+
+        grid.innerHTML += `
+            <div class="item-card">
+                <span class="badge public">
+                    Publiczny
+                </span>
+
+                <h3>${quiz.title}</h3>
+
+                <p>${count} pytań</p>
+            </div>
+        `;
+    });
+}
+
+async function loadSavedMaterials(){
+
+    const grid =
+    document.getElementById("savedGrid");
+
+    const { data, error } =
+    await supabaseClient
+    .from("saved_materials")
+    .select("*")
+    .eq("user_id", currentUser.id)
+    .order("created_at",{ascending:false});
+
+    if(error){
+        console.error(error);
+        return;
+    }
+
+    if(!data || data.length === 0){
+
+        grid.innerHTML = `
+            <div class="empty-state">
+                <strong>Brak zapisanych materiałów</strong>
+            </div>
+        `;
+
+        return;
+    }
+
+    grid.innerHTML = data.map(item => `
+        <div class="saved-card">
+
+            <div class="thumb">
+                FILM
+            </div>
+
+            <div class="info">
+                <h3>Film YouTube</h3>
+                <button class="go-btn" onclick="openVideo('${item.video_id}')"> Otwórz materiał </button>
+            </div>
+
+        </div>
+    `).join("");
+}
+
+function openVideo(videoId){
+
+    window.location.href =
+    `../Video/video.html?video=${videoId}`;
+
+}
+
+function openQuiz(id){
+
+    window.location.href =
+    `../quiz (stworzone)/qu.html?id=${id}`;
+
+}
