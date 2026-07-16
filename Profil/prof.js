@@ -241,7 +241,7 @@ async function loadUserStats() {
         .eq('user_id', currentUser.id);
 
     const savedPromise = supabaseClient
-        .from('saved_items')
+        .from('saved_materials')
         .select('id', { count:'exact', head:true })
         .eq('user_id', currentUser.id);
 

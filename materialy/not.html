@@ -54,23 +54,19 @@
     <!-- ===== QUIZY ===== -->
     <section class="tab-panel active" id="tab-quizy">
 
-      <form class="note-form" id="quizForm">
-        <h2>Nowy quiz</h2>
-        <div class="field">
-          <label for="quizTitle">Tytuł</label>
-          <input type="text" id="quizTitle" placeholder="np. Quiz ze stolic Europy" required>
-        </div>
-        <div class="field">
-          <label for="quizDescription">Opis</label>
-          <textarea id="quizDescription" placeholder="Krótki opis quizu..." required></textarea>
-        </div>
-        <div class="visibility-toggle">
-          <input type="checkbox" id="quizPublic">
-          <label for="quizPublic">Quiz publiczny (widoczny dla innych)</label>
-        </div>
-        <button type="submit" class="btn-primary" id="saveQuizBtn">ZAPISZ QUIZ</button>
-      </form>
+      <div class="note-form">
 
+    <h2>Quizy</h2>
+
+    <p>
+        Twórz własne quizy w kreatorze quizów.
+    </p>
+
+    <button class="btn-primary">
+       NOWY QUIZ
+    </button>
+
+  </div>
       <div class="section-label">Twoje quizy</div>
       <div id="myQuizyLoading" class="loading-msg">Wczytywanie quizów…</div>
       <div class="card-grid" id="myQuizyGrid"></div>
