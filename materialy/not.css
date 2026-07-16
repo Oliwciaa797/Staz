@@ -1,3 +1,4 @@
+
 :root{
   --cream: #FAF6EA;
   --card: #F2EFE4;
@@ -339,7 +340,7 @@ main{
     width: 16.66vw;
     height: 100vh;
 
-    background-color: #81926a;
+    background-color: #6B7259;
 
     transition: left 0.3s ease;
 
@@ -371,7 +372,7 @@ main{
 
 
 #sidebar a:hover {
-    background-color:#264500;
+    background-color:#565b48;
 }
 
 

@@ -86,9 +86,6 @@ header{
     font-size:20px;
 }
 
-.bottomBtns {
-    
-}
 #logoutBtn {
     display: flex;
     justify-content: space-between;
@@ -376,6 +373,7 @@ header{
 }
 
 #status {
+    cursor: not-allowed;
     font-family: 'Oswald', sans-serif;
     color: white;
     display: none;

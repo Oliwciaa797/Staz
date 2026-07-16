@@ -10,7 +10,6 @@
 body{
     background:#f4f2ec;
     min-height: 100vh;
-    overflow:hidden;
     position:relative;
     background-image: url('background.png');
     background-repeat: no-repeat;
@@ -237,6 +236,7 @@ header{
     cursor: pointer;
 }
 .reviews-grading {
+
     margin-top: 40px;
     padding: 20px;
     background-color: #f9f9f9;
