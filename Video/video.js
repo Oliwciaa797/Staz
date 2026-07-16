@@ -165,18 +165,56 @@ async function setRating(stars) {
 /* ---------- Wczytanie i wyświetlenie recenzji ---------- */
 async function loadReviews() {
 
-    const { data, error } =
-    await supabaseClient
-    .from('video_reviews')
-    .select(`
-        *,
-        profiles!user_id (
-            profiles,
-            avatar_url
-        )
-    `)
-    .eq('video_id', videoId)
-    .order('created_at', { ascending:false });
+    const sort =
+        document.getElementById("sortReviews")?.value || "newest";
+
+
+    let query =
+        supabaseClient
+        .from("video_reviews")
+        .select(`
+            *,
+            profiles!user_id (
+                profiles,
+                avatar_url
+            )
+        `)
+        .eq("video_id", videoId);
+
+
+    switch(sort){
+
+        case "oldest":
+            query = query.order("created_at", {
+                ascending:true
+            });
+            break;
+
+
+        case "highest":
+            query = query.order("rating", {
+                ascending:false
+            });
+            break;
+
+
+        case "lowest":
+            query = query.order("rating", {
+                ascending:true
+            });
+            break;
+
+
+        default:
+            query = query.order("created_at", {
+                ascending:false
+            });
+
+    }
+
+
+    const { data, error } = await query;
+
 
     if(error){
         console.error(error);
@@ -186,35 +224,44 @@ async function loadReviews() {
     const reviews = data || [];
 
     const container =
-    document.getElementById(
-        'reviewsContainer'
-    );
+        document.getElementById("reviewsContainer");
 
     if(reviews.length === 0){
 
         container.innerHTML =
-        '<p>Brak opinii.</p>';
+            "<p>Brak opinii.</p>";
+
+        document.querySelector(".grade-avg").textContent =
+            "Średnia ocena: 0/5 ⭐";
+
+        document.querySelector(".review-count").textContent =
+            "0 opinii";
 
         return;
     }
 
-    const averageRating =
-    (
-        reviews.reduce(
-            (sum,r)=>
-            sum+r.rating,0
-        ) / reviews.length
+    const formatDate = (date) => {
+
+    return new Date(date).toLocaleDateString("pl-PL", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+
+};
+
+    const averageRating = (
+        reviews.reduce((sum, r) => sum + r.rating, 0) /
+        reviews.length
     ).toFixed(1);
 
-    document.querySelector(
-        '.grade-avg'
-    ).textContent =
-    `Średnia ocena: ${averageRating}/5 ⭐`;
+    document.querySelector(".grade-avg").textContent =
+        `Średnia ocena: ${averageRating}/5 ⭐`;
 
-    document.querySelector(
-        '.review-count'
-    ).textContent =
-    `${reviews.length} opinii`;
+    document.querySelector(".review-count").textContent =
+        `${reviews.length} opinii`;
 
     container.innerHTML =
     reviews.map(review => {
@@ -264,8 +311,6 @@ async function submitReview() {
         return;
     }
 
-    const grade =
-        document.getElementById("gradeSelect").value;
 
     const reviewText =
         document.getElementById("reviewText").value;
@@ -282,7 +327,6 @@ async function submitReview() {
                 video_id: videoId,
                 user_id: user.id,
                 rating: userRating,
-                grade: grade,
                 comment: reviewText
             });
 
@@ -294,7 +338,6 @@ async function submitReview() {
 
     alert("Opinia dodana!");
 
-    document.getElementById("gradeSelect").value = "";
     document.getElementById("reviewText").value = "";
 
     userRating = 0;
@@ -484,6 +527,73 @@ function createPersonalNote() {
 
 }
 
+function timeAgo(date){
+
+    const seconds =
+        Math.floor((new Date() - new Date(date)) / 1000);
+
+
+    const intervals = {
+        rok: 31536000,
+        miesiąc: 2592000,
+        dzień: 86400,
+        godzina: 3600,
+        minuta: 60
+    };
+
+
+    if(seconds < 60){
+        return "przed chwilą";
+    }
+
+
+    if(seconds < intervals.godzina){
+
+        const min =
+            Math.floor(seconds / intervals.minuta);
+
+        return `${min} min temu`;
+
+    }
+
+
+    if(seconds < intervals.dzień){
+
+        const hours =
+            Math.floor(seconds / intervals.godzina);
+
+        return `${hours} godz. temu`;
+
+    }
+
+
+    if(seconds < intervals.miesiąc){
+
+        const days =
+            Math.floor(seconds / intervals.dzień);
+
+        return `${days} dni temu`;
+
+    }
+
+
+    if(seconds < intervals.rok){
+
+        const months =
+            Math.floor(seconds / intervals.miesiąc);
+
+        return `${months} mies. temu`;
+
+    }
+
+
+    const years =
+        Math.floor(seconds / intervals.rok);
+
+    return `${years} lat temu`;
+
+}
+
 async function loadPersonalNotes(){
 
     const {
@@ -585,6 +695,7 @@ is_public: isPublic   // zamiast is_public: false
     .from("notes")
     .insert({
         user_id: user.id,
+        video_id: videoId,
         title: title || "Notatka do filmu",
         content: content,
         is_public: isPublic
@@ -599,6 +710,8 @@ is_public: isPublic   // zamiast is_public: false
     }
 
     alert("Notatka zapisana");
+
+    const id = card.dataset.id;
 
     loadPersonalNotes();
 
