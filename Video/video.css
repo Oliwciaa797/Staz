@@ -172,8 +172,10 @@ header{
 }
 
 .tab.active {
-    display: block;
+    display: flex;
+    flex-direction: column;
 }
+
 * {
   scrollbar-width: 10px;
   scrollbar-color: #81926a #f4f2ec;
@@ -319,10 +321,11 @@ header{
     border-left: 4px solid #4CAF50;
 }
 
-.review-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
+.review-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
 }
 
 .review-author {
@@ -345,6 +348,16 @@ header{
 .review-text {
     color: #333;
     line-height: 1.6;
+}
+
+.review-user{
+    font-weight:700;
+    color:#264500;
+}
+
+.review-date{
+    font-size:14px;
+    color:#888;
 }
 
 .user-info .avatar{
@@ -411,10 +424,6 @@ header{
 
 }
 
-.user-menu.active{
-    display:block;
-}
-
 .user-menu a{
 
     display:block;
@@ -434,7 +443,8 @@ header{
 
 }
 
-#addNoteBtn{
+#addNoteBtn,
+#addQuizBtn{
 
     background:#81926a;
     color:white;
@@ -444,6 +454,11 @@ header{
     cursor:pointer;
     margin-bottom:20px;
 
+}
+
+#addNoteBtn:hover,
+#addQuizBtn:hover{
+    background:#6e7d5a;
 }
 
 .note-card{
@@ -456,6 +471,20 @@ header{
 
 }
 
+.note-card-title{
+    color:#264500;
+    margin-bottom:10px;
+}
+
+.note-card input.noteTitleInput{
+    width:100%;
+    padding:10px;
+    margin-bottom:10px;
+    border:1px solid #ddd;
+    border-radius:6px;
+    font-family:'Montserrat', sans-serif;
+}
+
 .note-card textarea{
 
     width:100%;
@@ -464,7 +493,84 @@ header{
     padding:10px;
 
 }
-.tab.active {
-    display: flex;
-    flex-direction: column;
+
+/* ---------- Pod-zakładki (Notatki / Quizy) ---------- */
+.sub-tabs{
+    display:flex;
+    gap:10px;
+    margin-bottom:18px;
+}
+
+.sub-tab-btn{
+    font-weight:700;
+    font-size:14px;
+    padding:9px 22px;
+    border-radius:20px;
+    border:2px solid #81926a;
+    background:transparent;
+    color:#264500;
+    cursor:pointer;
+    transition:all .15s ease;
+}
+
+.sub-tab-btn:hover{
+    background:#e2e5d7;
+}
+
+.sub-tab-btn.active{
+    background:#81926a;
+    color:white;
+}
+
+.sub-tab-panel{ display:none; }
+.sub-tab-panel.active{ display:block; }
+
+/* ---------- Karty quizów użytkownika ---------- */
+.quiz-card{
+    background:white;
+    border:1px solid #ddd;
+    border-radius:10px;
+    padding:15px;
+    margin-bottom:15px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:14px;
+}
+
+.quiz-card-info h4{
+    margin:0 0 6px;
+    color:#264500;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:15px;
+}
+
+.quiz-card-info p{
+    margin:0;
+    color:#888;
+    font-size:13px;
+}
+
+.quiz-badge{
+    font-size: 10px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.03em;
+    padding: 3px 9px;
+    border-radius: 12px;
+    background:#e2e5d7;
+    color:#264500;
+}
+
+.quiz-card-actions button{
+    background:none;
+    border:none;
+    cursor:pointer;
+    color:#B23B2E;
+    font-weight:700;
+    font-size:13px;
+    text-decoration:underline;
+    white-space:nowrap;
 }
