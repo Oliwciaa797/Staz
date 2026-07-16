@@ -13,6 +13,13 @@ console.log("video.js loaded");
 
 const API_KEY = "AIzaSyCTX8K53tIFW1_vUY828xfjYkvuGygnX_w";
 
+/* ---------- Pomocnicze: bezpieczne wstawianie tekstu do HTML ---------- */
+function escapeHtml(str){
+    const d = document.createElement('div');
+    d.textContent = str ?? '';
+    return d.innerHTML;
+}
+
 function toggleMenu() {
     const sidebar = document.getElementById("sidebar");
     if (sidebar) {
@@ -87,6 +94,7 @@ async function generateNotes() {
     }
 }
 
+/* ---------- Przełączanie głównych zakładek (Notatki AI / Własne materiały / Quiz) ---------- */
 function showTab(tabId) {
 
     console.log("Przełączam na:", tabId);
@@ -103,8 +111,24 @@ function showTab(tabId) {
 // Domyślnie pokaż pierwszą zakładkę
 showTab("generated");
 
+/* ---------- Przełączanie pod-zakładek w "Własne materiały" (Notatki / Quizy) ---------- */
+function showSubTab(subTabId){
+
+    document.querySelectorAll(".sub-tab-btn").forEach(btn => btn.classList.remove("active"));
+    document.querySelectorAll(".sub-tab-panel").forEach(panel => panel.classList.remove("active"));
+
+    const btn = document.querySelector(`.sub-tab-btn[data-subtab="${subTabId}"]`);
+    if(btn) btn.classList.add("active");
+
+    const panel = document.getElementById(subTabId);
+    if(panel) panel.classList.add("active");
+
+    if(subTabId === "personalQuizy"){
+        loadUserQuizy();
+    }
+}
+
 let userRating = 0;
-//const videoId = new URLSearchParams(window.location.search).get('video');
 
 // Set star rating
 async function setRating(stars) {
@@ -135,15 +159,10 @@ async function setRating(stars) {
 
     });
 
-    //const audio =
-   // new Audio('happy.mp3');
-
-   // audio.play();
-
 }
 
 
-// Load and display reviews
+/* ---------- Wczytanie i wyświetlenie recenzji ---------- */
 async function loadReviews() {
 
     const sort =
@@ -183,6 +202,18 @@ async function loadReviews() {
     }
 
     const { data, error } = await query;
+    const { data, error } =
+    await supabaseClient
+    .from('video_reviews')
+    .select(`
+        *,
+        profiles!user_id (
+            profiles,
+            avatar_url
+        )
+    `)
+    .eq('video_id', videoId)
+    .order('created_at', { ascending:false });
 
     if(error){
         console.error(error);
@@ -231,46 +262,38 @@ async function loadReviews() {
     document.querySelector(".review-count").textContent =
         `${reviews.length} opinii`;
 
-    container.innerHTML = reviews.map(review => `
+    container.innerHTML =
+    reviews.map(review => {
 
-<div class="review-item">
+        const date =
+        new Date(review.created_at)
+        .toLocaleString("pl-PL");
 
-    <div class="review-header">
+        return `
+            <div class="review-item">
 
-        <div class="review-user">
+                <div class="review-header">
 
-            <img
-                src="${review.profiles?.avatar_url || '../Profil/avatar.png'}"
-                class="review-avatar"
-            >
+                    <div class="review-user">
+                        ${escapeHtml(review.profiles?.profiles || "Użytkownik")}
+                    </div>
 
-            <div>
+                    <div class="review-date">
+                        ${date}
+                    </div>
+                </div>
 
-                <strong>
-                    ${review.profiles?.profiles || "Użytkownik"}
-                </strong>
+                <div class="review-rating">
+                    ${"⭐".repeat(review.rating)}
+                </div>
 
-                <div class="review-date">
-                    ${formatDate(review.created_at)}
+                <div class="review-text">
+                    ${escapeHtml(review.comment || "")}
                 </div>
 
             </div>
-
-        </div>
-
-        <div class="review-rating">
-            ${"⭐".repeat(review.rating)}
-        </div>
-
-    </div>
-
-    <div class="review-text">
-        ${review.comment || ""}
-    </div>
-
-</div>
-
-`).join("");
+        `;
+    }).join("");
 }
 
 // Load reviews when page loads
@@ -364,13 +387,11 @@ async function showUser() {
 
     userArea.innerHTML = `
 
-    <div class="user-area">
-
     <div class="user-info" id="userInfo">
 
         <img src="${avatarUrl}" class="avatar">
 
-        <span>Witaj, ${profile.profiles}</span>
+        <span>Witaj, ${escapeHtml(profile.profiles)}</span>
 
     </div>
 
@@ -385,8 +406,6 @@ async function showUser() {
         </a>
 
     </div>
-
-</div>
 
 `;
 
@@ -463,125 +482,42 @@ document.addEventListener("click", () => {
 
 });
 
+/* ============================================================
+   WŁASNE NOTATKI
+   ============================================================ */
+
 function createPersonalNote() {
 
     const container =
-        document.getElementById("personalNotesContainer");
+    document.getElementById(
+        "personalNotesContainer"
+    );
 
     const emptyText =
-        container.querySelector("p");
+    container.querySelector("p");
 
     if(emptyText){
         emptyText.remove();
     }
 
+    const div =
+    document.createElement("div");
 
-    const div = document.createElement("div");
-
-    div.className = "note-card new-note";
+    div.className = "note-card";
 
     div.innerHTML = `
-
-        <textarea 
+        <input type="text" class="noteTitleInput" placeholder="Tytuł notatki">
+        <textarea
             placeholder="Napisz swoją notatkę..."
-            class="note-textarea"
         ></textarea>
 
-        <div class="note-buttons">
-
-            <button onclick="saveNewNote(this)">
-                Zapisz
-            </button>
-
-            <button onclick="cancelNewNote(this)">
-                Anuluj
-            </button>
-
-        </div>
+        <button class="saveNoteBtn">
+            Zapisz
+        </button>
 
     `;
 
-
-    container.prepend(div);
-
-}
-
-function cancelNewNote(button){
-
-    const note =
-        button.closest(".note-card");
-
-    note.remove();
-
-
-    const container =
-        document.getElementById("personalNotesContainer");
-
-
-    if(container.children.length === 0){
-
-        container.innerHTML =
-        "<p>Brak notatek.</p>";
-
-    }
-
-}
-
-async function saveNewNote(button){
-
-    const note =
-        button.closest(".note-card");
-
-
-    const textarea =
-        note.querySelector("textarea");
-
-
-    const content =
-        textarea.value.trim();
-
-
-    if(!content){
-        alert("Wpisz treść notatki");
-        return;
-    }
-
-
-    const {
-        data:{user}
-    } = await supabaseClient.auth.getUser();
-
-
-    if(!user){
-        alert("Zaloguj się");
-        return;
-    }
-
-
-    const {error} =
-    await supabaseClient
-    .from("notes")
-    .insert({
-
-        user_id:user.id,
-        video_id:videoId,
-        title:"Notatka do filmu",
-        content:content,
-        is_public:false
-
-    });
-
-
-    if(error){
-
-        console.error(error);
-        alert(error.message);
-        return;
-
-    }
-
-
-    loadPersonalNotes();
+    container.appendChild(div);
 
 }
 
@@ -596,12 +532,11 @@ async function loadPersonalNotes(){
     }
 
     const { data, error } =
-await supabaseClient
-.from("notes")
-.select("*")
-.eq("user_id", user.id)
-.eq("video_id", videoId)
-.order("created_at", { ascending: false });
+    await supabaseClient
+    .from('notes')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending:false });
 
     if(error){
         console.error(error);
@@ -613,7 +548,7 @@ await supabaseClient
             "personalNotesContainer"
         );
 
-    if(data.length === 0){
+    if(!data || data.length === 0){
 
         container.innerHTML =
         "<p>Brak notatek.</p>";
@@ -623,101 +558,12 @@ await supabaseClient
     }
 
     container.innerHTML =
-data.map(note => `
-
-<div class="note-card">
-
-    <textarea 
-        class="note-textarea"
-        disabled
-    >${note.content}</textarea>
-
-
-    <div class="note-buttons">
-
-        <button onclick="editNote(this)">
-            Edytuj
-        </button>
-
-    </div>
-
-
-</div>
-
-`).join("");
-
-}
-
-function editNote(button){
-
-    const card =
-        button.closest(".note-card");
-
-
-    const textarea =
-        card.querySelector("textarea");
-
-
-    textarea.disabled = false;
-
-    textarea.focus();
-
-
-    button.parentElement.innerHTML = `
-
-        <button onclick="updateNote(this)">
-            Zapisz
-        </button>
-
-
-        <button onclick="loadPersonalNotes()">
-            Anuluj
-        </button>
-
-    `;
-
-}
-
-async function updateNote(button){
-
-    const card =
-        button.closest(".note-card");
-
-
-    const textarea =
-        card.querySelector("textarea");
-
-
-    const content =
-        textarea.value.trim();
-
-
-    const {
-        data:{user}
-    } = await supabaseClient.auth.getUser();
-
-
-    const {error} =
-    await supabaseClient
-    .from("notes")
-    .update({
-        content:content
-    })
-    .eq("user_id",user.id)
-    .eq("video_id",videoId)
-    .eq("content",textarea.defaultValue);
-
-
-    if(error){
-
-        console.error(error);
-        alert(error.message);
-        return;
-
-    }
-
-
-    loadPersonalNotes();
+    data.map(note => `
+        <div class="note-card">
+            <h4 class="note-card-title">${escapeHtml(note.title || "Bez tytułu")}</h4>
+            <textarea>${escapeHtml(note.content)}</textarea>
+        </div>
+    `).join("");
 
 }
 
@@ -731,9 +577,16 @@ document.addEventListener("click", async (e) => {
         return;
     }
 
+    const card = e.target.parentElement;
+
+    const titleInput =
+    card.querySelector(".noteTitleInput");
+
     const textarea =
-    e.target.parentElement
-    .querySelector("textarea");
+    card.querySelector("textarea");
+
+    const title =
+    titleInput ? titleInput.value.trim() : "";
 
     const content =
     textarea.value.trim();
@@ -756,12 +609,11 @@ document.addEventListener("click", async (e) => {
     await supabaseClient
     .from("notes")
     .insert({
-    user_id: user.id,
-    video_id: videoId,
-    title: "Notatka do filmu",
-    content: content,
-    is_public: false
-});
+        user_id: user.id,
+        title: title || "Notatka do filmu",
+        content: content,
+        is_public: false
+    });
 
     if(error){
 
@@ -776,3 +628,86 @@ document.addEventListener("click", async (e) => {
     loadPersonalNotes();
 
 });
+
+/* ============================================================
+   WŁASNE QUIZY
+   (tworzenie quizu odbywa się w folderze "kreator quizow" / quiz.html;
+   tutaj tylko wyświetlamy i usuwamy)
+   ============================================================ */
+
+async function loadUserQuizy(){
+
+    const container =
+    document.getElementById("personalQuizyContainer");
+
+    const {
+        data:{user}
+    } = await supabaseClient.auth.getUser();
+
+    if(!user){
+        container.innerHTML = "<p>Zaloguj się, aby zobaczyć swoje quizy.</p>";
+        return;
+    }
+
+    const { data, error } =
+    await supabaseClient
+    .from('quizzes')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending:false });
+
+    if(error){
+        console.error(error);
+        container.innerHTML = "<p>Nie udało się wczytać quizów.</p>";
+        return;
+    }
+
+    if(!data || data.length === 0){
+        container.innerHTML = "<p>Brak quizów.</p>";
+        return;
+    }
+
+    container.innerHTML =
+    data.map(quiz => {
+
+        const count =
+        Array.isArray(quiz.questions) ? quiz.questions.length : 0;
+
+        const badge =
+        quiz.is_public ? "Publiczny" : "Prywatny";
+
+        return `
+            <div class="quiz-card" data-id="${quiz.id}">
+                <div class="quiz-card-info">
+                    <h4><span class="quiz-badge">${badge}</span>${escapeHtml(quiz.title)}</h4>
+                    <p>${count} ${count === 1 ? 'pytanie' : 'pytań'}</p>
+                </div>
+                <div class="quiz-card-actions">
+                    <button class="deleteQuizBtn" data-id="${quiz.id}">Usuń</button>
+                </div>
+            </div>
+        `;
+    }).join("");
+
+    container.querySelectorAll(".deleteQuizBtn").forEach(btn => {
+        btn.addEventListener("click", () => deleteUserQuiz(btn.dataset.id));
+    });
+}
+
+async function deleteUserQuiz(id){
+
+    if(!confirm("Na pewno usunąć ten quiz?")) return;
+
+    const { error } =
+    await supabaseClient
+    .from("quizzes")
+    .delete()
+    .eq("id", id);
+
+    if(error){
+        alert("Nie udało się usunąć quizu.");
+        return;
+    }
+
+    loadUserQuizy();
+}
