@@ -479,8 +479,35 @@ textarea {
 	text-transform: uppercase;
 }
 
-.quiz-card-actions button {
-	border: none;
-	background: none;
-	cursor: pointer;
+.note-date{
+    font-size:13px;
+    color:#777;
+    margin-bottom:8px;
+}
+
+#saveMaterialBtn{
+    background: white;
+    color: #264500;
+    border: 2px solid #81926a;
+    border-radius: 30px;
+    padding: 10px 18px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+#saveMaterialBtn:hover{
+    background: #81926a;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,.15);
+}
+
+#saveMaterialBtn:active{
+    transform: scale(0.95);
 }
