@@ -468,3 +468,74 @@ header{
     display: flex;
     flex-direction: column;
 }
+
+.reviews-sort{
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
+    gap:10px;
+    margin-bottom:20px;
+}
+
+.reviews-sort select{
+    padding:8px 12px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    cursor:pointer;
+}
+
+.review-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+}
+
+.review-user{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.review-avatar{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    object-fit:cover;
+}
+
+.review-date{
+    font-size:13px;
+    color:#777;
+    margin-top:3px;
+}
+
+.review-rating{
+    font-size:20px;
+}
+
+.review-item{
+    background:#fff;
+    border-radius:12px;
+    padding:15px;
+    margin-bottom:15px;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+.note-buttons{
+    display:flex;
+    gap:10px;
+    margin-top:10px;
+}
+
+.note-buttons button{
+    padding:8px 14px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.note-textarea{
+    width:100%;
+    min-height:100px;
+    resize:vertical;
+}
