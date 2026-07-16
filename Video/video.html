@@ -125,25 +125,30 @@
             <span class="star" onclick="setRating(5)">⭐</span>
         </div>
         
-        <select id="gradeSelect" class="grade-input">
-            <option value="">Wybierz ocenę</option>
-            <option value="A">A - Doskonały</option>
-            <option value="B">B - Bardzo dobry</option>
-            <option value="C">C - Dobry</option>
-            <option value="D">D - Zadowalający</option>
-            <option value="F">F - Niedostateczny</option>
-        </select>
-        
         <textarea id="reviewText" placeholder="Dodaj swoją opinię..."></textarea>
         <div class="visibility-toggle">
         </div>
         <button onclick="submitReview()">Prześlij opinię</button>
     </div>
     
+        <label for="sortReviews">Sortuj:</label>
+    <select id="sortReviews" onchange="loadReviews()">
+        <option value="newest">Najnowsze</option>
+        <option value="oldest">Najstarsze</option>
+        <option value="highest">Najwyżej ocenione</option>
+        <option value="lowest">Najniżej ocenione</option>
+    </select>
+    
     <!-- Reviews List -->
     <div class="reviews-list">
-        <h3>Wszystkie opinii</h3>
+        <h3>Wszystkie opinie</h3>
         <div id="reviewsContainer"></div>
+        <div class="reviews-sort">
+    </div>
+
+
+
+<div id="reviewsContainer"></div>
     </div>
 </section>
 </main>
