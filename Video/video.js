@@ -392,7 +392,7 @@ async function showUser() {
 
         <img src="${avatarUrl}" class="avatar">
 
-        <span>Witaj, ${escapeHtml(profile.profiles)}</span>
+        <span>${escapeHtml(profile.profiles)}</span>
 
     </div>
 

@@ -16,20 +16,31 @@
 <body>
 
 <header>
-  <button class="menu-btn" aria-label="Menu">
-    <span></span><span></span><span></span>
-  </button>
+  <div id="menuBtn">
+    ☰
+  </div>
+    
+    <div id="sidebar">
+      <a href="../strona startowa/start.html">Strona Startowa</a>
+      <a href="../logowanie/log.html">Logowanie</a>
+      <a href="../materialy/not.html">Zapisane materiały</a>
+      <a href="../Profil/prof.html">Profil</a>
+    </div>
   <div class="site-title">Nazwa strony</div>
-  <button class="profile-chip" id="profileChip">
-    <img src="https://api.dicebear.com/7.x/initials/svg?seed=U" alt="">
-    <span id="profileName">Ładowanie…</span>
-  </button>
+  <div id="userArea" class="user-area"></div>
+
+    <div class="user-menu">
+
+      <a href="../Profil/prof.html">Profil</a>
+
+      <a href="../wylogowywanie/logout.html">Wyloguj się</a>
+    </div></div>
 </header>
 
 <main>
   <div class="panel">
     <div class="panel-top">
-      <button class="back-btn" aria-label="Wstecz" onclick="window.location.href='not.html'">←</button>
+      <button class="back-btn" aria-label="Wstecz" onclick="window.location.href='../materialy/not.html'">←</button>
       <h1>Nowy quiz</h1>
     </div>
 
