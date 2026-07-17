@@ -408,11 +408,13 @@ async function updateSidebar() {
             <a href="../materialy/not.html">Zapisane materiały</a>
             <a href="../Profil/prof.html">Profil</a>
             <a href="../wylogowywanie/logout.html">Wyloguj się</a>
+            <a href="../zglaszanie bledow/blad.html">⚠️Zgłoś błąd⚠️</a>
         `;
     } else {
         sidebar.innerHTML = `
             <a href="../strona startowa/start.html">Strona Startowa</a>
             <a href="../logowanie/log.html">Logowanie</a>
+            <a href="../zglaszanie bledow/blad.html">⚠️Zgłoś błąd⚠️</a>
         `;
     }
 }
@@ -431,16 +433,33 @@ document.getElementById("menuBtn").addEventListener("click", (e) => {
 });
 
 document.addEventListener("click", (e) => {
+
+    // sidebar
     const sidebar = document.getElementById("sidebar");
+    const menuBtn = document.getElementById("menuBtn");
 
     if (
         sidebar.classList.contains("active") &&
-        !sidebar.contains(e.target)
+        !sidebar.contains(e.target) &&
+        !menuBtn.contains(e.target)
     ) {
         sidebar.classList.remove("active");
     }
-});
 
+
+    // filtry
+    const dropdown = document.getElementById("filtersDropdown");
+    const filtersBtn = document.getElementById("filtersBtn");
+
+    if (
+        dropdown.classList.contains("show") &&
+        !dropdown.contains(e.target) &&
+        !filtersBtn.contains(e.target)
+    ) {
+        dropdown.classList.remove("show");
+    }
+
+});
 document.addEventListener("click", () => {
 
     const menu = document.getElementById("userMenu");

@@ -94,3 +94,7 @@ h1{
     border-radius:10px;
     padding:8px;
 }
+
+.back{
+    cursor: pointer;
+}
