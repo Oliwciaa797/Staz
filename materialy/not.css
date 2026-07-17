@@ -140,7 +140,6 @@ main{
 .field input[type="text"], .field textarea{
   width:100%;
   border:none;
-  border-bottom: 2px solid var(--ink);
   background:transparent;
   padding: 8px 2px;
   font-family:'Nunito Sans', sans-serif;
@@ -259,8 +258,9 @@ main{
 .item-card .edit-title,
 .item-card .edit-content{
   width:100%;
-  border:none;
-  border-bottom: 2px solid #000;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border:1px #CCC solid;
   background:transparent;
   padding: 6px 2px;
   font-family:'Nunito Sans', sans-serif;
@@ -471,4 +471,16 @@ header {
 
 #editor {
   height: 250px;
+}
+
+.edit-content {
+  border: none;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    height: 200px;
+  }
+
+.save-edit {
+  z-index: 1001;
 }
