@@ -36,20 +36,17 @@ header{
   justify-content:space-between;
   padding: 22px 36px;
 }
+
 .menu-btn{
-  background:none; border:none; cursor:pointer;
-  display:flex; flex-direction:column; gap:5px; padding:6px;
-  position: relative;
+  color: var(--primary-color);
+  top: 15px;
+  left: 15px;
+  font-size: 32px;
+  cursor: pointer;
   z-index: 1001;
+  user-select: none;
 }
-.menu-btn span{ 
-  width:26px; 
-  height:3px; 
-  background: 
-  var(--green-deep); 
-  border-radius:2px; 
-  display:block;
-}
+
 
 .site-title{
   font-family:'Baloo 2', sans-serif;
