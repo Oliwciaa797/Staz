@@ -1,6 +1,4 @@
 /* ============================================================
-   1) KONFIGURACJA — podmień na dane swojego projektu Supabase
-   Znajdziesz je w: Project Settings → API
    ============================================================ */
 const SUPABASE_URL = 'https://yewyjfcrwwmftovbobwl.supabase.co';
 
@@ -16,30 +14,6 @@ const supabaseClient = supabase.createClient(
 const isConfigured = !SUPABASE_URL.includes("TWOJ_") && !SUPABASE_ANON_KEY.includes("TWOJ_");
 
 /* ============================================================
-   Struktura tabeli "notes" w Supabase (SQL do uruchomienia raz):
-
-   create table notes (
-     id uuid primary key default gen_random_uuid(),
-     user_id uuid references auth.users(id) not null,
-     author_name text,
-     title text not null,
-     content text not null,
-     is_public boolean default false,
-     created_at timestamp with time zone default now()
-   );
-
-   alter table notes enable row level security;
-
-   create policy "Users can view own notes" on notes
-     for select using (auth.uid() = user_id);
-   create policy "Anyone can view public notes" on notes
-     for select using (is_public = true);
-   create policy "Users can insert own notes" on notes
-     for insert with check (auth.uid() = user_id);
-   create policy "Users can update own notes" on notes
-     for update using (auth.uid() = user_id);
-   create policy "Users can delete own notes" on notes
-     for delete using (auth.uid() = user_id);
    ============================================================ */
 
 let currentUser = null;
@@ -137,6 +111,7 @@ function renderNoteCard(note, { editable }){
     ${badge}
     <h3 class="note-title-view">${escapeHtml(note.title)}</h3>
     <p class="note-content-view">${escapeHtml(note.content)}</p>
+    <button class="go-btn big-btn show-note-btn">Pokaż notatkę</button>
     <div class="card-footer">
       <span>${editable ? date : escapeHtml(note.author_name || 'Użytkownik')}</span>
       ${editable ? `<div class="card-actions">
@@ -148,6 +123,22 @@ function renderNoteCard(note, { editable }){
       </div>` : ''}
     </div>
   `;
+  const showBtn =
+div.querySelector(".show-note-btn");
+
+showBtn.addEventListener("click",()=>{
+
+    const content =
+    div.querySelector(".note-content-view");
+
+    content.classList.toggle("expanded");
+
+    showBtn.textContent =
+    content.classList.contains("expanded")
+    ? "Ukryj notatkę"
+    : "Pokaż notatkę";
+
+});
   return div;
 }
 
@@ -212,7 +203,7 @@ async function loadMyNotes(){
   loadingEl.style.display = 'block';
   grid.innerHTML = '';
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from('notes')
     .select('*')
     .eq('user_id', currentUser.id)
@@ -254,7 +245,7 @@ async function loadPublicNotes(){
   loadingEl.style.display = 'block';
   grid.innerHTML = '';
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from('notes')
     .select('*')
     .eq('is_public', true)
@@ -299,13 +290,12 @@ document.getElementById('noteForm').addEventListener('submit', async (e)=>{
   btn.disabled = true;
   btn.textContent = 'ZAPISYWANIE…';
 
-  const { error } = await supabaseClient.from('notes').insert({
+const { error } = await supabaseClient.from('notes').insert({
     user_id: currentUser.id,
-    author_name: currentUser.user_metadata?.username || currentUser.email,
     title,
     content,
     is_public: isPublic
-  });
+});
 
   btn.disabled = false;
   btn.textContent = 'ZAPISZ NOTATKĘ';
@@ -444,8 +434,28 @@ async function loadMyQuizy(){
                 </span> 
             <h3>${quiz.title}</h3>
             <p>${count} pytań</p>
-            <button class="go-btn" onclick="openQuiz('${quiz.id}')">
-            Rozwiąż quiz</button>
+
+<button
+    class="go-btn big-btn"
+    onclick="openQuiz('${quiz.id}')">
+    Rozwiąż quiz
+</button>
+
+<div class="card-actions">
+
+    <button
+        class="mini-btn edit-btn"
+        onclick="editQuiz('${quiz.id}')">
+        Edytuj
+    </button>
+
+    <button
+        class="mini-btn delete-btn"
+        onclick="deleteQuiz('${quiz.id}')">
+        Usuń
+    </button>
+
+</div>
             </div>
         `;
     });
@@ -562,5 +572,36 @@ function openQuiz(id){
 
     window.location.href =
     `../quiz (stworzone)/qu.html?id=${id}`;
+
+}
+
+async function deleteQuiz(id){
+
+    if(!confirm("Na pewno usunąć quiz?")){
+        return;
+    }
+
+    const { error } =
+    await supabaseClient
+        .from("quizzes")
+        .delete()
+        .eq("id", id);
+
+    if(error){
+        console.error(error);
+        showToast("Nie udało się usunąć quizu.");
+        return;
+    }
+
+    showToast("Quiz usunięty.");
+
+    loadMyQuizy();
+    loadPublicQuizy();
+}
+
+function editQuiz(id){
+
+    window.location.href =
+    `../edytor quizow/quiz.html?id=${id}`;
 
 }
