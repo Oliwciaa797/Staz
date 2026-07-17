@@ -18,6 +18,20 @@ const isConfigured = !SUPABASE_URL.includes("TWOJ_") && !SUPABASE_ANON_KEY.inclu
 
 let currentUser = null;
 
+const quill = new Quill("#editor", {
+    theme: "snow",
+    placeholder: "Napisz notatkę...",
+    modules: {
+        toolbar: [
+            [{ header: [1, 2, false] }],
+            ["bold", "italic", "underline"],
+            [{ list: "ordered" }, { list: "bullet" }],
+            ["link"],
+            ["clean"]
+        ]
+    }
+});
+
 /* ---------- Toast ---------- */
 function showToast(msg){
   const t = document.getElementById('toast');
@@ -110,7 +124,7 @@ function renderNoteCard(note, { editable }){
   div.innerHTML = `
     ${badge}
     <h3 class="note-title-view">${escapeHtml(note.title)}</h3>
-    <p class="note-content-view">${escapeHtml(note.content)}</p>
+    <div class="note-content-view">${note.content}</div>
     <button class="go-btn big-btn show-note-btn">Pokaż notatkę</button>
     <div class="card-footer">
       <span>${editable ? date : escapeHtml(note.author_name || 'Użytkownik')}</span>
@@ -151,7 +165,7 @@ function enterEditMode(card, note){
     </div>
     <div class="field">
       <label>Treść</label>
-      <textarea class="edit-content">${escapeHtml(note.content)}</textarea>
+      <div class="edit-content"></div>
     </div>
     <div class="card-footer">
       <div class="card-actions">
@@ -165,7 +179,21 @@ function enterEditMode(card, note){
 
   card.querySelector('.save-edit').addEventListener('click', async () => {
     const newTitle = card.querySelector('.edit-title').value.trim();
-    const newContent = card.querySelector('.edit-content').value.trim();
+    const editEditor = card.querySelector(".edit-content");
+
+    const editQuill = new Quill(editEditor,{
+        theme:"snow",
+        modules:{
+            toolbar:[
+                ["bold","italic","underline"],
+                [{list:"ordered"},{list:"bullet"}],
+                ["link"],
+                ["clean"]
+            ]
+        }
+    });
+
+editQuill.root.innerHTML = note.content;
 
     if(!newTitle || !newContent){
       showToast('Tytuł i treść nie mogą być puste.');
@@ -283,7 +311,13 @@ document.getElementById('noteForm').addEventListener('submit', async (e)=>{
   }
 
   const title = document.getElementById('noteTitle').value.trim();
-  const content = document.getElementById('noteContent').value.trim();
+  const content = quill.root.innerHTML;
+  const plainText = quill.getText().trim();
+
+  if(!plainText){
+      showToast("Treść nie może być pusta.");
+      return;
+  }
   const isPublic = document.getElementById('notePublic').checked;
   const btn = document.getElementById('saveNoteBtn');
 
@@ -306,6 +340,7 @@ const { error } = await supabaseClient.from('notes').insert({
   }
 
   document.getElementById('noteForm').reset();
+  quill.setContents([]);
   showToast('Notatka zapisana!');
   loadMyNotes();
   if(isPublic) loadPublicNotes();
@@ -602,4 +637,12 @@ function editQuiz(id){
     window.location.href =
     `../edytor quizow/quiz.html?id=${id}`;
 
+}
+
+function quiz(){
+  window.location.href = "../kreator quizow/quiz.html"
+}
+
+function back(){
+  window.location.href = "../strona startowa/start.html"
 }

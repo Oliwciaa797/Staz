@@ -122,6 +122,42 @@ document
 
 function checkQuiz(){
 
+     // sprawdzenie czy wszystko zaznaczone
+    for(let i = 0; i < loadedQuiz.questions.length; i++){
+
+        const question = loadedQuiz.questions[i];
+
+        const checked =
+        document.querySelectorAll(
+            `input[name="q${i}"]:checked`
+        );
+
+        if(question.type === "multi"){
+
+            if(checked.length === 0){
+
+                alert(
+                    `Zaznacz odpowiedź w pytaniu ${i + 1}`
+                );
+
+                return;
+            }
+
+        } else {
+
+            if(checked.length === 0){
+
+                alert(
+                    `Zaznacz odpowiedź w pytaniu ${i + 1}`
+                );
+
+                return;
+            }
+
+        }
+
+    }
+
     let score = 0;
 
     loadedQuiz.questions.forEach(
@@ -236,4 +272,8 @@ loadedQuiz.questions.forEach(
     });
 
 });
+}
+
+function back() {
+    history.back();
 }
