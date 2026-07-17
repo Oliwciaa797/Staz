@@ -1,6 +1,4 @@
 /* ============================================================
-   1) KONFIGURACJA — podmień na dane swojego projektu Supabase
-   Znajdziesz je w: Project Settings → API
    ============================================================ */
 const SUPABASE_URL = 'https://yewyjfcrwwmftovbobwl.supabase.co';
 
@@ -16,30 +14,6 @@ const supabaseClient = supabase.createClient(
 const isConfigured = !SUPABASE_URL.includes("TWOJ_") && !SUPABASE_ANON_KEY.includes("TWOJ_");
 
 /* ============================================================
-   Struktura tabeli "notes" w Supabase (SQL do uruchomienia raz):
-
-   create table notes (
-     id uuid primary key default gen_random_uuid(),
-     user_id uuid references auth.users(id) not null,
-     author_name text,
-     title text not null,
-     content text not null,
-     is_public boolean default false,
-     created_at timestamp with time zone default now()
-   );
-
-   alter table notes enable row level security;
-
-   create policy "Users can view own notes" on notes
-     for select using (auth.uid() = user_id);
-   create policy "Anyone can view public notes" on notes
-     for select using (is_public = true);
-   create policy "Users can insert own notes" on notes
-     for insert with check (auth.uid() = user_id);
-   create policy "Users can update own notes" on notes
-     for update using (auth.uid() = user_id);
-   create policy "Users can delete own notes" on notes
-     for delete using (auth.uid() = user_id);
    ============================================================ */
 
 let currentUser = null;
@@ -212,7 +186,7 @@ async function loadMyNotes(){
   loadingEl.style.display = 'block';
   grid.innerHTML = '';
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from('notes')
     .select('*')
     .eq('user_id', currentUser.id)
@@ -254,7 +228,7 @@ async function loadPublicNotes(){
   loadingEl.style.display = 'block';
   grid.innerHTML = '';
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from('notes')
     .select('*')
     .eq('is_public', true)
@@ -299,13 +273,12 @@ document.getElementById('noteForm').addEventListener('submit', async (e)=>{
   btn.disabled = true;
   btn.textContent = 'ZAPISYWANIE…';
 
-  const { error } = await supabaseClient.from('notes').insert({
+const { error } = await supabaseClient.from('notes').insert({
     user_id: currentUser.id,
-    author_name: currentUser.user_metadata?.username || currentUser.email,
     title,
     content,
     is_public: isPublic
-  });
+});
 
   btn.disabled = false;
   btn.textContent = 'ZAPISZ NOTATKĘ';
