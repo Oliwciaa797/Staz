@@ -538,3 +538,134 @@ textarea {
 #reportErrorBtn:hover{
     background:#efc1c1;
 }
+
+/* ---------- Karty notatek/quizów (item-card) ---------- */
+.card-grid{
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: 16px;
+}
+
+.item-card{
+	display: flex;
+	flex-direction: column;
+	min-height: 150px;
+	padding: 16px 16px 14px;
+	border: 1px solid #ddd;
+	border-radius: 10px;
+	background: white;
+}
+
+.item-card .badge{
+	align-self: flex-start;
+	margin-bottom: 10px;
+	padding: 3px 9px;
+	border-radius: 12px;
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: .03em;
+	text-transform: uppercase;
+}
+.badge.public{ background:#e2e5d7; color:#264500; }
+.badge.private{ background:#f0e0c8; color:#7a4a1e; }
+
+.item-card h3,
+.item-card .note-title-view{
+	margin: 0 0 8px;
+	color: #264500;
+	font-size: 15px;
+}
+
+.item-card p,
+.item-card .note-content-view{
+	flex-grow: 1;
+	margin: 0 0 10px;
+	color: #555;
+	font-size: 13.5px;
+	line-height: 1.45;
+}
+
+.note-content-view{
+	max-height: 60px;
+	overflow: hidden;
+	transition: .3s;
+}
+.note-content-view.expanded{
+	max-height: 1000px;
+}
+
+.item-card .card-footer{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-top: auto;
+	font-size: 12px;
+	color: #888;
+}
+
+.card-actions{
+	display: flex;
+	gap: 10px;
+	margin-top: 8px;
+}
+.card-actions button{
+	padding: 0;
+	border: none;
+	background: none;
+	color: var(--primary-color);
+	font-size: 12px;
+	font-weight: 700;
+	text-decoration: underline;
+	cursor: pointer;
+}
+.card-actions button.delete,
+.card-actions button.deleteQuizBtn{ color: #a40000; }
+
+.item-card .go-btn,
+.item-card .big-btn{
+	width: 100%;
+	margin-top: 8px;
+	padding: 9px 16px;
+	border: 2px solid var(--secondary-color);
+	border-radius: 10px;
+	background: transparent;
+	color: var(--primary-color);
+	font-weight: 700;
+	cursor: pointer;
+	transition: .2s;
+}
+.item-card .go-btn:hover{
+	background: var(--secondary-color);
+	color: white;
+}
+
+/* ---------- Tryb edycji wewnątrz karty ---------- */
+.item-card .field{ margin-bottom: 10px; }
+.item-card .field label{
+	display: block;
+	margin-bottom: 4px;
+	font-size: 11px;
+	font-weight: 700;
+	color: #888;
+	text-transform: uppercase;
+}
+.item-card .edit-title,
+.item-card .edit-content{
+	width: 100%;
+	padding: 6px 2px;
+	border: none;
+	border-bottom: 2px solid #333;
+	background: transparent;
+	font-size: 14px;
+	resize: vertical;
+}
+.item-card .edit-content{ min-height: 60px; }
+.card-actions button.save-edit{ color: var(--primary-color); }
+.card-actions button.cancel-edit{ color: #888; }
+
+.section-label{
+	margin: 24px 0 10px;
+	font-weight: 700;
+	color: #264500;
+	font-size: 15px;
+}
