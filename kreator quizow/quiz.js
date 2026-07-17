@@ -354,7 +354,7 @@ async function showUser(){
     if(!user){
 
         userArea.innerHTML = `
-            <button onclick="window.location.href='../logowanie/log.html'">
+            <button class="login-btn" onclick="window.location.href='../logowanie/log.html'">
                 Zaloguj
             </button>
         `;
@@ -496,3 +496,8 @@ document.addEventListener(
 "DOMContentLoaded",
 showUser
 );
+
+supabaseClient.auth.onAuthStateChange(async () => {
+    await showUser();
+    await updateSidebar();
+});

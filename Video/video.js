@@ -863,3 +863,10 @@ if (error) {
 
     alert("Materiał zapisany!");
 }
+
+function reportError(){
+
+    window.location.href =
+    "../zglaszanie bledow/blad.html";
+
+}
