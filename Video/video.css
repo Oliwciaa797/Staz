@@ -669,3 +669,25 @@ textarea {
 	color: #264500;
 	font-size: 15px;
 }
+
+.note-content-view{
+
+    max-height: 0;
+
+    overflow: hidden;
+
+    opacity: 0;
+
+    transition: all 0.3s ease;
+
+    margin-top: 10px;
+
+}
+
+.note-content-view.expanded{
+
+    max-height: 1000px;
+
+    opacity: 1;
+
+}
