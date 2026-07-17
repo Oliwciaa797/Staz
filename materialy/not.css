@@ -236,11 +236,16 @@ main{
   line-height:1.45;
   margin: 0 0 14px;
   flex-grow:1;
-  display:-webkit-box;
-  -webkit-line-clamp:3;
-  -webkit-box-orient:vertical;
-  overflow:hidden;
 }
+.note-content-view{
+    display:none;
+    margin-top:10px;
+}
+
+.note-content-view.expanded{
+    display:block;
+}
+
 .item-card .card-footer{
   display:flex; justify-content:space-between; align-items:center;
   font-size: 12px; color: var(--muted);
@@ -510,4 +515,44 @@ header {
 
 .item-card .go-btn{
     margin-top: auto;
+}
+
+.big-btn{
+    width:100%;
+    margin-top:12px;
+}
+
+.card-actions{
+    display:flex;
+    gap:8px;
+    margin-top:10px;
+}
+
+.mini-btn{
+    flex:1;
+    padding:8px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+.edit-btn{
+    background:#d7e5b0;
+    color:#33411C;
+}
+
+.delete-btn{
+    background:#f7d6d6;
+    color:#a40000;
+}
+
+.note-content-view{
+    max-height:80px;
+    overflow:hidden;
+    transition:.3s;
+}
+
+.note-content-view.expanded{
+    max-height:1000px;
 }
