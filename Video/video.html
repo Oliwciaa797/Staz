@@ -43,96 +43,101 @@
     </header>
 
     <main>
-        <div class="middleSection">
-            <div class="video-container">
+        <div class="middle-section">
+            <div class="video-top">
+                <div class="video-container">
 
-                <iframe
-                    id="youtubeVideo"
-                    width="900"
-                    height="500"
-                    frameborder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen>
-                </iframe>
+                    <iframe
+                        id="youtubeVideo"
+                        width="900"
+                        height="500"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
 
-            </div>
-
-            <div class="sidepanel">
-
-                <div class="buttons">
-                    <button id="ainotes" onclick="showTab('generated')">Notatki AI</button>
-                    <button id="personalnotes" onclick="showTab('personal')">Własne materiały</button>
-                    <button id="quiztab" onclick="showTab('quiz')">Quiz</button>
                 </div>
-                <div class="sidepanelcontent">
-                    <div id="generated" class="tab">
-                        <button id="gennotes" onclick="generateNotes()">
-                            Generuj notatki
-                        </button>
-                        <div id="notesContent"></div>
+
+                <div class="sidepanel">
+
+                    <div class="buttons">
+                        <button id="ainotes" onclick="showTab('generated')">Notatki AI</button>
+                        <button id="personalnotes" onclick="showTab('personal')">Własne materiały</button>
+                        <button id="quiztab" onclick="showTab('quiz')">Quiz</button>
                     </div>
-
-                    <!-- ===== WŁASNE MATERIAŁY ===== -->
-                    <div id="personal" class="tab">
-
-                        <div class="sub-tabs">
-                            <button class="sub-tab-btn active" data-subtab="personalNotes" onclick="showSubTab('personalNotes')">Notatki</button>
-                            <button class="sub-tab-btn" data-subtab="personalQuizy" onclick="showSubTab('personalQuizy')">Quizy</button>
+                    <div class="sidepanelcontent">
+                        <div id="generated" class="tab">
+                            <button id="gennotes" onclick="generateNotes()">
+                                Generuj notatki
+                            </button>
+                            <div id="notesContent"></div>
                         </div>
 
-                        <div id="personalNotes" class="sub-tab-panel active">
-                            <div class="note-card" data-id="${note.id}"></div>
-                            <button id="addNoteBtn" onclick="createPersonalNote()">+ Dodaj notatkę</button>
-                            <div id="personalNotesContainer">
-                                <p>Brak notatek.</p>
+                        <!-- ===== WŁASNE MATERIAŁY ===== -->
+                        <div id="personal" class="tab">
+
+                            <div class="sub-tabs">
+                                <button class="sub-tab-btn active" data-subtab="personalNotes" onclick="showSubTab('personalNotes')">Notatki</button>
+                                <button class="sub-tab-btn" data-subtab="personalQuizy" onclick="showSubTab('personalQuizy')">Quizy</button>
                             </div>
-                        </div>
 
-                        <div id="personalQuizy" class="sub-tab-panel">
-                            <button id="addQuizBtn" onclick="window.location.href='../kreator quizow/quiz.html'">+ Nowy quiz</button>
-                            <div id="personalQuizyContainer">
-                                <p>Brak quizów.</p>
+                            <div id="personalNotes" class="sub-tab-panel active">
+                                <div class="note-card" data-id="${note.id}"></div>
+                                <button id="addNoteBtn" onclick="createPersonalNote()">+ Dodaj notatkę</button>
+                                <div id="personalNotesContainer">
+                                    <p>Brak notatek.</p>
+                                </div>
                             </div>
+
+                            <div id="personalQuizy" class="sub-tab-panel">
+                                <button id="addQuizBtn" onclick="window.location.href='../kreator quizow/quiz.html'">+ Nowy quiz</button>
+                                <div id="personalQuizyContainer">
+                                    <p>Brak quizów.</p>
+                                </div>
+                            </div>
+
                         </div>
 
-                    </div>
-
-                    <div id="quiz" class="tab">
-                        <h3>Quiz</h3>
-                        <p>Tutaj będzie quiz generowany automatycznie.</p>
+                        <div id="quiz" class="tab">
+                            <h3>Quiz</h3>
+                            <p>Tutaj będzie quiz generowany automatycznie.</p>
+                        </div>
                     </div>
                 </div>
             </div>
+            <button id="saveMaterialBtn" onclick="saveMaterial()">
+            ❤️ Zapisz
+        </button>
     </div>
+    
     <section class="reviews-grading">
     <h2>Recenzje i Ocena</h2>
     
-    <!-- Overall Grade -->
-    <div class="grade-summary">
-        <div class="grade-box">
-            <p class="grade-avg">Średnia ocena: 4.5/5 ⭐</p>
-            <p class="review-count">245 opinii</p>
-        </div>
-    </div>
-     <button id="saveMaterialBtn" onclick="saveMaterial()">
-            ❤️ Zapisz
-        </button>
-    <!-- User Rating Input -->
-    <div class="user-review">
-        <h3>Twoja ocena</h3>
-        <div class="rating-stars">
-            <span class="star" onclick="setRating(1)">⭐</span>
-            <span class="star" onclick="setRating(2)">⭐</span>
-            <span class="star" onclick="setRating(3)">⭐</span>
-            <span class="star" onclick="setRating(4)">⭐</span>
-            <span class="star" onclick="setRating(5)">⭐</span>
-        </div>
+    <div class="reviews-top">
         
         
-        <textarea id="reviewText" placeholder="Dodaj swoją opinię..."></textarea>
-        <div class="visibility-toggle">
+        <div class="user-review">
+            <h3>Twoja ocena</h3>
+            <div class="rating-stars">
+                <span class="star" onclick="setRating(1)">⭐</span>
+                <span class="star" onclick="setRating(2)">⭐</span>
+                <span class="star" onclick="setRating(3)">⭐</span>
+                <span class="star" onclick="setRating(4)">⭐</span>
+                <span class="star" onclick="setRating(5)">⭐</span>
+            </div>
+            
+            
+            <textarea id="reviewText" placeholder="Dodaj swoją opinię..."></textarea>
+            <div class="visibility-toggle">
+            </div>
+            <button onclick="submitReview()">Prześlij opinię</button>
         </div>
-        <button onclick="submitReview()">Prześlij opinię</button>
+        <div class="grade-summary">
+            <div class="grade-box">
+                <p class="grade-avg">Średnia ocena: 4.5/5 ⭐</p>
+                <p class="review-count">245 opinii</p>
+            </div>
+        </div>
     </div>
         <label for="sortReviews">Sortuj:</label>
     <select id="sortReviews" onchange="loadReviews()">
