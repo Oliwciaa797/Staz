@@ -111,6 +111,7 @@ function renderNoteCard(note, { editable }){
     ${badge}
     <h3 class="note-title-view">${escapeHtml(note.title)}</h3>
     <p class="note-content-view">${escapeHtml(note.content)}</p>
+    <button class="go-btn big-btn show-note-btn">Pokaż notatkę</button>
     <div class="card-footer">
       <span>${editable ? date : escapeHtml(note.author_name || 'Użytkownik')}</span>
       ${editable ? `<div class="card-actions">
@@ -122,6 +123,22 @@ function renderNoteCard(note, { editable }){
       </div>` : ''}
     </div>
   `;
+  const showBtn =
+div.querySelector(".show-note-btn");
+
+showBtn.addEventListener("click",()=>{
+
+    const content =
+    div.querySelector(".note-content-view");
+
+    content.classList.toggle("expanded");
+
+    showBtn.textContent =
+    content.classList.contains("expanded")
+    ? "Ukryj notatkę"
+    : "Pokaż notatkę";
+
+});
   return div;
 }
 
@@ -417,22 +434,23 @@ async function loadMyQuizy(){
                 </span> 
             <h3>${quiz.title}</h3>
             <p>${count} pytań</p>
-            <div class="card-actions">
+
+<button
+    class="go-btn big-btn"
+    onclick="openQuiz('${quiz.id}')">
+    Rozwiąż quiz
+</button>
+
+<div class="card-actions">
 
     <button
-        class="go-btn"
-        onclick="openQuiz('${quiz.id}')">
-        Rozwiąż
-    </button>
-
-    <button
-        class="go-btn edit-btn"
+        class="mini-btn edit-btn"
         onclick="editQuiz('${quiz.id}')">
         Edytuj
     </button>
 
     <button
-        class="go-btn delete-btn"
+        class="mini-btn delete-btn"
         onclick="deleteQuiz('${quiz.id}')">
         Usuń
     </button>
