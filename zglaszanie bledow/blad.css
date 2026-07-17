@@ -78,3 +78,8 @@ button{
     cursor:pointer;
 
 }
+
+#msg {
+    text-align: center;
+    margin: 10px;
+}
