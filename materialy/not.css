@@ -1,25 +1,11 @@
-
-:root{
-  --cream: #FAF6EA;
-  --card: #F2EFE4;
-  --green-deep: #33411C;
-  --green-mid: #4B5E28;
-  --green-soft: #B9C79B;
-  --green-soft-2: #CBD6AE;
-  --ink: #23281A;
-  --muted: #6B7259;
-  --danger: #B23B2E;
-  --white: #FFFFFF;
-  --radius-card: 28px;
-  --radius-el: 10px;
-}
+@import url(../main.css);
 
 *{ box-sizing: border-box; }
 
 body{
   margin:0;
-  background: var(--cream);
-  color: var(--ink);
+  background: var(--background);
+  color: #000;
   font-family: 'Nunito Sans', sans-serif;
   min-height:100vh;
   position: relative;
@@ -52,12 +38,12 @@ header{
   font-family:'Baloo 2', sans-serif;
   font-weight:800;
   font-size: 28px;
-  color: var(--green-deep);
+  color: var(--primary-color);
   letter-spacing: .2px;
 }
 .profile-chip{
   display:flex; align-items:center; gap:10px;
-  background: var(--green-deep);
+  background: var(--primary-color);
   color:#fff;
   border:none;
   padding:10px 20px;
@@ -82,9 +68,9 @@ main{
 }
 
 .panel{
-  background: var(--card);
-  border: 2.5px solid var(--green-deep);
-  border-radius: var(--radius-card);
+  background: #fff;
+  border: 4px solid var(--primary-color);
+  border-radius: 20px;
   padding: 40px 44px 46px;
 }
 
@@ -92,14 +78,14 @@ main{
   display:flex; align-items:center; gap:18px; margin-bottom: 18px;
 }
 .back-btn{
-  background:none;border:none;cursor:pointer;color:var(--green-deep);
+  background:none;border:none;cursor:pointer;color:var(--primary-color);
   font-size: 22px; line-height:1; padding:4px;
 }
 .panel h1{
   font-family:'Baloo 2', sans-serif;
   font-size: 40px;
   font-weight:800;
-  color: var(--green-deep);
+  color: var(--primary-color);
   margin: 0;
 }
 
@@ -116,15 +102,15 @@ main{
   font-size:16px;
   padding: 12px 26px;
   border-radius: 24px;
-  border: 2px solid var(--green-deep);
+  border: 2px solid var(--primary-color);
   background: transparent;
-  color: var(--green-deep);
+  color: var(--primary-color);
   cursor:pointer;
   transition: all .15s ease;
 }
-.tab-btn:hover{ background: var(--green-soft-2); }
+.tab-btn:hover{ background: var(--hover-dark); color: #fff;}
 .tab-btn.active{
-  background: var(--green-deep);
+  background: var(--primary-color);
   color: #fff;
 }
 
@@ -134,21 +120,21 @@ main{
 
 /* ---------- Notatki: formularz ---------- */
 .note-form{
-  background: var(--white);
+  background: #fff;
   border-radius: 18px;
-  border: 1.5px solid var(--green-soft);
+  border: 2px solid var(--secondary-color);
   padding: 22px 24px;
   margin-bottom: 30px;
 }
 .note-form h2{
   font-family:'Baloo 2', sans-serif;
   font-size: 20px;
-  color: var(--green-deep);
+  color: var(--primary-color);
   margin: 0 0 16px;
 }
 .field{ margin-bottom: 14px; }
 .field label{
-  display:block; font-size:13px; font-weight:700; color: var(--muted);
+  display:block; font-size:13px; font-weight:700; color: var(--secondary-color);
   margin-bottom:6px; text-transform:uppercase; letter-spacing:.03em;
 }
 .field input[type="text"], .field textarea{
@@ -159,20 +145,20 @@ main{
   padding: 8px 2px;
   font-family:'Nunito Sans', sans-serif;
   font-size:15px;
-  color: var(--ink);
+  color: #000;
   resize: vertical;
 }
-.field input:focus, .field textarea:focus{ outline:none; border-color: var(--green-deep); }
+.field input:focus, .field textarea:focus{ outline:none; border-color: var(--primary-color); }
 .field textarea{ min-height: 90px; }
 
 .visibility-toggle{
   display:flex; align-items:center; gap:10px; margin: 16px 0 20px;
 }
-.visibility-toggle input{ width:18px; height:18px; accent-color: var(--green-deep); }
-.visibility-toggle label{ font-size:14px; font-weight:600; color:var(--ink); }
+.visibility-toggle input{ width:18px; height:18px; accent-color: var(--primary-color); }
+.visibility-toggle label{ font-size:14px; font-weight:600; color:#000; }
 
 .btn-primary{
-  background: var(--green-deep);
+  background: var(--primary-color);
   color:#fff;
   border:none;
   padding: 12px 30px;
@@ -183,14 +169,14 @@ main{
   letter-spacing:.03em;
   cursor:pointer;
 }
-.btn-primary:hover{ background: var(--green-mid); }
+.btn-primary:hover{ background: var(--hover-dark); }
 .btn-primary:disabled{ opacity:.5; cursor:not-allowed; }
 
 /* ---------- Listy ---------- */
 .section-label{
   font-family:'Baloo 2', sans-serif;
   font-size: 18px;
-  color: var(--green-deep);
+  color: var(--primary-color);
   margin: 26px 0 14px;
 }
 
@@ -201,9 +187,9 @@ main{
 }
 
 .item-card{
-  background: var(--white);
+  background: #fff;
   border-radius: 16px;
-  border: 1.5px solid var(--green-soft);
+  border: 2px solid var(--secondary-color);
   padding: 18px 18px 16px;
   display:flex; flex-direction:column;
   min-height: 150px;
@@ -218,18 +204,18 @@ main{
   border-radius: 12px;
   margin-bottom: 10px;
 }
-.badge.public{ background:#E4EBD2; color: var(--green-deep); }
+.badge.public{ background:#E4EBD2; color: var(--primary-color); }
 .badge.private{ background:#F0E4D2; color:#7A4A1E; }
 
 .item-card h3{
   font-family:'Baloo 2', sans-serif;
   font-size: 17px;
   margin: 0 0 8px;
-  color: var(--ink);
+  color: #000;
 }
 .item-card p{
   font-size: 13.5px;
-  color: var(--muted);
+  color: var(--secondary-color);
   line-height:1.45;
   margin: 0 0 14px;
   flex-grow:1;
@@ -245,13 +231,13 @@ main{
 
 .item-card .card-footer{
   display:flex; justify-content:space-between; align-items:center;
-  font-size: 12px; color: var(--muted);
+  font-size: 12px; color: var(--secondary-color);
 }
 .card-actions{ display:flex; gap:12px; }
 .card-actions button{
   background:none; border:none; cursor:pointer;
   font-size:12px; font-weight:700;
-  color: var(--green-deep);
+  color: var(--primary-color);
   text-decoration: underline;
   padding:0;
 }
@@ -260,12 +246,12 @@ main{
 .empty-state{
   text-align:center;
   padding: 40px 20px;
-  color: var(--muted);
+  color: var(--secondary-color);
   font-size: 14.5px;
 }
-.empty-state strong{ display:block; color: var(--green-deep); font-family:'Baloo 2', sans-serif; font-size:17px; margin-bottom:6px; }
+.empty-state strong{ display:block; color: var(--primary-color); font-family:'Baloo 2', sans-serif; font-size:17px; margin-bottom:6px; }
 
-.loading-msg{ color: var(--muted); font-size: 14px; padding: 10px 0; }
+.loading-msg{ color: var(--secondary-color); font-size: 14px; padding: 10px 0; }
 
 /* ---------- Tryb edycji wewnątrz karty ---------- */
 .item-card .field{ margin-bottom: 10px; }
@@ -274,32 +260,32 @@ main{
 .item-card .edit-content{
   width:100%;
   border:none;
-  border-bottom: 2px solid var(--ink);
+  border-bottom: 2px solid #000;
   background:transparent;
   padding: 6px 2px;
   font-family:'Nunito Sans', sans-serif;
   font-size:14px;
-  color: var(--ink);
+  color: #000;
   resize: vertical;
 }
 .item-card .edit-content{ min-height: 60px; }
 .item-card .edit-title:focus,
-.item-card .edit-content:focus{ outline:none; border-color: var(--green-deep); }
-.card-actions button.save-edit{ color: var(--green-deep); }
-.card-actions button.cancel-edit{ color: var(--muted); }
+.item-card .edit-content:focus{ outline:none; border-color: var(--primary-color); }
+.card-actions button.save-edit{ color: var(--primary-color); }
+.card-actions button.cancel-edit{ color: var(--secondary-color); }
 
 /* ---------- Quizy / Zapisane (placeholder grid podobny do wyszukiwarki) ---------- */
 .quiz-card, .saved-card{
-  background: var(--white);
+  background: #fff;
   border-radius: 12px;
   overflow:hidden;
-  border: 1px solid #E7E2D2;
+  border: 1px solid var(--background);
 }
 .quiz-card .thumb, .saved-card .thumb{
   height: 110px;
-  background: linear-gradient(135deg, var(--green-soft), var(--green-soft-2));
+  background: linear-gradient(135deg, var(--secondary-color), var(--hover-light));
   display:flex; align-items:center; justify-content:center;
-  color: var(--green-deep);
+  color: var(--primary-color);
   font-family:'Baloo 2', sans-serif;
   font-weight:800;
   font-size: 15px;
@@ -309,11 +295,11 @@ main{
   font-family:'Baloo 2', sans-serif;
   font-size: 15.5px;
   margin: 0 0 6px;
-  color: var(--ink);
+  color: #000;
 }
-.quiz-card .meta, .saved-card .meta{ font-size:12.5px; color: var(--muted); margin-bottom:12px; }
+.quiz-card .meta, .saved-card .meta{ font-size:12.5px; color: var(--secondary-color); margin-bottom:12px; }
 .quiz-card .go-btn, .saved-card .go-btn{
-  background: var(--green-deep); color:#fff; border:none;
+  background: var(--primary-color); color:#fff; border:none;
   padding: 9px 16px; border-radius: 8px; font-size:13px;
   font-family:'Baloo 2', sans-serif; font-weight:700; cursor:pointer;
 }
@@ -321,7 +307,7 @@ main{
 /* ---------- Toast ---------- */
 #toast{
   position: fixed; left:50%; bottom: 30px; transform: translateX(-50%) translateY(20px);
-  background: var(--green-deep); color:#fff; padding: 12px 24px; border-radius: 30px;
+  background: var(--primary-color); color:#fff; padding: 12px 24px; border-radius: 30px;
   font-size: 14px; font-weight:600; opacity:0; pointer-events:none;
   transition: all .25s ease; z-index: 50;
 }
@@ -333,88 +319,17 @@ main{
   .panel h1{ font-size: 30px; }
 }
 
-/* ===== SIDEBAR (taki sam jak start.css) ===== */
-
-#sidebar {
-    position: fixed;
-    top: 0;
-    left: -16.66vw;
-    width: 16.66vw;
-    height: 100vh;
-
-    background-color: #6B7259;
-
-    transition: left 0.3s ease;
-
-    z-index: 1000;
-
-    display:flex;
-    flex-direction:column;
-
-    padding-top:70px;
-}
-
-
-/* otwarte menu */
-#sidebar.active {
-    left:0;
-}
-
-
-/* linki */
-#sidebar a {
-    color:white;
-    text-decoration:none;
-
-    padding:15px 20px;
-
-    font-size:18px;
-    font-weight:700;
-}
-
-
-#sidebar a:hover {
-    background-color:#565b48;
-}
-
-
 /* ===== KRESKI MENU ===== */
 
-.menu-btn {
-
-    background:none;
-    border:none;
-
-    cursor:pointer;
-
-    display:flex;
-    flex-direction:column;
-
-    gap:5px;
-
-    padding:6px;
-
-    position:relative;
-
-    z-index:1002;
+#menuBtn {
+    color: var(--primary-color);
+    top: 15px;
+    left: 15px;
+    font-size: 32px;
+    cursor: pointer;
+    z-index: 1001;
+    user-select: none;
 }
-
-
-.menu-btn span {
-
-    width:26px;
-    height:3px;
-
-    background:#264500;
-
-    border-radius:3px;
-
-    display:block;
-
-}
-
-
-/* ===== HEADER MUSI BYĆ NAD SIDEBAR ===== */
 
 header {
 
@@ -437,7 +352,7 @@ header {
     background:white;
     border-radius:12px;
     overflow:hidden;
-    box-shadow:0 10px 30px rgba(0,0,0,.2);
+    box-shadow:0 10px 30px var(--shadow);
     display:none;
 }
 
@@ -462,8 +377,8 @@ header {
 }
 
 .go-btn{
-    background: var(--green-deep);
-    color: white;
+    background: var(--primary-color);
+    color: #fff;
 
     border: none;
     border-radius: 12px;
@@ -482,7 +397,7 @@ header {
 }
 
 .go-btn:hover{
-    background: var(--green-mid);
+    background: var(--hover-dark);
     transform: translateY(-2px);
 }
 
@@ -492,9 +407,9 @@ header {
 
 .go-btn{
     background: transparent;
-    border: 2px solid var(--green-deep);
+    border: 2px solid var(--primary-color);
 
-    color: var(--green-deep);
+    color: var(--primary-color);
 
     padding: 8px 16px;
     border-radius: 10px;
@@ -506,8 +421,8 @@ header {
 }
 
 .go-btn:hover{
-    background: var(--green-deep);
-    color: white;
+    background: var(--hover-dark);
+    color: #fff;
 }
 
 .item-card .go-btn{
@@ -535,13 +450,13 @@ header {
 }
 
 .edit-btn{
-    background:#d7e5b0;
-    color:#33411C;
+    background:var(--background);
+    color:var(--primary-color);
 }
 
 .delete-btn{
-    background:#f7d6d6;
-    color:#a40000;
+    background: var(--background);
+    color: var(--danger);
 }
 
 .note-content-view{
