@@ -438,8 +438,6 @@ async function toggleVisibility(id, currentlyPublic){
 }
 document.addEventListener("DOMContentLoaded", () => {
 
-    loadUser();
-
     const menuBtn = document.getElementById("menuBtn");
     const sidebar = document.getElementById("sidebar");
 

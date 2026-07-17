@@ -19,6 +19,9 @@ function escapeHtml(str){
     d.textContent = str ?? '';
     return d.innerHTML;
 }
+function escapeAttr(str){
+    return escapeHtml(str).replace(/"/g, '&quot;');
+}
 
 function toggleMenu() {
     const sidebar = document.getElementById("sidebar");
@@ -452,7 +455,7 @@ async function updateSidebar() {
 document.addEventListener("DOMContentLoaded", () => {
     showUser();
     updateSidebar();
-    loadPersonalNotes();
+    loadAllNoteLists();
 });
 
 function back(){
@@ -486,236 +489,343 @@ document.addEventListener("click", () => {
 });
 
 /* ============================================================
-   WŁASNE NOTATKI
+   WŁASNE NOTATKI (3 listy: do tego filmu / pozostałe / publiczne)
    ============================================================ */
 
 function createPersonalNote() {
 
-    const container =
-    document.getElementById(
-        "personalNotesContainer"
-    );
+    const container = document.getElementById("personalNotesContainer");
+    const emptyText = container.querySelector("p");
+    if(emptyText){ emptyText.remove(); }
 
-    const emptyText =
-    container.querySelector("p");
-
-    if(emptyText){
-        emptyText.remove();
-    }
-
-    const div =
-    document.createElement("div");
-
-    div.className = "note-card";
+    const div = document.createElement("div");
+    div.className = "note-form-card";
 
     div.innerHTML = `
         <input type="text" class="noteTitleInput" placeholder="Tytuł notatki">
-        <textarea
-            placeholder="Napisz swoją notatkę..."
-        ></textarea>
-        
+        <textarea placeholder="Napisz swoją notatkę..."></textarea>
         <div class="visibility-toggle">
             <input type="checkbox" class="notePublicInput">
             <label>Notatka publiczna (widoczna dla innych)</label>
         </div>
-
-        <button class="saveNoteBtn">
-            Zapisz
-        </button>
-
+        <button type="button" class="saveNoteBtn">Zapisz</button>
     `;
 
-    container.appendChild(div);
-
+    container.prepend(div);
 }
 
 function timeAgo(date){
 
-    const seconds =
-        Math.floor((new Date() - new Date(date)) / 1000);
-
+    const seconds = Math.floor((new Date() - new Date(date)) / 1000);
 
     const intervals = {
-        rok: 31536000,
-        miesiąc: 2592000,
-        dzień: 86400,
-        godzina: 3600,
-        minuta: 60
+        rok: 31536000, miesiąc: 2592000, dzień: 86400, godzina: 3600, minuta: 60
     };
 
-
-    if(seconds < 60){
-        return "przed chwilą";
-    }
-
-
-    if(seconds < intervals.godzina){
-
-        const min =
-            Math.floor(seconds / intervals.minuta);
-
-        return `${min} min temu`;
-
-    }
-
-
-    if(seconds < intervals.dzień){
-
-        const hours =
-            Math.floor(seconds / intervals.godzina);
-
-        return `${hours} godz. temu`;
-
-    }
-
-
-    if(seconds < intervals.miesiąc){
-
-        const days =
-            Math.floor(seconds / intervals.dzień);
-
-        return `${days} dni temu`;
-
-    }
-
-
-    if(seconds < intervals.rok){
-
-        const months =
-            Math.floor(seconds / intervals.miesiąc);
-
-        return `${months} mies. temu`;
-
-    }
-
-
-    const years =
-        Math.floor(seconds / intervals.rok);
-
-    return `${years} lat temu`;
-
+    if(seconds < 60) return "przed chwilą";
+    if(seconds < intervals.godzina) return `${Math.floor(seconds / intervals.minuta)} min temu`;
+    if(seconds < intervals.dzień) return `${Math.floor(seconds / intervals.godzina)} godz. temu`;
+    if(seconds < intervals.miesiąc) return `${Math.floor(seconds / intervals.dzień)} dni temu`;
+    if(seconds < intervals.rok) return `${Math.floor(seconds / intervals.miesiąc)} mies. temu`;
+    return `${Math.floor(seconds / intervals.rok)} lat temu`;
 }
 
+/* ---------- Renderowanie pojedynczej karty notatki ---------- */
+function renderNoteCard(note, { editable, showAuthor }){
+
+    const div = document.createElement('div');
+    div.className = 'item-card';
+    div.dataset.id = note.id;
+    div._note = note; // potrzebne do trybu edycji
+
+    const badge = note.is_public
+        ? '<span class="badge public">Publiczna</span>'
+        : '<span class="badge private">Prywatna</span>';
+
+    const footerLeft = showAuthor
+        ? escapeHtml(note.profiles?.profiles || "Użytkownik")
+        : timeAgo(note.created_at);
+
+    div.innerHTML = `
+        ${badge}
+        <h3 class="note-title-view">${escapeHtml(note.title || "Bez tytułu")}</h3>
+        <p class="note-content-view">${escapeHtml(note.content)}</p>
+        <button type="button" class="go-btn big-btn show-note-btn">Pokaż notatkę</button>
+        <div class="card-footer">
+            <span>${footerLeft}</span>
+            ${editable ? `
+            <div class="card-actions">
+                <button type="button" class="edit" data-id="${note.id}">Edytuj</button>
+                <button type="button" class="toggle-vis" data-id="${note.id}" data-public="${note.is_public}">
+                    ${note.is_public ? 'Ukryj' : 'Upublicznij'}
+                </button>
+                <button type="button" class="delete" data-id="${note.id}">Usuń</button>
+            </div>` : ''}
+        </div>
+    `;
+
+    return div;
+}
+
+/* ---------- Tryb edycji karty ---------- */
+function enterNoteEditMode(card, note){
+
+    card.innerHTML = `
+        <div class="field">
+            <label>Tytuł</label>
+            <input type="text" class="edit-title" value="${escapeAttr(note.title || "")}">
+        </div>
+        <div class="field">
+            <label>Treść</label>
+            <textarea class="edit-content">${escapeHtml(note.content)}</textarea>
+        </div>
+        <div class="card-footer">
+            <div class="card-actions">
+                <button type="button" class="save-edit" data-id="${note.id}">Zapisz zmiany</button>
+                <button type="button" class="cancel-edit">Anuluj</button>
+            </div>
+        </div>
+    `;
+
+    card.querySelector('.cancel-edit').addEventListener('click', () => loadAllNoteLists());
+
+    card.querySelector('.save-edit').addEventListener('click', async () => {
+
+        const newTitle = card.querySelector('.edit-title').value.trim();
+        const newContent = card.querySelector('.edit-content').value.trim();
+
+        if(!newContent){
+            alert("Treść notatki nie może być pusta.");
+            return;
+        }
+
+        const { error } = await supabaseClient
+            .from('notes')
+            .update({ title: newTitle || "Notatka do filmu", content: newContent })
+            .eq('id', note.id);
+
+        if(error){
+            alert("Nie udało się zapisać zmian: " + error.message);
+            return;
+        }
+
+        loadAllNoteLists();
+    });
+}
+
+/* ---------- Wczytywanie 3 list ---------- */
 async function loadPersonalNotes(){
 
-    const {
-        data:{user}
-    } = await supabaseClient.auth.getUser();
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const container = document.getElementById("personalNotesContainer");
 
     if(!user){
+        container.innerHTML = "<p>Zaloguj się, aby zobaczyć swoje notatki.</p>";
         return;
     }
 
-    const { data, error } =
-    await supabaseClient
-    .from('notes')
-    .select('*')
-    .eq('user_id', user.id)
-    .order('created_at', { ascending:false });
+    const { data, error } = await supabaseClient
+        .from('notes')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('video_id', videoId)
+        .order('created_at', { ascending: false });
 
     if(error){
         console.error(error);
+        container.innerHTML = "<p>Nie udało się wczytać notatek.</p>";
         return;
     }
 
-    const container =
-        document.getElementById(
-            "personalNotesContainer"
-        );
+    container.innerHTML = "";
 
     if(!data || data.length === 0){
-
-        container.innerHTML =
-        "<p>Brak notatek.</p>";
-
+        container.innerHTML = "<p>Brak notatek.</p>";
         return;
-
     }
 
-    container.innerHTML =
-    data.map(note => `
-        <div class="note-card">
-            <h4 class="note-card-title">${escapeHtml(note.title || "Bez tytułu")}</h4>
-            <textarea>${escapeHtml(note.content)}</textarea>
-            <span class="note-card-badge ${note.is_public ? 'public' : 'private'}">
-            ${note.is_public ? 'Publiczna' : 'Prywatna'}
-            </span>
-        <div class="note-card-actions">
-            <button class="toggle-note-vis" data-id="${note.id}" data-public="${note.is_public}">
-            ${note.is_public ? 'Ukryj' : 'Upublicznij'}
-            </button>
-            <button class="delete-note" data-id="${note.id}">Usuń</button>
-        </div></div>
-    `).join("");
-
+    data.forEach(note => container.appendChild(renderNoteCard(note, { editable: true, showAuthor: false })));
 }
 
-document.addEventListener("click", async (e) => {
+async function loadMyOtherNotes(){
 
-    if(
-        !e.target.classList.contains(
-            "saveNoteBtn"
-        )
-    ){
-        return;
-    }
-
-    const card = e.target.parentElement;
-
-    const titleInput =
-    card.querySelector(".noteTitleInput");
-
-    const textarea =
-    card.querySelector("textarea");
-
-    const title =
-    titleInput ? titleInput.value.trim() : "";
-
-    const content =
-    textarea.value.trim();
-    const publicInput = card.querySelector(".notePublicInput");
-const isPublic = publicInput ? publicInput.checked : false;
-// ...
-is_public: isPublic   // zamiast is_public: false
-
-    if(!content){
-        alert("Wpisz treść notatki");
-        return;
-    }
-
-    const {
-        data:{user}
-    } = await supabaseClient.auth.getUser();
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const container = document.getElementById("myOtherNotesContainer");
+    if(!container) return;
 
     if(!user){
-        alert("Zaloguj się");
+        container.innerHTML = "<p>Zaloguj się, aby zobaczyć swoje notatki.</p>";
         return;
     }
 
-    const { error } =
-    await supabaseClient
-    .from("notes")
-    .insert({
-        user_id: user.id,
-        video_id: videoId,
-        title: title || "Notatka do filmu",
-        content: content,
-        is_public: isPublic
-    });
+    const { data, error } = await supabaseClient
+        .from('notes')
+        .select('*')
+        .eq('user_id', user.id)
+        .neq('video_id', videoId)
+        .order('created_at', { ascending: false });
 
     if(error){
-
         console.error(error);
-        alert(error.message);
+        container.innerHTML = "<p>Nie udało się wczytać notatek.</p>";
         return;
-
     }
 
-    alert("Notatka zapisana");
+    container.innerHTML = "";
 
-    const id = card.dataset.id;
+    if(!data || data.length === 0){
+        container.innerHTML = "<p>Brak innych notatek.</p>";
+        return;
+    }
 
-    loadPersonalNotes();
+    data.forEach(note => container.appendChild(renderNoteCard(note, { editable: true, showAuthor: false })));
+}
+
+async function loadPublicVideoNotes(){
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const container = document.getElementById("publicVideoNotesContainer");
+    if(!container) return;
+
+    const { data, error } = await supabaseClient
+        .from('notes')
+        .select(`
+            *,
+            profiles!user_id ( profiles, avatar_url )
+        `)
+        .eq('video_id', videoId)
+        .eq('is_public', true)
+        .order('created_at', { ascending: false });
+
+    if(error){
+        console.error(error);
+        container.innerHTML = "<p>Nie udało się wczytać notatek publicznych.</p>";
+        return;
+    }
+
+    const filtered = user ? (data || []).filter(n => n.user_id !== user.id) : (data || []);
+
+    container.innerHTML = "";
+
+    if(filtered.length === 0){
+        container.innerHTML = "<p>Brak notatek publicznych.</p>";
+        return;
+    }
+
+    filtered.forEach(note => container.appendChild(renderNoteCard(note, { editable: false, showAuthor: true })));
+}
+
+async function loadAllNoteLists(){
+    await loadPersonalNotes();
+    await loadMyOtherNotes();
+    await loadPublicVideoNotes();
+}
+
+async function deletePersonalNote(id){
+
+    if(!confirm("Na pewno usunąć tę notatkę?")) return;
+
+    const { error } = await supabaseClient.from("notes").delete().eq("id", id);
+
+    if(error){
+        console.error(error);
+        alert("Nie udało się usunąć notatki.");
+        return;
+    }
+
+    loadAllNoteLists();
+}
+
+async function togglePersonalNoteVisibility(id, currentlyPublic){
+
+    const { error } = await supabaseClient
+        .from("notes")
+        .update({ is_public: !currentlyPublic })
+        .eq("id", id);
+
+    if(error){
+        console.error(error);
+        alert("Nie udało się zmienić widoczności.");
+        return;
+    }
+
+    loadAllNoteLists();
+}
+
+/* ---------- JEDEN globalny listener na wszystkie akcje kart notatek ---------- */
+document.addEventListener("click", async (e) => {
+
+    // Zapis nowej notatki
+    if(e.target.classList.contains("saveNoteBtn")){
+
+        const card = e.target.parentElement;
+        const titleInput = card.querySelector(".noteTitleInput");
+        const textarea = card.querySelector("textarea");
+        const title = titleInput ? titleInput.value.trim() : "";
+        const content = textarea.value.trim();
+        const publicInput = card.querySelector(".notePublicInput");
+        const isPublic = publicInput ? publicInput.checked : false;
+
+        if(!content){
+            alert("Wpisz treść notatki");
+            return;
+        }
+
+        const { data: { user } } = await supabaseClient.auth.getUser();
+
+        if(!user){
+            alert("Zaloguj się");
+            return;
+        }
+
+        const { error } = await supabaseClient.from("notes").insert({
+            user_id: user.id,
+            video_id: videoId,
+            title: title || "Notatka do filmu",
+            content: content,
+            is_public: isPublic
+        });
+
+        if(error){
+            console.error(error);
+            alert(error.message);
+            return;
+        }
+
+        card.remove();
+        loadAllNoteLists();
+        return;
+    }
+
+    // Reszta akcji dotyczy karty .item-card
+    const card = e.target.closest(".item-card");
+    if(!card) return;
+
+    if(e.target.classList.contains("show-note-btn")){
+        const content = card.querySelector(".note-content-view");
+        if(content){
+            content.classList.toggle("expanded");
+            e.target.textContent = content.classList.contains("expanded")
+                ? "Ukryj notatkę"
+                : "Pokaż notatkę";
+        }
+        return;
+    }
+
+    if(e.target.classList.contains("delete")){
+        deletePersonalNote(e.target.dataset.id);
+        return;
+    }
+
+    if(e.target.classList.contains("toggle-vis")){
+        togglePersonalNoteVisibility(e.target.dataset.id, e.target.dataset.public === "true");
+        return;
+    }
+
+    if(e.target.classList.contains("edit")){
+        enterNoteEditMode(card, card._note);
+        return;
+    }
 
 });
 
@@ -767,24 +877,49 @@ async function loadUserQuizy(){
         quiz.is_public ? "Publiczny" : "Prywatny";
 
         return `
-            <div class="quiz-card" data-id="${quiz.id}">
-                <div class="quiz-card-info">
-                    <h4><span class="quiz-badge">${badge}</span>${escapeHtml(quiz.title)}</h4>
-                    <p>${count} ${count === 1 ? 'pytanie' : 'pytań'}</p>
-                </div>
-                <div class="quiz-card-actions">
-                    <button class="deleteQuizBtn" data-id="${quiz.id}">Usuń</button>
+            <div class="item-card" data-id="${quiz.id}">
+                <span class="badge ${quiz.is_public ? 'public' : 'private'}">${badge}</span>
+                <h3>${escapeHtml(quiz.title)}</h3>
+                <p>${count} ${count === 1 ? 'pytanie' : 'pytań'}</p>
+                <button class="go-btn big-btn" onclick="openQuiz('${quiz.id}')">Rozwiąż quiz</button>
+                <div class="card-footer">
+                    <div class="card-actions">
+                        <button class="toggle-quiz-vis" data-id="${quiz.id}" data-public="${quiz.is_public}">
+                            ${quiz.is_public ? 'Ukryj' : 'Upublicznij'}
+                        </button>
+                        <button class="deleteQuizBtn" data-id="${quiz.id}">Usuń</button>
+                    </div>
                 </div>
             </div>
-            <button class="toggle-quiz-vis" data-id="${quiz.id}" data-public="${quiz.is_public}">
-            ${quiz.is_public ? 'Ukryj' : 'Upublicznij'}
-            </button>
         `;
     }).join("");
 
     container.querySelectorAll(".deleteQuizBtn").forEach(btn => {
         btn.addEventListener("click", () => deleteUserQuiz(btn.dataset.id));
     });
+
+    container.querySelectorAll(".toggle-quiz-vis").forEach(btn => {
+        btn.addEventListener("click", () => toggleQuizVisibility(btn.dataset.id, btn.dataset.public === "true"));
+    });
+}
+
+async function toggleQuizVisibility(id, currentlyPublic){
+
+    const { error } =
+    await supabaseClient
+    .from("quizzes")
+    .update({
+        is_public: !currentlyPublic
+    })
+    .eq("id", id);
+
+    if(error){
+        console.error(error);
+        alert("Nie udało się zmienić widoczności quizu.");
+        return;
+    }
+
+    loadUserQuizy();
 }
 
 async function deleteUserQuiz(id){
@@ -803,35 +938,8 @@ async function deleteUserQuiz(id){
     }
 
     loadUserQuizy();
+    
 }
-
-document.addEventListener("click", async (e) => {
-
-    if (!e.target.classList.contains("toggle-note-vis")) {
-        return;
-    }
-
-    const noteId = e.target.dataset.id;
-
-    const currentState =
-        e.target.dataset.public === "true";
-
-    const { error } =
-        await supabaseClient
-        .from("notes")
-        .update({
-            is_public: !currentState
-        })
-        .eq("id", noteId);
-
-    if (error) {
-        console.error(error);
-        alert("Nie udało się zmienić widoczności.");
-        return;
-    }
-
-    loadPersonalNotes();
-});
 
 async function saveMaterial() {
 
