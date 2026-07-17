@@ -693,4 +693,24 @@ textarea {
     min-height:100px;
     max-width:100%;
     overflow-wrap:anywhere;
+.note-content-view{
+
+    max-height: 0;
+
+    overflow: hidden;
+
+    opacity: 0;
+
+    transition: all 0.3s ease;
+
+    margin-top: 10px;
+
+}
+
+.note-content-view.expanded{
+
+    max-height: 1000px;
+
+    opacity: 1;
+
 }
