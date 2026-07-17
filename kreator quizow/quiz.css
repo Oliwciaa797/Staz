@@ -346,3 +346,7 @@ header{
 .login-btn:hover {
 	background: var(--hover-dark);
 }
+
+.back{
+  cursor: pointer;
+}
