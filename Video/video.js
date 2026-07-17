@@ -299,7 +299,7 @@ async function loadReviews() {
 
 // Load reviews when page loads
 document.addEventListener('DOMContentLoaded', loadReviews);
-
+let errorMsg = document.getElementById('errorMsg');
 async function submitReview() {
 
     const {
@@ -316,7 +316,7 @@ async function submitReview() {
         document.getElementById("reviewText").value;
 
     if (userRating === 0) {
-        alert("Wybierz ocenę");
+        errorMsg.textContent = "Wybierz ocenę."
         return;
     }
 
@@ -392,7 +392,7 @@ async function showUser() {
 
         <img src="${avatarUrl}" class="avatar">
 
-        <span>Witaj, ${escapeHtml(profile.profiles)}</span>
+        <span>${escapeHtml(profile.profiles)}</span>
 
     </div>
 

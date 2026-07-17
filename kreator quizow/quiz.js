@@ -82,7 +82,11 @@ async function init(){
     }
     currentUser = user;
     const displayName = user.user_metadata?.username || user.email;
-    document.getElementById('profileName').textContent = displayName;
+    const profileName = document.getElementById('profileName');
+
+    if(profileName){
+      profileName.textContent = displayName;
+    }
     document.getElementById('authNotice').style.display = 'none';
     document.getElementById('quizBuilder').style.display = 'block';
     renderQuestionsList();
@@ -331,5 +335,164 @@ document.getElementById('saveQuizBtn').addEventListener('click', async () => {
   }
 
   showToast('Quiz zapisany!');
-  setTimeout(() => { window.location.href = 'not.html'; }, 900);
+  setTimeout(() => { window.location.href = "../materialy/not.html"; }, 900);
 });
+
+/* ----------profilowe i nazwa uzytkownika----------*/
+
+async function showUser(){
+
+    const userArea =
+    document.getElementById("userArea");
+
+
+    const {
+        data:{user}
+    } = await supabaseClient.auth.getUser();
+
+
+    if(!user){
+
+        userArea.innerHTML = `
+            <button onclick="window.location.href='../logowanie/log.html'">
+                Zaloguj
+            </button>
+        `;
+
+        return;
+    }
+
+
+    const {data: profile, error} =
+    await supabaseClient
+    .from("profiles")
+    .select("profiles, avatar_url")
+    .eq("id", user.id)
+    .single();
+
+
+    if(error){
+        console.log(error);
+        return;
+    }
+
+
+    const avatar =
+    profile.avatar_url ||
+    "../Profil/avatar.png";
+
+
+    userArea.innerHTML = `
+
+        <div class="user-info" id="userInfo">
+
+            <img 
+            src="${avatar}" 
+            class="avatar">
+
+            <span>
+                ${profile.profiles}
+            </span>
+
+        </div>
+
+
+        <div class="user-menu" id="userMenu">
+
+            <a href="../Profil/prof.html">
+                Profil
+            </a>
+
+
+            <a href="../wylogowywanie/logout.html">
+                Wyloguj się
+            </a>
+
+        </div>
+
+    `;
+
+    const info = document.getElementById("userInfo");
+const menu = document.getElementById("userMenu");
+
+
+info.addEventListener("click",(e)=>{
+
+    e.stopPropagation();
+
+    menu.classList.toggle("active");
+
+});
+
+}
+
+function toProfile(){
+    window.location.href = "../Profil/prof.html";
+}
+
+/* ----------sidebar----------*/
+
+async function updateSidebar() {
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    const sidebar = document.getElementById("sidebar");
+
+    if (user) {
+        sidebar.innerHTML = `
+            <a href="../strona startowa/start.html">Strona Startowa</a>
+            <a href="../materialy/not.html">Zapisane materiały</a>
+            <a href="../Profil/prof.html">Profil</a>
+            <a href="../wylogowywanie/logout.html">Wyloguj się</a>
+        `;
+    } else {
+        sidebar.innerHTML = `
+            <a href="../strona startowa/start.html">Strona Startowa</a>
+            <a href="../logowanie/log.html">Logowanie</a>
+        `;
+    }
+}
+
+
+function back(){
+    window.location.href = "../strona startowa/start.html";
+}
+
+document.getElementById("menuBtn").addEventListener("click", (e) => {
+    e.stopPropagation();
+    document.getElementById("sidebar").classList.toggle("active");
+});
+
+document.addEventListener("click", (e) => {
+    const sidebar = document.getElementById("sidebar");
+
+    if (
+        sidebar.classList.contains("active") &&
+        !sidebar.contains(e.target)
+    ) {
+        sidebar.classList.remove("active");
+    }
+});
+
+document.addEventListener("click", (e)=>{
+
+    const menu = document.getElementById("userMenu");
+    const info = document.getElementById("userInfo");
+
+    if(menu && info && !menu.contains(e.target) && !info.contains(e.target)){
+        menu.classList.remove("active");
+    }
+
+});
+
+function toggleMenu() {
+    const sidebar = document.getElementById("sidebar");
+    if (sidebar) {
+        sidebar.classList.toggle("active");
+    }
+}
+
+document.addEventListener(
+"DOMContentLoaded",
+showUser
+);
