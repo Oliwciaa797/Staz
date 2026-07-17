@@ -1,3 +1,4 @@
+@import url(../main.css);
 /* ---------- Przycisk drugorzędny ---------- */
 .btn-secondary{
   background: transparent;
@@ -330,4 +331,18 @@ header{
 
 .user-menu a:hover{
     background:#e4ebd2;
+}
+
+.login-btn {
+	padding: 12px 25px;
+	border: none;
+	border-radius: 30px;
+	background: var(--primary-color);
+	color: white;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.login-btn:hover {
+	background: var(--hover-dark);
 }
