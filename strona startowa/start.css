@@ -427,3 +427,21 @@ main.search-mode{
     background:var(--hover-white);
 
 }
+
+.grade-box {
+	padding: 2px;
+	border-radius: 8px;
+	background: white;
+	text-align: center;
+	box-shadow: 0 2px 8px var(--shadow);
+}
+
+.grade-avg {
+	margin: 2px 0;
+	font-size: 14px;
+}
+
+.review-count {
+	color: #666;
+	font-size: 10px;
+}
