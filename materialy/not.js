@@ -417,8 +417,27 @@ async function loadMyQuizy(){
                 </span> 
             <h3>${quiz.title}</h3>
             <p>${count} pytań</p>
-            <button class="go-btn" onclick="openQuiz('${quiz.id}')">
-            Rozwiąż quiz</button>
+            <div class="card-actions">
+
+    <button
+        class="go-btn"
+        onclick="openQuiz('${quiz.id}')">
+        Rozwiąż
+    </button>
+
+    <button
+        class="go-btn edit-btn"
+        onclick="editQuiz('${quiz.id}')">
+        Edytuj
+    </button>
+
+    <button
+        class="go-btn delete-btn"
+        onclick="deleteQuiz('${quiz.id}')">
+        Usuń
+    </button>
+
+</div>
             </div>
         `;
     });
@@ -535,5 +554,36 @@ function openQuiz(id){
 
     window.location.href =
     `../quiz (stworzone)/qu.html?id=${id}`;
+
+}
+
+async function deleteQuiz(id){
+
+    if(!confirm("Na pewno usunąć quiz?")){
+        return;
+    }
+
+    const { error } =
+    await supabaseClient
+        .from("quizzes")
+        .delete()
+        .eq("id", id);
+
+    if(error){
+        console.error(error);
+        showToast("Nie udało się usunąć quizu.");
+        return;
+    }
+
+    showToast("Quiz usunięty.");
+
+    loadMyQuizy();
+    loadPublicQuizy();
+}
+
+function editQuiz(id){
+
+    window.location.href =
+    `../edytor quizow/quiz.html?id=${id}`;
 
 }

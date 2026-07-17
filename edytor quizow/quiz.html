@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nowy quiz — Nazwa strony</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../materialy/not.css">
+<link rel="stylesheet" href="quiz.css">
+<!-- Klient Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- Logika strony -->
+<script src="quiz.js" defer></script>
+</head>
+<body>
+
+<header>
+  <div id="menuBtn">
+    ☰
+  </div>
+    
+    <div id="sidebar">
+      <a href="../strona startowa/start.html">Strona Startowa</a>
+      <a href="../logowanie/log.html">Logowanie</a>
+      <a href="../materialy/not.html">Zapisane materiały</a>
+      <a href="../Profil/prof.html">Profil</a>
+    </div>
+  <div class="site-title">Nazwa strony</div>
+  <div id="userArea" class="user-area"></div>
+
+    <div class="user-menu">
+
+      <a href="../Profil/prof.html">Profil</a>
+
+      <a href="../wylogowywanie/logout.html">Wyloguj się</a>
+    </div></div>
+</header>
+
+<main>
+  <div class="panel">
+    <div class="panel-top">
+      <button class="back-btn" aria-label="Wstecz" onclick="window.location.href='../materialy/not.html'">←</button>
+      <h1>Nowy quiz</h1>
+    </div>
+
+    <div id="authNotice" class="empty-state" style="display:none;">
+      <strong>Zaloguj się</strong>
+      Aby tworzyć quizy, musisz być zalogowany.
+    </div>
+
+    <div id="quizBuilder" style="display:none;">
+
+      <!-- Dane podstawowe quizu -->
+      <div class="note-form">
+        <h2>Dane quizu</h2>
+        <div class="field">
+          <label for="quizTitle">Nazwa quizu</label>
+          <input type="text" id="quizTitle" placeholder="np. Quiz ze stolic Europy" required>
+        </div>
+        <div class="visibility-toggle">
+          <input type="checkbox" id="quizPublic">
+          <label for="quizPublic">Quiz publiczny (widoczny dla innych)</label>
+        </div>
+      </div>
+
+      <!-- Lista dodanych pytań -->
+      <div class="section-label">Pytania</div>
+      <div id="questionsList" class="questions-list"></div>
+      <div id="questionsEmpty" class="empty-state">
+        <strong>Brak pytań</strong>
+        Dodaj pierwsze pytanie poniżej.
+      </div>
+
+      <!-- Dodawanie pytania -->
+      <div class="add-question-box">
+
+        <button type="button" class="btn-secondary" id="addQuestionBtn">+ Dodaj pytanie</button>
+
+        <div id="typePicker" class="type-picker" style="display:none;">
+          <p class="type-picker-label">Wybierz typ pytania:</p>
+          <div class="type-options">
+            <button type="button" class="type-option" data-type="single">
+              <span class="type-option-title">Jednokrotny wybór</span>
+              <span class="type-option-desc">Jedna poprawna odpowiedź z listy</span>
+            </button>
+            <button type="button" class="type-option" data-type="multi">
+              <span class="type-option-title">Wielokrotny wybór</span>
+              <span class="type-option-desc">Kilka poprawnych odpowiedzi z listy</span>
+            </button>
+            <button type="button" class="type-option" data-type="boolean">
+              <span class="type-option-title">Prawda / Fałsz</span>
+              <span class="type-option-desc">Proste pytanie tak/nie</span>
+            </button>
+          </div>
+          <button type="button" class="btn-cancel-inline" id="cancelTypePickerBtn">Anuluj</button>
+        </div>
+
+        <div id="questionFormArea"></div>
+
+      </div>
+
+      <button type="button" class="btn-primary" id="saveQuizBtn" style="margin-top:26px;">ZAPISZ QUIZ</button>
+    </div>
+
+  </div>
+</main>
+
+<div id="toast"></div>
+
+</body>
+</html>
