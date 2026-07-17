@@ -605,3 +605,11 @@ function editQuiz(id){
     `../edytor quizow/quiz.html?id=${id}`;
 
 }
+
+function quiz(){
+  window.location.href = "../kreator quizow/quiz.html"
+}
+
+function back(){
+  window.location.href = "../strona startowa/start.html"
+}

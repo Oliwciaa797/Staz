@@ -439,11 +439,13 @@ async function updateSidebar() {
             <a href="../materialy/not.html">Zapisane materiały</a>
             <a href="../Profil/prof.html">Profil</a>
             <a href="../wylogowywanie/logout.html">Wyloguj się</a>
+            <a href="../zglaszanie bledow/blad.html">⚠️Zgłoś błąd⚠️</a>
         `;
     } else {
         sidebar.innerHTML = `
             <a href="../strona startowa/start.html">Strona Startowa</a>
             <a href="../logowanie/log.html">Logowanie</a>
+            <a href="../zglaszanie bledow/blad.html">⚠️Zgłoś błąd⚠️</a>
         `;
     }
 }
