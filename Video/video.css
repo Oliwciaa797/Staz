@@ -693,6 +693,8 @@ textarea {
     min-height:100px;
     max-width:100%;
     overflow-wrap:anywhere;
+}
+
 .note-content-view{
 
     max-height: 0;
