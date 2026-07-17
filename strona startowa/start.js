@@ -220,6 +220,12 @@ async function search() {
             item.snippet.defaultLanguage ||
             " ";
         });
+        
+            const { data: ratings } =
+            await supabaseClient
+            .from("video_reviews")
+            .select("video_id,rating");
+
 
         let html = "";
 
@@ -227,6 +233,24 @@ async function search() {
 
             const id =
             video.id.videoId;
+
+                const reviewsForVideo =
+ratings.filter(
+    r => r.video_id === id
+);
+
+const reviewCount =
+reviewsForVideo.length;
+
+const averageRating =
+reviewCount > 0
+? (
+    reviewsForVideo.reduce(
+        (sum,r) => sum + r.rating,
+        0
+    ) / reviewCount
+).toFixed(1)
+: "0";
 
             const videoLanguage =
             languages[id];
@@ -266,6 +290,10 @@ async function search() {
                     <p>
                     ${Math.round(minutes)} min
                     </p>
+                        <div class="grade-box">
+                        <p class="grade-avg">Średnia ocena:${averageRating}/5 ⭐</p>
+                        <p class="review-count">${reviewCount} opinii</p>
+                        </div><br>
                     <a target="_blank"
                         href="../Video/video.html?video=${id}">
                         Otwórz film
@@ -295,7 +323,49 @@ async function search() {
         );
     }
 }
+const averageRating = (
+        reviews.reduce((sum, r) => sum + r.rating, 0) /
+        reviews.length
+    ).toFixed(1);
 
+    document.querySelector(".grade-avg").textContent =
+        `Średnia ocena: ${averageRating}/5 ⭐`;
+
+    document.querySelector(".review-count").textContent =
+        `${reviews.length} opinii`;
+
+    container.innerHTML =
+    reviews.map(review => {
+
+        const date =
+        new Date(review.created_at)
+        .toLocaleString("pl-PL");
+
+        return `
+            <div class="review-item">
+
+                <div class="review-header">
+
+                    <div class="review-user">
+                        ${escapeHtml(review.profiles?.profiles || "Użytkownik")}
+                    </div>
+
+                    <div class="review-date">
+                        ${date}
+                    </div>
+                </div>
+
+                <div class="review-rating">
+                    ${"⭐".repeat(review.rating)}
+                </div>
+
+                <div class="review-text">
+                    ${escapeHtml(review.comment || "")}
+                </div>
+
+            </div>
+        `;
+    }).join("");
 
 function categoryDropdown() {
     const dropdown =

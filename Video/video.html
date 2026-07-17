@@ -82,16 +82,25 @@
                             </div>
 
                             <div id="personalNotes" class="sub-tab-panel active">
-                                <div class="note-card" data-id="${note.id}"></div>
-                                <button id="addNoteBtn" onclick="createPersonalNote()">+ Dodaj notatkę</button>
-                                <div id="personalNotesContainer">
-                                    <p>Brak notatek.</p>
-                                </div>
+                            <button id="addNoteBtn" onclick="createPersonalNote()">+ Dodaj notatkę</button>
+
+                            <div class="section-label">Twoje notatki do tego filmu</div>
+                             <div id="personalNotesContainer" class="card-grid">
+                            <p>Brak notatek.</p>
                             </div>
+                            <div class="section-label">Twoje pozostałe notatki</div>
+                            <div id="myOtherNotesContainer" class="card-grid">
+                                <p>Brak notatek.</p>
+                            </div>
+                            <div class="section-label">Notatki publiczne innych o tym filmie</div>
+                            <div id="publicVideoNotesContainer" class="card-grid">
+                                <p>Brak notatek publicznych.</p>
+                            </div>
+                        </div>
 
                             <div id="personalQuizy" class="sub-tab-panel">
                                 <button id="addQuizBtn" onclick="window.location.href='../kreator quizow/quiz.html'">+ Nowy quiz</button>
-                                <div id="personalQuizyContainer">
+                                <div id="personalQuizyContainer" class="card-grid">
                                     <p>Brak quizów.</p>
                                 </div>
                             </div>
