@@ -158,63 +158,126 @@ showBtn.addEventListener("click",()=>{
 
 /* ---------- Przełączenie karty w tryb edycji ---------- */
 function enterEditMode(card, note){
+
   card.innerHTML = `
     <div class="field">
+
       <label>Tytuł</label>
-      <input type="text" class="edit-title" value="${escapeAttr(note.title)}">
-    </div>
-    <div class="field">
+      <input 
+        type="text" 
+        class="edit-title" 
+        value="${escapeAttr(note.title)}"
+      >
+
       <label>Treść</label>
       <div class="edit-content"></div>
+
     </div>
+
     <div class="card-footer">
       <div class="card-actions">
-        <button class="save-edit" data-id="${note.id}">Zapisz zmiany</button>
-        <button class="cancel-edit">Anuluj</button>
+        <button class="save-edit">
+          Zapisz zmiany
+        </button>
+
+        <button class="cancel-edit">
+          Anuluj
+        </button>
       </div>
     </div>
   `;
 
-  card.querySelector('.cancel-edit').addEventListener('click', () => loadMyNotes());
 
-  card.querySelector('.save-edit').addEventListener('click', async () => {
-    const newTitle = card.querySelector('.edit-title').value.trim();
-    const editEditor = card.querySelector(".edit-content");
+  // URUCHAMIAMY QUILL OD RAZU
+  const editEditor = card.querySelector(".edit-content");
 
-    const editQuill = new Quill(editEditor,{
-        theme:"snow",
-        modules:{
-            toolbar:[
-                ["bold","italic","underline"],
-                [{list:"ordered"},{list:"bullet"}],
-                ["link"],
-                ["clean"]
-            ]
-        }
-    });
 
-editQuill.root.innerHTML = note.content;
-
-    if(!newTitle || !newContent){
-      showToast('Tytuł i treść nie mogą być puste.');
-      return;
+  const editQuill = new Quill(editEditor,{
+    theme:"snow",
+    modules:{
+      toolbar:[
+        ["bold","italic","underline"],
+        [{list:"ordered"},{list:"bullet"}],
+        ["link"],
+        ["clean"]
+      ]
     }
-
-    const { error } = await supabase
-      .from('notes')
-      .update({ title: newTitle, content: newContent })
-      .eq('id', note.id);
-
-    if(error){
-      showToast('Nie udało się zapisać zmian: ' + error.message);
-      return;
-    }
-
-    showToast('Notatka zaktualizowana.');
-    loadMyNotes();
   });
-}
 
+
+  // WŁADUJEMY STARĄ TREŚĆ
+  editQuill.root.innerHTML = note.content;
+
+
+
+  // ANULUJ
+  card.querySelector(".cancel-edit")
+  .addEventListener("click",()=>{
+      loadMyNotes();
+  });
+
+
+
+  // ZAPIS
+  card.querySelector(".save-edit")
+  .addEventListener("click", async ()=>{
+
+
+      const newTitle =
+      card.querySelector(".edit-title")
+      .value
+      .trim();
+
+
+      const newContent =
+      editQuill.root.innerHTML;
+
+
+      const plainText =
+      editQuill.getText().trim();
+
+
+
+      if(!newTitle || !plainText){
+
+          showToast(
+          "Tytuł i treść nie mogą być puste."
+          );
+
+          return;
+      }
+
+
+
+      const {error}=await supabaseClient
+      .from("notes")
+      .update({
+          title:newTitle,
+          content:newContent
+      })
+      .eq("id",note.id);
+
+
+
+      if(error){
+
+          showToast(
+          "Nie udało się zapisać zmian: "
+          + error.message
+          );
+
+          return;
+      }
+
+
+
+      showToast("Notatka zaktualizowana.");
+
+      loadMyNotes();
+
+  });
+
+}
 function escapeHtml(str){
   const d = document.createElement('div');
   d.textContent = str;
