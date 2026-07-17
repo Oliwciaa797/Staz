@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nazwa strony — Twój panel</title>
+<link href="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="not.css">
@@ -84,11 +86,11 @@
         <h2>Nowa notatka</h2>
         <div class="field">
           <label for="noteTitle">Tytuł</label>
-          <input type="text" id="noteTitle" placeholder="np. Najlepsze combo na start" required>
+          <input type="text" id="noteTitle" placeholder="np. Funkcje kwadratowe" required>
         </div>
         <div class="field">
           <label for="noteContent">Treść</label>
-          <textarea id="noteContent" placeholder="Treść notatki..." required></textarea>
+          <div id="editor"></div>
         </div>
         <div class="visibility-toggle">
           <input type="checkbox" id="notePublic">

@@ -468,3 +468,7 @@ header {
 .note-content-view.expanded{
     max-height:1000px;
 }
+
+#editor {
+  height: 250px;
+}
