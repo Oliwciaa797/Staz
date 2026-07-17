@@ -105,14 +105,20 @@ header {
 	user-select: none;
 }
 
-.middleSection {
+.middle-section {
 	display: flex;
+	flex-direction: column;
 	justify-content: space-between;
 	margin: 10px;
 	padding: 10px;
 	border-radius: 10px;
 	background-color: var(--background);
 	box-shadow: 5px 5px 5px rgba(104, 117, 80, 0.144);
+}
+
+.video-top {
+	display: flex;
+
 }
 
 .sidepanel {
@@ -214,7 +220,7 @@ header {
 
 .reviews-top {
 	display: flex;
-	flex-direction: row-reverse;
+	flex-direction: row;
 	justify-content: space-between;
 	gap: 10px;
 }
@@ -486,10 +492,11 @@ textarea {
 }
 
 #saveMaterialBtn{
+	align-self: center;
     background: white;
-    color: #264500;
-    border: 2px solid #81926a;
-    border-radius: 30px;
+    color: var(--primary-color);
+    border: 2px solid var(--secondary-color);
+    border-radius: 20px;
     padding: 10px 18px;
     font-size: 15px;
     font-weight: 700;
@@ -498,14 +505,14 @@ textarea {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    margin-top: 10px;
+    margin: 10px;
 }
 
 #saveMaterialBtn:hover{
-    background: #81926a;
+    background: var(--secondary-color);
     color: white;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,.15);
+    box-shadow: 0 4px 12px var(--shadow);
 }
 
 #saveMaterialBtn:active{
