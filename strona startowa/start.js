@@ -433,16 +433,33 @@ document.getElementById("menuBtn").addEventListener("click", (e) => {
 });
 
 document.addEventListener("click", (e) => {
+
+    // sidebar
     const sidebar = document.getElementById("sidebar");
+    const menuBtn = document.getElementById("menuBtn");
 
     if (
         sidebar.classList.contains("active") &&
-        !sidebar.contains(e.target)
+        !sidebar.contains(e.target) &&
+        !menuBtn.contains(e.target)
     ) {
         sidebar.classList.remove("active");
     }
-});
 
+
+    // filtry
+    const dropdown = document.getElementById("filtersDropdown");
+    const filtersBtn = document.getElementById("filtersBtn");
+
+    if (
+        dropdown.classList.contains("show") &&
+        !dropdown.contains(e.target) &&
+        !filtersBtn.contains(e.target)
+    ) {
+        dropdown.classList.remove("show");
+    }
+
+});
 document.addEventListener("click", () => {
 
     const menu = document.getElementById("userMenu");

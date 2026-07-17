@@ -75,3 +75,7 @@ async function sendReport(){
     .value = "";
 
 }
+
+function back() {
+    history.back();
+}
