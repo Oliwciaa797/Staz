@@ -518,3 +518,23 @@ textarea {
 #saveMaterialBtn:active{
     transform: scale(0.95);
 }
+
+#reportErrorBtn{
+    margin-top:12px;
+
+    background:#f7d6d6;
+    color:#a40000;
+
+    border:none;
+    border-radius:10px;
+
+    padding:10px 15px;
+
+    cursor:pointer;
+
+    font-weight:700;
+}
+
+#reportErrorBtn:hover{
+    background:#efc1c1;
+}
