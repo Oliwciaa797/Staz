@@ -6,14 +6,6 @@
     box-sizing:border-box;
 }
 
-body{
-    background:var(--background);
-    min-height:100vh;
-    background-image:url('../strona startowa/background.png');
-    background-repeat:no-repeat;
-    background-attachment:fixed;
-    background-size:cover;
-}
 header{
     background-color: var(--background);
     padding:20px 40px;

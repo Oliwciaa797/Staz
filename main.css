@@ -12,6 +12,17 @@
     --shadow : #23281a1b;
 }
 
+body{
+    background:var(--background);
+    min-height: 100vh;
+    overflow:auto; /* allow page scrolling when search mode is active */
+    position:relative;
+    background-image: url('background.svg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+}
+
 body, header, button{
     font-family: 'Baloo 2', sans-serif;
 }

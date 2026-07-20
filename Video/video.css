@@ -5,16 +5,6 @@
 	padding: 0;
 }
 
-body {
-	position: relative;
-	min-height: 100vh;
-	background: #f4f2ec;
-	background-image: url('background.png');
-	background-repeat: no-repeat;
-	background-size: cover;
-	background-attachment: fixed;
-}
-
 header {
 	position: sticky;
 	top: 0;

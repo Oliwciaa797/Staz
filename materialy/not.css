@@ -4,7 +4,6 @@
 
 body{
   margin:0;
-  background: var(--background);
   color: #000;
   font-family: 'Nunito Sans', sans-serif;
   min-height:100vh;

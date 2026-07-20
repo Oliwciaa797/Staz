@@ -3,7 +3,6 @@
 body{
 
     font-family:sans-serif;
-    background: var(--background);
 
     display:flex;
     justify-content:center;
