@@ -11,8 +11,6 @@ supabase.createClient(
 
 console.log("video.js loaded");
 
-const API_KEY = "AIzaSyCTX8K53tIFW1_vUY828xfjYkvuGygnX_w";
-
 /* ---------- Pomocnicze: bezpieczne wstawianie tekstu do HTML ---------- */
 function escapeHtml(str){
     const d = document.createElement('div');
@@ -47,6 +45,8 @@ if (videoId) {
 }
 
 async function generateNotes() {
+    console.log("generateNotes() called");
+
     const notes = document.getElementById("notesContent");
     notes.innerHTML = "Generowanie notatek...";
 
@@ -56,44 +56,32 @@ async function generateNotes() {
     }
 
     try {
-        const detailsResponse = await fetch(
-            `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${API_KEY}`
-        );
-        const detailsData = await detailsResponse.json();
 
-        if (!detailsResponse.ok || !detailsData.items || detailsData.items.length === 0) {
-            console.error(detailsData);
-            notes.innerHTML = "Nie można pobrać danych filmu z YouTube.";
-            return;
-        }
-
-        const snippet = detailsData.items[0].snippet || {};
-        const title = snippet.title || "";
-        const description = snippet.description || "";
-
-        const response = await fetch("http://localhost:5000/generate", {
+        const response = await fetch("http://127.0.0.1:5000/study", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                videoId,
-                title,
-                description
+                url: `https://www.youtube.com/watch?v=${videoId}`
             })
         });
 
+        console.log("Status:", response.status);
+
+        const data = await response.json();
+        console.log(data);
+
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({ error: "Błąd serwera" }));
-            notes.innerHTML = errorData.error || "Błąd serwera.";
+            notes.textContent = data.error || "Błąd serwera.";
             return;
         }
 
-        const data = await response.json();
-        notes.innerHTML = data.notes || "Brak notatek.";
+        notes.innerHTML = data.notes;
+
     } catch (error) {
         console.error(error);
-        notes.innerHTML = "Nie udało się wygenerować notatki.";
+        notes.textContent = "Nie udało się połączyć z backendem.";
     }
 }
 
