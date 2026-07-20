@@ -1,7 +1,7 @@
 from pathlib import Path
 import os
 import time
-
+import json
 from dotenv import load_dotenv
 from google import genai
 
@@ -58,3 +58,37 @@ Transkrypt:
             time.sleep(2)
 
     return f"<p>Błąd Gemini:<br>{last_error}</p>"
+
+def generate_quiz(transcript):
+
+    prompt = f"""
+Generate a quiz in JSON.
+
+Return ONLY valid JSON in this format:
+
+{{
+  "questions": [
+    {{
+      "question": "What is Python?",
+      "answers": [
+        "Programming language",
+        "Snake",
+        "Operating system",
+        "Browser"
+      ],
+      "correct": 0,
+      "explanation": "Python is a programming language."
+    }}
+  ]
+}}
+
+Transcript:
+{transcript}
+"""
+
+    response = client.models.generate_content(
+        model="gemini-flash-lite-latest",
+        contents=prompt,
+    )
+
+    return json.loads(response.text)

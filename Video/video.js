@@ -87,6 +87,81 @@ async function generateNotes() {
     }
 }
 
+let currentQuiz = [];
+
+async function generateQuiz() {
+
+    const response = await fetch("http://127.0.0.1:5000/quiz", {
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+            url:`https://www.youtube.com/watch?v=${videoId}`
+        })
+    });
+
+    const data = await response.json();
+
+    currentQuiz = data.quiz.questions;
+    console.log(Array.isArray(data.quiz.questions));
+    displayQuiz(currentQuiz);
+}
+function displayQuiz(quiz) {
+
+    const container = document.getElementById("quiz");
+
+    container.innerHTML = "";
+
+    quiz.forEach((q, index) => {
+
+        const div = document.createElement("div");
+
+        div.innerHTML = `
+            <h3>${index + 1}. ${q.question}</h3>
+
+            ${q.answers.map((a, i) => `
+                <label>
+                    <input
+                        type="radio"
+                        name="q${index}"
+                        value="${i}">
+                    ${a}
+                </label><br>
+            `).join("")}
+
+            <hr>
+        `;
+
+        container.appendChild(div);
+    });
+
+    // Add the submit button AFTER all questions
+    const button = document.createElement("button");
+    button.textContent = "Submit Quiz";
+    button.onclick = checkQuiz;
+
+    container.appendChild(button);
+}
+
+function checkQuiz() {
+
+    let score = 0;
+
+    currentQuiz.forEach((q, index) => {
+
+        const selected = document.querySelector(
+            `input[name="q${index}"]:checked`
+        );
+
+        if (selected && parseInt(selected.value) === q.correct) {
+            score++;
+        }
+    });
+
+    alert(`Your score: ${score}/${currentQuiz.length}`);
+}
+
 /* ---------- Przełączanie głównych zakładek (Notatki AI / Własne materiały / Quiz) ---------- */
 function showTab(tabId) {
 
@@ -152,24 +227,6 @@ async function setRating(stars) {
 
     });
 
-}
-
-async function loadVideoDescription() {
-    if (!videoId) return;
-
-    const response = await fetch("http://127.0.0.1:5000/youtube-info", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ video_id: videoId })
-    });
-
-    const data = await response.json();
-
-    document.getElementById("videoDescription").innerHTML = `
-        <h3>${escapeHtml(data.title)}</h3>
-        <p>${escapeHtml(data.description)}</p>
-        <small>Autor: ${escapeHtml(data.channel)}</small>
-    `;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
