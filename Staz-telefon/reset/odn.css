@@ -2,86 +2,65 @@
 
 * {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
 }
 
 body {
+    margin: 0;
+    padding: 0;
     min-height: 100vh;
     background-color: #faf3e6;
     display: flex;
-    justify-content: center;
     align-items: center;
-    padding: 16px;
+    justify-content: center;
 }
-
-/* Główny kontener */
 
 .login-container {
-    width: 100%;
-    max-width: 480px;
-
-    background: #fff;
-
-    border: 3px solid var(--primary-color);
-    border-radius: 24px;
-
-    padding: 24px;
+    position: relative;
+    width: 480px;
+    max-width: 90vw;
+    background-color: #ffffff;
+    border: 4px solid var(--primary-color);
+    border-radius: 28px;
+    padding: 40px 48px 48px 48px;
+    margin: 60px auto;
 }
-
-/* Strzałka */
 
 #arrow {
     cursor: pointer;
     width: 32px;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
 #arrow img {
     display: block;
-    width: 24px;
-    height: 24px;
 }
-
-/* Nagłówek */
 
 .login-container h1 {
-    margin-bottom: 16px;
-
-    font-size: 2rem;
-    line-height: 1.1;
-
-    color: var(--primary-color);
+    margin: 0 0 16px 0;
+    font-size: 40px;
     font-weight: 800;
+    color: var(--primary-color);
+    line-height: 1.1;
 }
 
-/* Opis */
-
 .login-container p {
-    margin-bottom: 24px;
-
-    color: #666;
+    margin: 0 0 28px 0;
     font-size: 14px;
+    color: #666;
     line-height: 1.5;
 }
 
-/* Inputy */
-
 .login-container input {
     width: 100%;
-
     border: none;
     border-bottom: 2px solid #1a1a1a;
-
     background: transparent;
-
-    padding: 12px 4px;
-
+    padding: 10px 2px;
     font-size: 16px;
-    font-family: inherit;
-
-    margin-bottom: 24px;
+    color: #1a1a1a;
+    margin-bottom: 28px;
     outline: none;
+    font-family: inherit;
 }
 
 .login-container input::placeholder {
@@ -92,33 +71,22 @@ body {
     border-bottom-color: var(--primary-color);
 }
 
-/* Przycisk */
-
 .login-btn {
     width: 100%;
-
     border: none;
-    border-radius: 20px;
-
-    background: var(--primary-color);
-    color: white;
-
-    padding: 16px;
-
+    border-radius: 30px;
+    background-color: var(--primary-color);
+    color: #fff;
     font-size: 16px;
     font-weight: 700;
-
+    padding: 15px 0;
     cursor: pointer;
-
-    transition: 0.2s;
+    font-family: inherit;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
 }
 
 .login-btn:hover:not(:disabled) {
-    background: var(--hover-dark);
-}
-
-.login-btn:active {
-    transform: scale(0.98);
+    background-color: var(--primary-color);
 }
 
 .login-btn:disabled {
@@ -126,77 +94,16 @@ body {
     cursor: not-allowed;
 }
 
-/* Komunikaty */
-
 #status {
-    margin-top: 16px;
-
-    min-height: 18px;
-
-    text-align: center;
-    font-size: 14px;
-
+    margin-top: 18px;
+    font-size: 13px;
     color: var(--secondary-color);
+    text-align: center;
+    min-height: 16px;
 }
 
 .error {
     color: var(--danger);
     font-size: 13px;
-    margin: -12px 0 16px;
-}
-
-/* Tablet */
-
-@media (max-width: 768px) {
-    .login-container {
-        padding: 20px;
-    }
-
-    .login-container h1 {
-        font-size: 1.8rem;
-    }
-}
-
-/* Telefony */
-
-@media (max-width: 480px) {
-    body {
-        padding: 12px;
-        align-items: center;
-    }
-
-    .login-container {
-        width: 100%;
-        padding: 18px;
-        border-radius: 18px;
-        border-width: 2px;
-    }
-
-    .login-container h1 {
-        font-size: 1.6rem;
-        margin-bottom: 12px;
-    }
-
-    .login-container p {
-        font-size: 13px;
-    }
-
-    .login-container input {
-        font-size: 16px; /* zapobiega zoomowi na iPhone */
-        margin-bottom: 20px;
-    }
-
-    .login-btn {
-        padding: 14px;
-        font-size: 15px;
-    }
-
-    #arrow {
-        margin-bottom: 16px;
-    }
-
-    #arrow img {
-        width: 22px;
-        height: 22px;
-    }
+    margin: -18px 0 18px 0;
 }

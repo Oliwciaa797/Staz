@@ -90,3 +90,61 @@ body {
   text-align: right;
   cursor: pointer;
 }
+
+/* ===========================
+   TELEFON
+=========================== */
+@media (max-width: 600px) {
+
+    body {
+        padding: 20px;
+        background-position: center;
+    }
+
+    .login-container {
+        width: 100%;
+        max-width: 380px;
+        height: auto;
+        min-height: 500px;
+        padding: 30px 25px;
+        border-width: 3px;
+        border-radius: 25px;
+    }
+
+    .login-container h1 {
+        font-size: 38px;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .login-container input[type="email"],
+    .login-container input[type="password"] {
+        font-size: 18px;
+        padding: 12px 5px;
+        margin-bottom: 25px;
+    }
+
+    .login-btn {
+        width: 100%;
+        padding: 14px;
+        font-size: 16px;
+        margin-top: 20px;
+    }
+
+    .register-btn {
+        width: 100%;
+        font-size: 13px;
+        padding: 15px 5px;
+        text-align: center;
+    }
+
+    #reset {
+        font-size: 14px;
+        margin-top: 10px;
+    }
+
+    #arrow img {
+        width: 18px;
+        height: 18px;
+    }
+}

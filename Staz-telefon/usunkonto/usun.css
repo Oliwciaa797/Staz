@@ -11,8 +11,7 @@ body {
     align-items: center;
     justify-content: center;
     background: var(--background);
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden;
     position: relative;
 }
 
@@ -141,43 +140,4 @@ button.danger:hover {
     font-size: 14px;
     color: var(--primary-color);
     min-height: 18px;
-}
-
-/* ============================================================
-   RESPONSYWNOŚĆ - MOBILE
-   ============================================================ */
-@media (max-width: 480px) {
-
-    body {
-        align-items: flex-start;
-    }
-
-    .profile-container {
-        padding: 12px;
-    }
-
-    .left-section {
-        padding: 28px 22px;
-        border-radius: 20px;
-        border-width: 3px;
-    }
-
-    h1 {
-        font-size: 24px;
-        margin-bottom: 20px;
-    }
-
-    .left-section p {
-        font-size: 13px;
-        margin-bottom: 22px;
-    }
-
-    .field {
-        margin-bottom: 20px;
-    }
-
-    button {
-        padding: 13px;
-        font-size: 14px;
-    }
 }

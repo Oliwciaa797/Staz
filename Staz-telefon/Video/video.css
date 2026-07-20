@@ -13,7 +13,6 @@ body {
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-attachment: fixed;
-	overflow-x: hidden;
 }
 
 header {
@@ -119,21 +118,14 @@ header {
 
 .video-top {
 	display: flex;
-	flex-wrap: wrap;
-	gap: 10px;
-}
 
-.video-container {
-	width: 100%;
-	max-width: 900px;
 }
 
 .sidepanel {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
-	width: 100%;
-	max-width: 1000px;
+	width: 1000px;
 	height: auto;
 	background-color: var(--background);
 	text-align: left;
@@ -174,9 +166,6 @@ header {
 }
 
 #youtubeVideo {
-	width: 100%;
-	aspect-ratio: 16 / 9;
-	height: auto;
 	border-radius: 10px;
 	box-shadow: 5px 5px 5px var(--shadow);
 }
@@ -232,7 +221,6 @@ header {
 .reviews-top {
 	display: flex;
 	flex-direction: row;
-	flex-wrap: wrap;
 	justify-content: space-between;
 	gap: 10px;
 }
@@ -305,8 +293,7 @@ header {
 }
 
 .review-text {
-	width: 100%;
-	max-width: 800px;
+	width: 800px;
 	color: #333;
 	line-height: 1.6;
 }
@@ -427,7 +414,6 @@ textarea {
 
 .sub-tabs {
 	display: flex;
-	flex-wrap: wrap;
 	gap: 10px;
 	margin-bottom: 18px;
 }
@@ -463,7 +449,6 @@ textarea {
 
 .quiz-card {
 	display: flex;
-	flex-wrap: wrap;
 	justify-content: space-between;
 	align-items: center;
 	gap: 14px;
@@ -611,7 +596,6 @@ textarea {
 
 .item-card .card-footer{
 	display: flex;
-	flex-wrap: wrap;
 	justify-content: space-between;
 	align-items: center;
 	margin-top: auto;
@@ -621,7 +605,6 @@ textarea {
 
 .card-actions{
 	display: flex;
-	flex-wrap: wrap;
 	gap: 10px;
 	margin-top: 8px;
 }
@@ -689,8 +672,7 @@ textarea {
 
 .note-form-card,
 .item-card{
-	width: 100%;
-	max-width: 800px;
+	width: 800px;
     overflow:hidden;
 }
 
@@ -739,75 +721,4 @@ textarea {
 	/* overflow-y: auto; */
 	padding: 10px;
 	margin: 10px;
-}
-
-/* ============================================================
-   RESPONSYWNOŚĆ - TABLET / MOBILE
-   ============================================================ */
-@media (max-width: 768px) {
-
-	header {
-		padding: 14px 16px;
-	}
-
-	.logo {
-		font-size: 1.4rem;
-	}
-
-	.video-top {
-		flex-direction: column;
-	}
-
-	.middle-section {
-		margin: 8px;
-		padding: 8px;
-	}
-
-	.buttons {
-		width: 100%;
-		margin: 8px 0;
-	}
-
-	.buttons button {
-		width: 50%;
-	}
-
-	.sidepanel {
-		width: 100%;
-	}
-
-	.sidepanelcontent {
-		width: 100%;
-	}
-
-	.reviews-top {
-		flex-direction: column;
-	}
-
-	.grade-summary {
-		width: 100%;
-	}
-
-	.grade-box {
-		width: 100%;
-	}
-
-	.card-grid {
-		grid-template-columns: 1fr;
-	}
-}
-
-@media (max-width: 480px) {
-
-	.logo {
-		display: none;
-	}
-
-	.user-info span {
-		display: none;
-	}
-
-	.buttons button {
-		font-size: 13px;
-	}
 }
