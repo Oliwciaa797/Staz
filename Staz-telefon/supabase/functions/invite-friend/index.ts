@@ -1,46 +1,55 @@
-// Follow this setup guide to integrate the Deno language server with your editor:
-// https://deno.land/manual/getting_started/setup_your_environment
-// This enables autocomplete, go to definition, etc.
+import { Resend } from "npm:resend";
 
-// Setup type definitions for built-in Supabase Runtime APIs
-import "@supabase/functions-js/edge-runtime.d.ts";
-import { withSupabase } from "@supabase/server";
+const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
-console.log("Hello from Functions!");
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response("ok", {
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+      },
+    });
+  }
 
-// This endpoint uses 'publishable' | 'secret' access, apiKey is required.
-// Use publishable for Client-facing, key-validated endpoints
-// Use secret for Server-to-server, internal calls
-export default {
-  fetch: withSupabase({ auth: ["publishable", "secret"] }, async (req, ctx) => {
-    // Called by another service with a secret key
-    // ctx.supabaseAdmin bypasses RLS — use for privileged operations
-    /*
-    if (ctx.authMode === "secret") {
-      const { user_id } = await req.json();
-      const { data } = await ctx.supabaseAdmin.auth.admin.getUserById(user_id);
+  try {
+    const { email, inviterEmail } = await req.json();
 
-      return Response.json({
-        email: data?.user?.email,
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return new Response(
+        JSON.stringify({ error: "Nieprawidłowy adres email" }),
+        { status: 400, headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" } }
+      );
+    }
+
+    const { data, error } = await resend.emails.send({
+      from: "Nazwa strony <onboarding@resend.dev>",
+      to: [email],
+      subject: "Zaproszenie do społeczności",
+      html: `
+        <p>Cześć,</p>
+        <p>${inviterEmail || "Ktoś"} zaprosił Cię do dołączenia do naszej społeczności!</p>
+        <p><a href="https://twojastrona.pl/rejestracja">Dołącz teraz</a></p>
+      `,
+    });
+
+    if (error) {
+      return new Response(JSON.stringify({ error }), {
+        status: 500,
+        headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" },
       });
     }
-    */
 
-    const { name } = await req.json();
-
-    return Response.json({
-      message: `Hello ${name}!`,
+    return new Response(JSON.stringify({ data }), {
+      status: 200,
+      headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" },
     });
-  }),
-};
 
-/* To invoke locally:
-
-  1. Run `supabase start` (see: https://supabase.com/docs/reference/cli/supabase-start)
-  2. Make an HTTP request:
-
-  curl -i --location --request POST 'http://127.0.0.1:54321/functions/v1/invite-friend' \
-    --header 'apiKey: sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH' \
-    --data '{"name":"Functions"}'
-
-*/
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return new Response(JSON.stringify({ error: message }), {
+      status: 500,
+      headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" },
+    });
+  }
+});
