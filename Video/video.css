@@ -693,6 +693,8 @@ textarea {
     min-height:100px;
     max-width:100%;
     overflow-wrap:anywhere;
+}
+
 .note-content-view{
 
     max-height: 0;
@@ -713,4 +715,10 @@ textarea {
 
     opacity: 1;
 
+}
+
+#notesContent {
+	/* overflow-y: auto; */
+	padding: 10px;
+	margin: 10px;
 }

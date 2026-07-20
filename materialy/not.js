@@ -707,5 +707,5 @@ function quiz(){
 }
 
 function back(){
-  window.location.href = "../strona startowa/start.html"
+  window.location.href = "../Profil/prof.html"
 }
