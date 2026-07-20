@@ -694,18 +694,15 @@ textarea {
     overflow:hidden;
 }
 
-
 .quill-container,
 .edit-quill{
     /* width:400px; */
     max-width:100%;
 }
 
-
 .ql-container{
     max-height:300px;
 }
-
 
 .ql-editor{
     min-height:100px;
@@ -714,23 +711,15 @@ textarea {
 }
 
 .note-content-view{
-
     max-height: 0;
-
     overflow: hidden;
-
     opacity: 0;
-
     transition: all 0.3s ease;
-
     margin-top: 10px;
-
 }
 
 .note-content-view.expanded{
-
     max-height: 1000px;
-
     opacity: 1;
 
 }
