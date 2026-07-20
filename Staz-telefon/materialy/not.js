@@ -594,23 +594,33 @@ async function loadPublicQuizy(){
 
     filtered.forEach(quiz => {
 
-        const count =
-        Array.isArray(quiz.questions)
-        ? quiz.questions.length
-        : 0;
+    const count =
+    Array.isArray(quiz.questions)
+    ? quiz.questions.length
+    : 0;
 
-        grid.innerHTML += `
-            <div class="item-card">
-                <span class="badge public">
-                    Publiczny
-                </span>
+    grid.innerHTML += `
+        <div class="item-card">
 
-                <h3>${quiz.title}</h3>
+            <span class="badge public">
+                Publiczny
+            </span>
 
-                <p>${count} pytań</p>
-            </div>
-        `;
-    });
+            <h3>${quiz.title}</h3>
+
+            <p>${count} pytań</p>
+
+            <button
+                class="go-btn big-btn"
+                onclick="openQuiz('${quiz.id}')">
+
+                Rozwiąż quiz
+
+            </button>
+
+        </div>
+    `;
+});
 }
 
 async function loadSavedMaterials(){
