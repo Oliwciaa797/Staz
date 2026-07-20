@@ -491,29 +491,78 @@ document.addEventListener("click", () => {
 /* ============================================================
    WŁASNE NOTATKI (3 listy: do tego filmu / pozostałe / publiczne)
    ============================================================ */
+let noteQuill = null;
 
 function createPersonalNote() {
 
     const container = document.getElementById("personalNotesContainer");
+
     const emptyText = container.querySelector("p");
-    if(emptyText){ emptyText.remove(); }
+    if(emptyText){
+        emptyText.remove();
+    }
 
     const div = document.createElement("div");
     div.className = "note-form-card";
 
     div.innerHTML = `
-        <input type="text" class="noteTitleInput" placeholder="Tytuł notatki">
-        <textarea placeholder="Napisz swoją notatkę..."></textarea>
+        <input 
+            type="text" 
+            class="noteTitleInput" 
+            placeholder="Tytuł notatki"
+        >
+
+        <div class="quill-container"></div>
+
         <div class="visibility-toggle">
-            <input type="checkbox" class="notePublicInput">
-            <label>Notatka publiczna (widoczna dla innych)</label>
+            <input 
+                type="checkbox" 
+                class="notePublicInput"
+            >
+
+            <label>
+                Notatka publiczna (widoczna dla innych)
+            </label>
         </div>
-        <button type="button" class="saveNoteBtn">Zapisz</button>
+
+        <button 
+            type="button" 
+            class="saveNoteBtn">
+            Zapisz
+        </button>
     `;
 
-    container.prepend(div);
-}
 
+    container.prepend(div);
+
+
+    const editor =
+    div.querySelector(".quill-container");
+
+
+    noteQuill = new Quill(editor,{
+
+        theme:"snow",
+
+        modules:{
+            toolbar:[
+                ["bold","italic","underline"],
+                [
+                    {
+                        list:"ordered"
+                    },
+                    {
+                        list:"bullet"
+                    }
+                ],
+                ["link"],
+                ["clean"]
+            ]
+        }
+
+    });
+
+}
 function timeAgo(date){
 
     const seconds = Math.floor((new Date() - new Date(date)) / 1000);
@@ -549,7 +598,9 @@ function renderNoteCard(note, { editable, showAuthor }){
     div.innerHTML = `
         ${badge}
         <h3 class="note-title-view">${escapeHtml(note.title || "Bez tytułu")}</h3>
-        <p class="note-content-view">${escapeHtml(note.content)}</p>
+        <div class="note-content-view">
+            ${note.content || ""}
+        </div>
         <button type="button" class="go-btn big-btn show-note-btn">Pokaż notatkę</button>
         <div class="card-footer">
             <span>${footerLeft}</span>
@@ -573,46 +624,114 @@ function enterNoteEditMode(card, note){
     card.innerHTML = `
         <div class="field">
             <label>Tytuł</label>
-            <input type="text" class="edit-title" value="${escapeAttr(note.title || "")}">
+            <input 
+                type="text" 
+                class="edit-title" 
+                value="${escapeAttr(note.title || "")}"
+            >
         </div>
+
         <div class="field">
             <label>Treść</label>
-            <textarea class="edit-content">${escapeHtml(note.content)}</textarea>
+            <div class="edit-quill"></div>
         </div>
+
         <div class="card-footer">
             <div class="card-actions">
-                <button type="button" class="save-edit" data-id="${note.id}">Zapisz zmiany</button>
-                <button type="button" class="cancel-edit">Anuluj</button>
+                <button type="button" class="save-edit">
+                    Zapisz zmiany
+                </button>
+
+                <button type="button" class="cancel-edit">
+                    Anuluj
+                </button>
             </div>
         </div>
     `;
 
-    card.querySelector('.cancel-edit').addEventListener('click', () => loadAllNoteLists());
 
-    card.querySelector('.save-edit').addEventListener('click', async () => {
+    const editQuill = new Quill(
+        card.querySelector(".edit-quill"),
+        {
+            theme:"snow",
+            modules:{
+                toolbar:[
+                    ["bold","italic","underline"],
+                    [
+                        {
+                            list:"ordered"
+                        },
+                        {
+                            list:"bullet"
+                        }
+                    ],
+                    ["link"],
+                    ["clean"]
+                ]
+            }
+        }
+    );
 
-        const newTitle = card.querySelector('.edit-title').value.trim();
-        const newContent = card.querySelector('.edit-content').value.trim();
 
-        if(!newContent){
+    // wczytanie starej treści
+    editQuill.root.innerHTML = note.content || "";
+
+
+    card.querySelector(".cancel-edit")
+    .addEventListener("click",()=>{
+        loadAllNoteLists();
+    });
+
+
+    card.querySelector(".save-edit")
+    .addEventListener("click",async()=>{
+
+
+        const newTitle =
+        card.querySelector(".edit-title")
+        .value.trim();
+
+
+        const newContent =
+        editQuill.root.innerHTML;
+
+
+        const plainText =
+        editQuill.getText().trim();
+
+
+
+        if(!plainText){
             alert("Treść notatki nie może być pusta.");
             return;
         }
 
-        const { error } = await supabaseClient
-            .from('notes')
-            .update({ title: newTitle || "Notatka do filmu", content: newContent })
-            .eq('id', note.id);
+
+
+        const {error}=await supabaseClient
+        .from("notes")
+        .update({
+            title:newTitle || "Notatka do filmu",
+            content:newContent
+        })
+        .eq("id",note.id);
+
+
 
         if(error){
-            alert("Nie udało się zapisać zmian: " + error.message);
+            alert(
+                "Nie udało się zapisać zmian: "
+                + error.message
+            );
             return;
         }
 
-        loadAllNoteLists();
-    });
-}
 
+        loadAllNoteLists();
+
+    });
+
+}
 /* ---------- Wczytywanie 3 list ---------- */
 async function loadPersonalNotes(){
 
@@ -760,13 +879,22 @@ document.addEventListener("click", async (e) => {
 
         const card = e.target.parentElement;
         const titleInput = card.querySelector(".noteTitleInput");
-        const textarea = card.querySelector("textarea");
-        const title = titleInput ? titleInput.value.trim() : "";
-        const content = textarea.value.trim();
+
+        const title = titleInput 
+            ? titleInput.value.trim() 
+            : "";
+
+
+        const content =
+        noteQuill.root.innerHTML;
+
+
+        const plainText =
+        noteQuill.getText().trim();
         const publicInput = card.querySelector(".notePublicInput");
         const isPublic = publicInput ? publicInput.checked : false;
 
-        if(!content){
+        if(!plainText){
             alert("Wpisz treść notatki");
             return;
         }
