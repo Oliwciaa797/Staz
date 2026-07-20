@@ -323,7 +323,6 @@ reviewCount > 0
         );
     }
 }
-
 function categoryDropdown() {
     const dropdown =
     document.getElementById("filtersDropdown");
