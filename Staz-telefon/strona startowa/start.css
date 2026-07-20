@@ -386,7 +386,6 @@ main.search-mode{
 
 
 .user-menu{
-
     position:absolute;
     right:0;
     top:calc(100% + 10px);
@@ -402,7 +401,6 @@ main.search-mode{
 }
 
 .user-menu.active{
-
     opacity:1;
     visibility:visible;
     transform:translateY(0);
@@ -414,7 +412,6 @@ main.search-mode{
 }
 
 .user-menu a{
-
     display:block;
     padding:14px;
     text-decoration:none;
