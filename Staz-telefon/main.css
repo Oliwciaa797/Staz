@@ -1,166 +1,100 @@
-@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap");
 
 :root {
-    --hover-white: #f3f3f3;
-    --background: #FFFAF2;
+    --hover-white : #f3f3f3;
+    --background : #FFFAF2;
     --primary-color: #33411C;
     --secondary-color: #6B7259;
     --hover-light: #CBD6AE;
     --hover-sidebar: #565b48;
     --hover-dark: #4b5e28;
     --danger: #B23B2E;
-    --shadow: #23281a1b;
+    --shadow : #23281a1b;
 }
 
-/* Reset */
-
-* {
-    box-sizing: border-box;
-}
-
-body,
-header,
-button {
+body, header, button{
     font-family: 'Baloo 2', sans-serif;
-    margin: 0;
-    padding: 0;
 }
 
-/* SIDEBAR */
 
 #sidebar {
     position: fixed;
     top: 0;
-    left: -100%;
-    width: 85%;
-    max-width: 320px;
+    left: -16.66vw;
+    width: 16.66vw;
     height: 100vh;
 
-    background: var(--secondary-color);
-
-    display: flex;
-    flex-direction: column;
-
-    padding-top: 70px;
+    background-color: var(--secondary-color);
 
     transition: left 0.3s ease;
+
     z-index: 1000;
 
-    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.15);
+    display:flex;
+    flex-direction:column;
+
+    padding-top:70px;
 }
 
 #sidebar.active {
-    left: 0;
+    left:0;
 }
 
 #sidebar a {
-    color: white;
-    text-decoration: none;
+    color:white;
+    text-decoration:none;
 
-    padding: 18px 24px;
+    padding:15px 20px;
 
-    font-size: 1.1rem;
-    font-weight: 600;
-
-    transition: background 0.2s ease;
+    font-size:18px;
+    
 }
+
 
 #sidebar a:hover {
-    background-color: var(--hover-sidebar);
+    background-color:var(--hover-sidebar);
 }
-
-/* TABLETY */
-
-@media (min-width: 768px) {
-    #sidebar {
-        width: 280px;
-        left: -280px;
-    }
-
-    #sidebar.active {
-        left: 0;
-    }
-}
-
-/* DESKTOP */
-
-@media (min-width: 1200px) {
-    #sidebar {
-        width: 320px;
-        left: -320px;
-    }
-}
-
-/* SCROLLBAR */
 
 * {
-    scrollbar-width: thin;
-    scrollbar-color: #81926a #f4f2ec;
+  scrollbar-width: 10px;
+  scrollbar-color: #81926a #f4f2ec;
 }
 
 *::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 *::-webkit-scrollbar-track {
-    background: #f4f2ec;
-    border-radius: 8px;
+  background-color: #f4f2ec;
+  border-radius: 7px;
+}
+
+*::-webkit-scrollbar-track:hover {
+  background-color: #e2e5d7;
+}
+
+*::-webkit-scrollbar-track:active {
+  background-color: #c8cbbe;
 }
 
 *::-webkit-scrollbar-thumb {
-    background: #81926a;
-    border-radius: 8px;
+  background-color: #81926a;
+  border-radius: 3px;
+  min-height: 26px;
+  box-shadow: 0 0 4px rgba(97,101,83, 0.23);
 }
 
 *::-webkit-scrollbar-thumb:hover {
-    background: #787f5c;
+  background-color: #787f5c;
 }
 
 *::-webkit-scrollbar-thumb:active {
-    background: #676d4f;
+  background-color: #676d4f;
 }
 
 *::-webkit-scrollbar-button {
-    display: none;
-}
-
-.menu-btn {
-    position: fixed;
-    top: 15px;
-    left: 15px;
-
-    width: 48px;
-    height: 48px;
-
-    border-radius: 12px;
-    border: none;
-
-    background: white;
-    color: var(--primary-color);
-
-    font-size: 24px;
-
-    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-
-    z-index: 1100;
-}
-
-.sidebar-overlay {
-    position: fixed;
-    inset: 0;
-
-    background: rgba(0,0,0,0.4);
-
-    opacity: 0;
-    visibility: hidden;
-
-    transition: 0.3s;
-
-    z-index: 999;
-}
-
-.sidebar-overlay.active {
-    opacity: 1;
-    visibility: visible;
+  display: none;
+  width: 0;
+  height: 0;
 }

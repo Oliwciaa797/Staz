@@ -484,3 +484,189 @@ header {
 .save-edit {
   z-index: 1001;
 }
+
+/* ==========================
+   WERSJA MOBILNA
+========================== */
+
+@media (max-width: 768px){
+
+    body{
+        overflow-x:hidden;
+    }
+    header{
+        padding:15px 18px;
+        flex-wrap:wrap;
+    }
+
+    .site-title{
+        font-size:22px;
+    }
+
+    .profile-chip{
+        padding:8px 14px;
+        font-size:13px;
+    }
+
+    .profile-chip img{
+        width:22px;
+        height:22px;
+    }
+
+    #menuBtn{
+        font-size:28px;
+    }
+
+    main{
+        width:100%;
+        margin:0 auto 40px;
+        padding:0 12px;
+    }
+
+    .panel{
+        width:100%;
+        padding:25px 16px 30px;
+        border-width:3px;
+        border-radius:18px;
+    }
+
+    .panel-top{
+        gap:10px;
+        margin-bottom:15px;
+    }
+
+    .panel h1{
+        font-size:30px;
+    }
+
+    .back-btn img{
+        width:22px;
+        height:22px;
+    }
+
+    /* ===== TABY ===== */
+
+    .tabs{
+        display:grid;
+        grid-template-columns:1fr;
+        gap:10px;
+        margin-bottom:25px;
+    }
+
+    .tab-btn{
+        width:100%;
+        padding:10px;
+        font-size:15px;
+    }
+
+    /* ===== FORMULARZE ===== */
+
+    .note-form{
+        padding:18px 14px;
+    }
+
+    .note-form h2{
+        font-size:19px;
+    }
+
+    .field input[type="text"]{
+        font-size:16px;
+    }
+
+    #editor{
+        height:180px;
+    }
+
+    .visibility-toggle{
+        align-items:flex-start;
+        font-size:13px;
+    }
+
+    .btn-primary{
+        width:100%;
+        padding:12px;
+    }
+
+    /* ===== KARTY ===== */
+    .card-grid{
+        grid-template-columns:1fr;
+        gap:14px;
+    }
+
+    .item-card{
+        padding:16px;
+        min-height:auto;
+    }
+
+    .item-card h3{
+        font-size:18px;
+    }
+
+    .note-content-view{
+        font-size:14px;
+    }
+
+    .card-footer{
+        flex-direction:column;
+        align-items:flex-start !important;
+        gap:10px;
+    }
+
+    .card-actions{
+        width:100%;
+    }
+
+    .card-actions button{
+        flex:1;
+        padding:8px;
+    }
+
+    /* ===== QUIZY ===== */
+
+    .go-btn{
+        width:100%;
+        padding:12px;
+    }
+
+    .mini-btn{
+        padding:10px;
+    }
+
+    .item-card .edit-title{
+        font-size:16px;
+    }
+
+    .item-card .edit-content{
+        min-height:150px;
+    }
+
+}
+
+/* bardzo małe telefony */
+@media(max-width:420px){
+
+    .panel{
+        padding:20px 12px;
+    }
+
+    .panel h1{
+        font-size:26px;
+    }
+
+    .profile-chip{
+        padding:7px 10px;
+    }
+
+    .profile-chip span{
+        display:none;
+    }
+
+    .tabs{
+        gap:8px;
+    }
+
+    .section-label{
+        font-size:16px;
+    }
+
+}
