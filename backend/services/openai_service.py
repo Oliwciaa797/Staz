@@ -9,6 +9,10 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
+key = os.getenv("GEMINI_API_KEY")
+
+print(key is not None)
+print(key[:10] if key else "BRAK")
 
 def generate_notes(transcript):
     prompt = f"""
