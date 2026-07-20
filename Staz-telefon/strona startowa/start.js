@@ -385,8 +385,6 @@ async function showUser() {
 
         <img src="${avatarUrl}" class="avatar">
 
-        <span>Witaj, ${profile.profiles}</span>
-
     </div>
 
     <div class="user-menu" id="userMenu">
