@@ -18,3 +18,23 @@ def study():
     return jsonify({
         "notes": notes
     })
+
+@youtube.route("/youtube-info", methods=["POST"])
+def youtube_info():
+    import requests
+    data = request.json
+    video_id = data.get("video_id")
+
+    API_KEY = "AIzaSyCTX8K53tIFW1_vUY828xfjYkvuGygnX_w"
+    url = f"https://www.googleapis.com/youtube/v3/videos?part=snippet&id={video_id}&key={API_KEY}"
+
+    r = requests.get(url)
+    info = r.json()
+
+    snippet = info["items"][0]["snippet"]
+
+    return {
+        "title": snippet["title"],
+        "description": snippet["description"],
+        "channel": snippet["channelTitle"]
+    }

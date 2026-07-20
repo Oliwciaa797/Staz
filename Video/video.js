@@ -11,6 +11,8 @@ supabase.createClient(
 
 console.log("video.js loaded");
 
+
+
 /* ---------- Pomocnicze: bezpieczne wstawianie tekstu do HTML ---------- */
 function escapeHtml(str){
     const d = document.createElement('div');
@@ -152,7 +154,27 @@ async function setRating(stars) {
 
 }
 
+async function loadVideoDescription() {
+    if (!videoId) return;
 
+    const response = await fetch("http://127.0.0.1:5000/youtube-info", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ video_id: videoId })
+    });
+
+    const data = await response.json();
+
+    document.getElementById("videoDescription").innerHTML = `
+        <h3>${escapeHtml(data.title)}</h3>
+        <p>${escapeHtml(data.description)}</p>
+        <small>Autor: ${escapeHtml(data.channel)}</small>
+    `;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    loadVideoDescription();
+});
 /* ---------- Wczytanie i wyświetlenie recenzji ---------- */
 async function loadReviews() {
 
