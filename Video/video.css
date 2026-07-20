@@ -408,8 +408,8 @@ textarea {
 .note-card textarea {
 	width: 100%;
 	min-height: 120px;
-	padding: 10px;
-	resize: vertical;
+	/* padding: 10px;
+	resize: vertical; */
 }
 
 .sub-tabs {
@@ -666,6 +666,51 @@ textarea {
 .section-label{
 	margin: 24px 0 10px;
 	font-weight: 700;
-	color: #264500;
+	color: var(--primary-color);
 	font-size: 15px;
+}
+
+.note-form-card,
+.item-card{
+	width: 800px;
+    overflow:hidden;
+}
+
+
+.quill-container,
+.edit-quill{
+    /* width:400px; */
+    max-width:100%;
+}
+
+
+.ql-container{
+    max-height:300px;
+}
+
+
+.ql-editor{
+    min-height:100px;
+    max-width:100%;
+    overflow-wrap:anywhere;
+.note-content-view{
+
+    max-height: 0;
+
+    overflow: hidden;
+
+    opacity: 0;
+
+    transition: all 0.3s ease;
+
+    margin-top: 10px;
+
+}
+
+.note-content-view.expanded{
+
+    max-height: 1000px;
+
+    opacity: 1;
+
 }
