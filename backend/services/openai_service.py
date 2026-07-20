@@ -1,78 +1,56 @@
 from pathlib import Path
 import os
+import time
 
 from dotenv import load_dotenv
 from google import genai
 
-# Load .env
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
-api_key = os.getenv("GEMINI_API_KEY")
-
-if not api_key:
-    raise RuntimeError("GEMINI_API_KEY not found in backend/.env")
-
-client = genai.Client(api_key=api_key)
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 
 def generate_notes(transcript):
-
     prompt = f"""
-You are an expert university professor.
+Jesteś ekspertem tworzącym materiały do nauki.
 
-Analyze this YouTube transcript.
+Na podstawie poniższego transkryptu przygotuj odpowiedź w języku polskim.
 
-Return your response in Markdown.
+Zwróć WYŁĄCZNIE poprawny HTML.
 
-Create these sections:
+Używaj tylko tych tagów:
+<h2>, <h3>, <p>, <ul>, <li>, <strong>
 
-# Summary
+Struktura:
 
-# Detailed Notes
+<h2>Krótka notatka</h2>
 
-# Key Concepts
+<h2>Najważniejsze definicje</h2>
 
-# Important Definitions
+<h2>Podsumowanie</h2>
 
-# Important Facts
+Transkrypt:
 
-# Study Tips
-
-# Flashcards
-
-Create 10 flashcards.
-
-Format:
-
-Q:
-A:
-
-# Quiz
-
-Create 10 multiple choice questions.
-
-Each question should have:
-
-Question
-
-A)
-
-B)
-
-C)
-
-D)
-
-Correct Answer
-
-Transcript:
-
-{transcript}
+{transcript[:25000]}
 """
 
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=prompt,
-    )
+    last_error = None
 
-    return response.text
+    for attempt in range(3):
+        try:
+            response = client.models.generate_content(
+                model="gemini-flash-lite-latest",
+                contents=prompt,
+            )
+
+            if response.text:
+                return response.text
+
+            return "<p>Model nie zwrócił odpowiedzi.</p>"
+
+        except Exception as e:
+            last_error = e
+            print(f"Attempt {attempt + 1} failed: {e}")
+            time.sleep(2)
+
+    return f"<p>Błąd Gemini:<br>{last_error}</p>"
