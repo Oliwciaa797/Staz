@@ -303,3 +303,31 @@ header{
   50%   {transform:scaleY(-1) rotate(0deg)}
   100%  {transform:scaleY(-1) rotate(-135deg)}
 }
+
+.invite-friend-box {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 16px;
+}
+
+.invite-friend-box input {
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.invite-friend-box button {
+    padding: 8px;
+    border: none;
+    border-radius: 6px;
+    background: var(--primary-color);
+    color: #fff;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.invite-friend-box button:hover {
+    opacity: 0.85;
+}
