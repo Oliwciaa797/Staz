@@ -424,7 +424,7 @@ async function deleteNote(id){
 
 /* ---------- Zmiana widoczności notatki ---------- */
 async function toggleVisibility(id, currentlyPublic){
-  const { error } = await supabase
+  const { error } = await supabaseC
     .from('notes')
     .update({ is_public: !currentlyPublic })
     .eq('id', id);
@@ -719,3 +719,19 @@ function quiz(){
 function back(){
   window.location.href = "../Profil/prof.html"
 }
+
+showBtn.addEventListener("click", () => {
+
+    console.log("klik działa");
+
+    const content =
+    div.querySelector(".note-content-view");
+
+    content.classList.toggle("expanded");
+
+    showBtn.textContent =
+    content.classList.contains("expanded")
+    ? "Ukryj notatkę"
+    : "Pokaż notatkę";
+
+});

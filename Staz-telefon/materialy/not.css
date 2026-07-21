@@ -594,3 +594,12 @@ main{
     max-width: 260px;
   }
 }
+
+.note-content-view{
+    display: none;
+    margin-top: 6px;
+}
+
+.note-content-view.expanded{
+    display: block;
+}
