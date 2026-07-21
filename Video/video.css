@@ -183,13 +183,13 @@ header {
 	flex-direction: column;
 }
 
-#generated {
+#generated, #quiz {
 	flex-direction: column;
 	justify-content: flex-start;
 	align-items: center;
 }
 
-#gennotes {
+#gennotes, #genQuizBtn, .user-review button {
 	width: auto;
 	height: 50px;
 	margin: 10px;
@@ -482,7 +482,7 @@ textarea {
 }
 
 #saveMaterialBtn{
-	align-self: center;
+	align-self: flex-start;
     background: white;
     color: var(--primary-color);
     border: 2px solid var(--secondary-color);
@@ -712,3 +712,15 @@ textarea {
 	padding: 10px;
 	margin: 10px;
 }
+
+.review-item {
+	background-color: #fff;
+	border-radius: 10px;
+	margin: 10px 0;
+	padding: 10px 15px;
+	box-shadow: 5px 5px 5px var(--shadow);
+}
+
+/* .review-item div {
+	margin-left: 10px;
+} */

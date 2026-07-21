@@ -55,16 +55,14 @@ async function init(){
       document.getElementById('quizBuilder').style.display = 'none';
       document.getElementById('profileName').textContent = 'Zaloguj się';
       return;
-    }
-    currentUser = user;
-    const displayName = user.user_metadata?.username || user.email;
-    const profileName = document.getElementById('profileName');
+    }currentUser = user;
 
-    if(profileName){
-      profileName.textContent = displayName;
-    }if(editQuizId){
-    await loadQuizToEdit();
-}
+    await showUser();
+
+    if(editQuizId){
+        await loadQuizToEdit();
+    }
+
     document.getElementById('authNotice').style.display = 'none';
     document.getElementById('quizBuilder').style.display = 'block';
     renderQuestionsList();
@@ -358,92 +356,48 @@ document.getElementById('saveQuizBtn').addEventListener('click', async () => {
 
 });
 /* ----------profilowe i nazwa uzytkownika----------*/
-
-async function showUser(){
-
-    const userArea =
-    document.getElementById("userArea");
-
+async function showUser() {
 
     const {
-        data:{user}
+        data: { user }
     } = await supabaseClient.auth.getUser();
 
+    const profileName = document.getElementById("profileName");
+    const profileAvatar = document.getElementById("profileAvatar");
+    const userMenu = document.querySelector(".user-menu");
 
-    if(!user){
-
-        userArea.innerHTML = `
-            <button onclick="window.location.href='../logowanie/log.html'">
-                Zaloguj
-            </button>
-        `;
-
+    if (!user) {
+        profileName.textContent = "Zaloguj";
+        profileAvatar.src = "../Profil/avatar.png";
         return;
     }
 
+    const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("profiles, avatar_url")
+        .eq("id", user.id)
+        .single();
 
-    const {data: profile, error} =
-    await supabaseClient
-    .from("profiles")
-    .select("profiles, avatar_url")
-    .eq("id", user.id)
-    .single();
-
-
-    if(error){
+    if (error) {
         console.log(error);
         return;
     }
 
+    profileName.textContent = profile.profiles;
+    profileAvatar.src = profile.avatar_url || "../Profil/avatar.png";
 
-    const avatar =
-    profile.avatar_url ||
-    "../Profil/avatar.png";
+    document.querySelector(".profile-chip").onclick = (e) => {
+        e.stopPropagation();
+        userMenu.classList.toggle("active");
+    };
 
-
-    userArea.innerHTML = `
-
-        <div class="user-info" id="userInfo">
-
-            <img 
-            src="${avatar}" 
-            class="avatar">
-
-            <span>
-                ${profile.profiles}
-            </span>
-
-        </div>
-
-
-        <div class="user-menu" id="userMenu">
-
-            <a href="../Profil/prof.html">
-                Profil
-            </a>
-
-
-            <a href="../wylogowywanie/logout.html">
-                Wyloguj się
-            </a>
-
-        </div>
-
-    `;
-
-    const info = document.getElementById("userInfo");
-const menu = document.getElementById("userMenu");
-
-
-info.addEventListener("click",(e)=>{
-
-    e.stopPropagation();
-
-    menu.classList.toggle("active");
-
-});
-
+    document.addEventListener("click", (e) => {
+        if (!document.getElementById("userArea").contains(e.target)) {
+            userMenu.classList.remove("active");
+        }
+    });
 }
+
 
 function toProfile(){
     window.location.href = "../Profil/prof.html";
@@ -495,12 +449,12 @@ document.addEventListener("click", (e) => {
     }
 });
 
-document.addEventListener("click", (e)=>{
+document.addEventListener("click", (e) => {
 
-    const menu = document.getElementById("userMenu");
-    const info = document.getElementById("userInfo");
+    const menu = document.querySelector(".user-menu");
+    const area = document.getElementById("userArea");
 
-    if(menu && info && !menu.contains(e.target) && !info.contains(e.target)){
+    if (menu && area && !area.contains(e.target)) {
         menu.classList.remove("active");
     }
 
@@ -513,10 +467,6 @@ function toggleMenu() {
     }
 }
 
-document.addEventListener(
-"DOMContentLoaded",
-showUser
-);
 
 async function loadQuizToEdit(){
 
