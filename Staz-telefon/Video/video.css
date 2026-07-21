@@ -800,3 +800,13 @@ textarea {
 		font-size: 13px;
 	}
 }
+
+.note-content-view{
+    max-height: 80px;
+    overflow: hidden;
+    transition: .3s;
+}
+
+.note-content-view.expanded{
+    max-height: 1000px;
+}

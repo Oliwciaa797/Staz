@@ -3,6 +3,9 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// nazwa Twojego bucketu ze zdjęciami — popraw jeśli inna
+const AVATAR_BUCKET = 'avatars';
+
 document.addEventListener('DOMContentLoaded', async function () {
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (!session) {
@@ -14,8 +17,37 @@ document.addEventListener('DOMContentLoaded', async function () {
         const statusEl = document.getElementById('status');
         statusEl.textContent = 'Usuwanie konta...';
 
-        // Wywołuje funkcję SQL "delete_user" (security definer) utworzoną w Supabase,
-        // która usuwa konto TYLKO osoby aktualnie zalogowanej.
+        const { data: { user } } = await supabaseClient.auth.getUser();
+
+        // 1. Pobierz avatar_url z profilu, żeby wiedzieć co usunąć z bucketu
+        const { data: profile, error: profileError } = await supabaseClient
+            .from('profiles')
+            .select('avatar_url')
+            .eq('id', user.id)
+            .single();
+
+        if (profileError) {
+            statusEl.textContent = 'Błąd: ' + profileError.message;
+            return;
+        }
+
+        // 2. Usuń zdjęcie z bucketu (jeśli istnieje)
+        if (profile?.avatar_url) {
+            const filePath = extractPathFromUrl(profile.avatar_url);
+
+            const { error: storageError } = await supabaseClient
+                .storage
+                .from(AVATAR_BUCKET)
+                .remove([filePath]);
+
+            if (storageError) {
+                console.error(storageError);
+                // nie przerywamy — brak pliku nie powinien blokować usunięcia konta
+            }
+        }
+
+        // 3. Wywołuje funkcję SQL "delete_user" (security definer) w Supabase,
+        // która usuwa profil i konto TYLKO osoby aktualnie zalogowanej.
         const { error } = await supabaseClient.rpc('delete_user');
 
         if (error) {
@@ -27,6 +59,12 @@ document.addEventListener('DOMContentLoaded', async function () {
         window.location.href = '../logowanie/log.html';
     });
 });
+
+function extractPathFromUrl(url) {
+    // przykład: https://xxx.supabase.co/storage/v1/object/public/avatars/user-id/avatar.png
+    const parts = url.split(`/storage/v1/object/public/${AVATAR_BUCKET}/`);
+    return parts[1] || url; // jeśli avatar_url to już sama ścieżka, zwróć bez zmian
+}
 
 function back(){
     window.location.href='../Profil/prof.html'
