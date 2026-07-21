@@ -25,3 +25,4 @@ def get_transcript(url):
     data = transcript.fetch()
 
     return " ".join(item.text for item in data)
+

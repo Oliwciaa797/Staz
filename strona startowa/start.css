@@ -6,17 +6,6 @@
     box-sizing: border-box;
 }
 
-body{
-    background:var(--background);
-    min-height: 100vh;
-    overflow:auto; /* allow page scrolling when search mode is active */
-    position:relative;
-    background-image: url('background.png');
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: cover;
-}
-
 /* Header */
 
 header {
