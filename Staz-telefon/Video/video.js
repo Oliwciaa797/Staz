@@ -502,22 +502,6 @@ function createPersonalNote() {
 
         <div class="quill-container"></div>
 
-        <div class="visibility-toggle">
-            <input 
-                type="checkbox" 
-                class="notePublicInput"
-            >
-
-            <label>
-                Notatka publiczna (widoczna dla innych)
-            </label>
-        </div>
-
-        <button 
-            type="button" 
-            class="saveNoteBtn">
-            Zapisz
-        </button>
     `;
 
 
@@ -551,6 +535,32 @@ function createPersonalNote() {
     });
 
 }
+function createPersonalNote() {
+
+    const container = document.getElementById("personalNotesContainer");
+
+    const emptyText = container.querySelector("p");
+    if(emptyText){
+        emptyText.remove();
+    }
+    div.innerHTML = `
+<div class="visibility-toggle">
+            <input 
+                type="checkbox" 
+                class="notePublicInput"
+            >
+
+            <label>
+                Notatka publiczna (widoczna dla innych)
+            </label>
+        </div>
+
+        <button 
+            type="button" 
+            class="saveNoteBtn">
+            Zapisz
+        </button>
+         `;}
 function timeAgo(date){
 
     const seconds = Math.floor((new Date() - new Date(date)) / 1000);
@@ -603,7 +613,65 @@ function renderNoteCard(note, { editable, showAuthor }){
         </div>
     `;
 
-    return div;
+    div.innerHTML = `
+    ${badge}
+    <h3 class="note-title-view">${escapeHtml(note.title || "Bez tytułu")}</h3>
+
+    <div class="note-content-view">
+        ${note.content || ""}
+    </div>
+
+    <button
+        type="button"
+        class="go-btn big-btn show-note-btn">
+        Pokaż notatkę
+    </button>
+
+    <div class="card-footer">
+        <span>${footerLeft}</span>
+
+        ${editable ? `
+        <div class="card-actions">
+            <button type="button" class="edit" data-id="${note.id}">
+                Edytuj
+            </button>
+
+            <button
+                type="button"
+                class="toggle-vis"
+                data-id="${note.id}"
+                data-public="${note.is_public}">
+                ${note.is_public ? "Ukryj" : "Upublicznij"}
+            </button>
+
+            <button
+                type="button"
+                class="delete"
+                data-id="${note.id}">
+                Usuń
+            </button>
+        </div>
+        ` : ""}
+    </div>
+`;
+
+const showBtn =
+div.querySelector(".show-note-btn");
+
+showBtn.addEventListener("click", () => {
+
+    const content =
+    div.querySelector(".note-content-view");
+
+    content.classList.toggle("expanded");
+
+    showBtn.textContent =
+    content.classList.contains("expanded")
+        ? "Ukryj notatkę"
+        : "Pokaż notatkę";
+});
+
+return div;
 }
 
 /* ---------- Tryb edycji karty ---------- */
@@ -927,7 +995,6 @@ document.addEventListener("click", async (e) => {
         }
         return;
     }
-
     if(e.target.classList.contains("delete")){
         deletePersonalNote(e.target.dataset.id);
         return;
