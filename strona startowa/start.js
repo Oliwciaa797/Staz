@@ -496,3 +496,47 @@ document.addEventListener("click", () => {
     }
 
 });
+
+// Mobile version popup
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    console.log("Popup script started");
+
+    const popup = document.getElementById("mobilePopup");
+    const closeBtn = document.getElementById("closeMobilePopup");
+
+    console.log("Popup:", popup);
+
+    if (!popup) return;
+
+    // TEST
+    popup.classList.add("show");
+
+    const dismissed = localStorage.getItem("mobilePopupDismissed");
+
+    if (window.innerWidth <= 768 && dismissed !== "true") {
+        setTimeout(() => {
+            popup.classList.add("show");
+        }, 500);
+    }
+
+    popup.addEventListener("click", () => {
+        window.location.href =
+            "../Staz-telefon/strona%20startowa/start.html";
+    });
+
+    if (closeBtn) {
+        closeBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+
+            popup.classList.remove("show");
+            popup.classList.add("hide");
+
+            localStorage.setItem(
+                "mobilePopupDismissed",
+                "true"
+            );
+        });
+    }
+});

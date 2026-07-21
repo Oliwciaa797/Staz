@@ -424,7 +424,7 @@ async function deleteNote(id){
 
 /* ---------- Zmiana widoczności notatki ---------- */
 async function toggleVisibility(id, currentlyPublic){
-  const { error } = await supabase
+  const { error } = await supabaseC
     .from('notes')
     .update({ is_public: !currentlyPublic })
     .eq('id', id);
@@ -594,23 +594,33 @@ async function loadPublicQuizy(){
 
     filtered.forEach(quiz => {
 
-        const count =
-        Array.isArray(quiz.questions)
-        ? quiz.questions.length
-        : 0;
+    const count =
+    Array.isArray(quiz.questions)
+    ? quiz.questions.length
+    : 0;
 
-        grid.innerHTML += `
-            <div class="item-card">
-                <span class="badge public">
-                    Publiczny
-                </span>
+    grid.innerHTML += `
+        <div class="item-card">
 
-                <h3>${quiz.title}</h3>
+            <span class="badge public">
+                Publiczny
+            </span>
 
-                <p>${count} pytań</p>
-            </div>
-        `;
-    });
+            <h3>${quiz.title}</h3>
+
+            <p>${count} pytań</p>
+
+            <button
+                class="go-btn big-btn"
+                onclick="openQuiz('${quiz.id}')">
+
+                Rozwiąż quiz
+
+            </button>
+
+        </div>
+    `;
+});
 }
 
 async function loadSavedMaterials(){
@@ -709,3 +719,19 @@ function quiz(){
 function back(){
   window.location.href = "../Profil/prof.html"
 }
+
+showBtn.addEventListener("click", () => {
+
+    console.log("klik działa");
+
+    const content =
+    div.querySelector(".note-content-view");
+
+    content.classList.toggle("expanded");
+
+    showBtn.textContent =
+    content.classList.contains("expanded")
+    ? "Ukryj notatkę"
+    : "Pokaż notatkę";
+
+});

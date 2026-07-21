@@ -65,7 +65,7 @@ async function checkPasswords() {
     // zapis do tabeli profiles
     const { error: profileError } = await supabaseClient
         .from("profiles")
-        .insert([
+        .upsert([
             {
                 id: data.user.id,
                 

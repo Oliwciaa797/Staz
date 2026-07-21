@@ -441,4 +441,74 @@ main.search-mode{
 .review-count {
 	color: #666;
 	font-size: 10px;
-} */
+}
+/* Mobile version popup */
+
+.mobile-popup{
+    position: fixed;
+    top: 90px; /* pod headerem */
+    left: 15px;
+    z-index: 1500;
+    cursor: pointer;
+    background: white;
+    color: var(--primary-color);
+    padding: 12px 35px 12px 15px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px var(--shadow);
+    font-weight: 600;
+    font-size: 0.9rem;
+
+    display: flex;
+    align-items: center;
+
+    opacity: 0;
+    transform: translateX(-120%);
+    transition: transform .5s ease, opacity .5s ease;
+    pointer-events: none;
+}
+
+.mobile-popup.show{
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+.mobile-popup.hide{
+    opacity: 0;
+    transform: translateX(-120%);
+}
+
+.mobile-popup p{
+    margin: 0;
+}
+
+.mobile-popup-close{
+    position: absolute;
+    top: 4px;
+    right: 10px;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    color: #999;
+    font-weight: 700;
+}
+
+.mobile-popup-close:hover{
+    color: var(--primary-color);
+}
+
+.mobile-popup {
+    display: flex;
+}
+
+.mobile-popup.show {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+.mobile-popup.hide {
+    opacity: 0;
+    transform: translateX(-120%);
+    pointer-events: none;
+}
