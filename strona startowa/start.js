@@ -291,18 +291,19 @@ reviewCount > 0
                     ${Math.round(minutes)} min
                     </p>
                         <div class="grade-box">
-                        <p class="grade-avg">Średnia ocena:${averageRating}/5 ⭐</p>
-                        <p class="review-count">${reviewCount} opinii</p>
-                        </div><br>
-                    <a target="_blank"
+                        <p class="grade-avg">${averageRating}/5 ⭐</p>
+                        
+                        <a target="_blank"
                         href="../Video/video.html?video=${id}">
                         Otwórz film
-                    </a>
+                        </a>
+                        </div><br>
+                    
                 </div>
             </div>
             `;
         });
-
+// <p class="review-count">${reviewCount} opinii</p>
         if (html === "") {
             document.querySelector(".searchAlert").textContent =
             "Brak filmów spełniających filtry.";
