@@ -323,50 +323,6 @@ reviewCount > 0
         );
     }
 }
-// const averageRating = (
-//         reviews.reduce((sum, r) => sum + r.rating, 0) /
-//         reviews.length
-//     ).toFixed(1);
-
-//     document.querySelector(".grade-avg").textContent =
-//         `Średnia ocena: ${averageRating}/5 ⭐`;
-
-//     document.querySelector(".review-count").textContent =
-//         `${reviews.length} opinii`;
-
-//     container.innerHTML =
-//     reviews.map(review => {
-
-//         const date =
-//         new Date(review.created_at)
-//         .toLocaleString("pl-PL");
-
-//         return `
-//             <div class="review-item">
-
-//                 <div class="review-header">
-
-//                     <div class="review-user">
-//                         ${escapeHtml(review.profiles?.profiles || "Użytkownik")}
-//                     </div>
-
-//                     <div class="review-date">
-//                         ${date}
-//                     </div>
-//                 </div>
-
-//                 <div class="review-rating">
-//                     ${"⭐".repeat(review.rating)}
-//                 </div>
-
-//                 <div class="review-text">
-//                     ${escapeHtml(review.comment || "")}
-//                 </div>
-
-//             </div>
-//         `;
-//     }).join("");
-
 function categoryDropdown() {
     const dropdown =
     document.getElementById("filtersDropdown");
