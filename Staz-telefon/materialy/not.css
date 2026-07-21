@@ -601,5 +601,21 @@ main{
 }
 
 .note-content-view.expanded{
-    display: block;
+    max-height:1000px;
+}
+
+#editor {
+  height: 250px;
+}
+
+.edit-content {
+  border: none;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    height: 200px;
+  }
+
+.save-edit {
+  z-index: 1001;
 }

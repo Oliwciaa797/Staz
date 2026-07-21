@@ -6,7 +6,7 @@
 <title>Nowy quiz — WiseUp</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../materialy/not.css">
+<!-- <link rel="stylesheet" href="../materialy/not.css"> -->
 <link rel="stylesheet" href="quiz.css">
 <!-- Klient Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -16,25 +16,28 @@
 <body>
 
 <header>
-  <div id="menuBtn">
+  <div class="menu-btn" id="menuBtn" aria-label="Menu">
     ☰
   </div>
-    
-    <div id="sidebar">
-      <a href="../strona startowa/start.html">Strona Startowa</a>
-      <a href="../logowanie/log.html">Logowanie</a>
+  <div id="sidebar">
+      <a href="../strona startowa/start.html">Strona startowa</a>
       <a href="../materialy/not.html">Zapisane materiały</a>
       <a href="../Profil/prof.html">Profil</a>
+      <a href="../wylogowywanie/logout.html">Wyloguj się</a>
+      <a href="../zglaszanie bledow/blad.html">⚠️Zgłoś błąd⚠️</a>
+  </div>
+  <div id="userArea" class="user-area">
+
+    <div class="profile-chip">
+        <img id="profileAvatar" src="../Profil/avatar.png">
+        <span id="profileName"></span>
     </div>
-  <div class="site-title">WiseUp</div>
-  <div id="userArea" class="user-area"></div>
 
     <div class="user-menu">
-
-      <a href="../Profil/prof.html">Profil</a>
-
-      <a href="../wylogowywanie/logout.html">Wyloguj się</a>
-    </div></div>
+        <a href="../Profil/prof.html">Profil</a>
+        <a href="../wylogowywanie/logout.html">Wyloguj się</a>
+    </div>
+</div>
 </header>
 
 <main>

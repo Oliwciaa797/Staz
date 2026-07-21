@@ -4,7 +4,6 @@
 
 body{
   margin:0;
-  background: var(--background);
   color: #000;
   font-family: 'Nunito Sans', sans-serif;
   min-height:100vh;
@@ -34,13 +33,6 @@ header{
 }
 
 
-.site-title{
-  font-family:'Baloo 2', sans-serif;
-  font-weight:800;
-  font-size: 28px;
-  color: var(--primary-color);
-  letter-spacing: .2px;
-}
 .profile-chip{
   display:flex; align-items:center; gap:10px;
   background: var(--primary-color);
@@ -329,14 +321,6 @@ main{
     cursor: pointer;
     z-index: 1001;
     user-select: none;
-}
-
-header {
-
-    position:relative;
-
-    z-index:1001;
-
 }
 /* ===== USER ===== */
 

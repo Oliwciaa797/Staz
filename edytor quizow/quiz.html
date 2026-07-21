@@ -16,31 +16,34 @@
 <body>
 
 <header>
-  <div id="menuBtn">
+  <div class="menu-btn" id="menuBtn" aria-label="Menu">
     ☰
   </div>
-    
-    <div id="sidebar">
-      <a href="../strona startowa/start.html">Strona Startowa</a>
-      <a href="../logowanie/log.html">Logowanie</a>
+  <div id="sidebar">
+      <a href="../strona startowa/start.html">Strona startowa</a>
       <a href="../materialy/not.html">Zapisane materiały</a>
       <a href="../Profil/prof.html">Profil</a>
+      <a href="../wylogowywanie/logout.html">Wyloguj się</a>
+      <a href="../zglaszanie bledow/blad.html">⚠️Zgłoś błąd⚠️</a>
+  </div>
+  <div id="userArea" class="user-area">
+
+    <div class="profile-chip">
+        <img id="profileAvatar" src="../Profil/avatar.png">
+        <span id="profileName"></span>
     </div>
-  <div class="site-title">WiseUp</div>
-  <div id="userArea" class="user-area"></div>
 
     <div class="user-menu">
-
-      <a href="../Profil/prof.html">Profil</a>
-
-      <a href="../wylogowywanie/logout.html">Wyloguj się</a>
-    </div></div>
+        <a href="../Profil/prof.html">Profil</a>
+        <a href="../wylogowywanie/logout.html">Wyloguj się</a>
+    </div>
+</div>
 </header>
 
 <main>
   <div class="panel">
     <div class="panel-top">
-      <button class="back-btn" aria-label="Wstecz" onclick="window.location.href='../materialy/not.html'">←</button>
+      <button class="back-btn" aria-label="Wstecz" onclick="window.location.href='../materialy/not.html'"><img src="arrow.png" alt="arrow" height="25px" width="25px"></button>
       <h1>Nowy quiz</h1>
     </div>
 

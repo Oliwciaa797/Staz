@@ -118,8 +118,17 @@ header {
 
 main{
     transition:.5s;
+
+    position:relative;
+
+    text-align:center;
+}
+main{
+    min-height:calc(100vh - 100px);
+
     display:flex;
     flex-direction:column;
+    justify-content:center;
     align-items:center;
 
     position:relative;
@@ -181,6 +190,7 @@ main.search-mode{
     transition: all 0.5s ease;
     margin-top:20px;
     display:flex;
+    flex-wrap: wrap;
     justify-content:center;
     gap:15px;
     flex-wrap: wrap;
@@ -304,9 +314,6 @@ main.search-mode{
     display: none;
 }
 
-.show {
-    display: flex;
-}
 
 .checkbox {
     cursor: pointer;
@@ -323,6 +330,7 @@ main.search-mode{
 .checkbox__icon {
     width: 22px;
     height: 22px;
+    flex-shrink: 0;
 }
 
 .checkbox__icon .tick {

@@ -57,6 +57,8 @@
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowfullscreen>
                     </iframe>
+                    <div id="videoDescription"></div>
+
 
                 </div>
 
@@ -65,7 +67,7 @@
                     <div class="buttons">
                         <button id="ainotes" onclick="showTab('generated')">Notatki AI</button>
                         <button id="personalnotes" onclick="showTab('personal')">Własne materiały</button>
-                        <button id="quiztab" onclick="showTab('quiz')">Quiz</button>
+                        <button id="quiztab" onclick="showTab('quiz')">Quiz AI</button>
                     </div>
                     <div class="sidepanelcontent">
                         <div id="generated" class="tab">
@@ -110,8 +112,7 @@
                         </div>
 
                         <div id="quiz" class="tab">
-                            <h3>Quiz</h3>
-                            <p>Tutaj będzie quiz generowany automatycznie.</p>
+                            <button onclick="generateQuiz()" id="genQuizBtn">Generuj quiz</button>
                         </div>
                     </div>
                 </div>
