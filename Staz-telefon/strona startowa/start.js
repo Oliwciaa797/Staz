@@ -324,11 +324,16 @@ reviewCount > 0
     }
 }
 function categoryDropdown() {
-    const dropdown =
-    document.getElementById("filtersDropdown");
 
-    if (dropdown) {
-        dropdown.classList.toggle("show");
+    const dropdown =
+        document.getElementById("filtersDropdown");
+
+    dropdown.classList.toggle("show");
+
+    if (dropdown.classList.contains("show")) {
+        document.body.classList.add("filters-open");
+    } else {
+        document.body.classList.remove("filters-open");
     }
 }
 
@@ -481,6 +486,7 @@ document.addEventListener("click", (e) => {
         !filtersBtn.contains(e.target)
     ) {
         dropdown.classList.remove("show");
+        document.body.classList.remove("no-scroll");
     }
 
 });
