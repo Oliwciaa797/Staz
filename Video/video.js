@@ -612,15 +612,12 @@ function createPersonalNote() {
         theme:"snow",
 
         modules:{
-            toolbar:[
-                ["bold","italic","underline"],
+            toolbar: [
+                [{ header: [1, 2, 3, false] }],
+                ["bold", "italic", "underline"],
                 [
-                    {
-                        list:"ordered"
-                    },
-                    {
-                        list:"bullet"
-                    }
+                    { list: "ordered" },
+                    { list: "bullet" }
                 ],
                 ["link"],
                 ["clean"]
@@ -721,22 +718,19 @@ function enterNoteEditMode(card, note){
         card.querySelector(".edit-quill"),
         {
             theme:"snow",
-            modules:{
-                toolbar:[
-                    ["bold","italic","underline"],
-                    [
-                        {
-                            list:"ordered"
-                        },
-                        {
-                            list:"bullet"
-                        }
-                    ],
-                    ["link"],
-                    ["clean"]
-                ]
+                modules:{
+                    toolbar:[
+                        [{ header:[1,2,3,false] }],
+                        ["bold","italic","underline"],
+                        [
+                            { list:"ordered" },
+                            { list:"bullet" }
+                        ],
+                        ["link"],
+                        ["clean"]
+                    ]
+                }
             }
-        }
     );
 
 

@@ -120,13 +120,14 @@ async function search() {
     document.getElementById("english").checked;
 
 
-    let language = "";
+    let languages = [];
 
-    if (polish && !english) {
-        language = "pl";
+    if (polish) {
+        languages.push("pl");
     }
-    if (!polish && english) {
-        language = "en";
+
+    if (english) {
+        languages.push("en");
     }
 
 
@@ -149,7 +150,7 @@ async function search() {
     // ===== CACHE =====
 
     const cacheKey =
-    value + language + minDuration + maxDuration + ignoreDuration;
+    value + languages + minDuration + maxDuration + ignoreDuration;
 
     if (cache[cacheKey]) {
         results.innerHTML =
@@ -161,9 +162,8 @@ async function search() {
     let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=5&q=${encodeURIComponent(value)}&key=${API_KEY}`;
 
 
-    if (language !== "") {
-        url +=
-        `&relevanceLanguage=${language}`;
+    if (languages.length === 1) {
+        url += `&relevanceLanguage=${languages[0]}`;
     }
 
     try {
@@ -218,7 +218,7 @@ async function search() {
             languages[item.id] =
             item.snippet.defaultAudioLanguage ||
             item.snippet.defaultLanguage ||
-            " ";
+            "";
         });
         
             const { data: ratings } =
@@ -260,17 +260,23 @@ reviewCount > 0
                 durations[id]
             );
 
+            // Filtr długości
             if (!ignoreDuration) {
-                if (
-                    minutes < minDuration ||
-                    minutes > maxDuration
-                ) {
+                if (minutes < minDuration || minutes > maxDuration) {
                     return;
                 }
             }
 
-            if(language !== " " && videoLanguage !== "") {
-                if(!videoLanguage.startsWith(language)) {
+            // Filtr języka
+            if (languages.length > 0) {
+
+                const lang = (videoLanguage || "").toLowerCase();
+
+                const match = languages.some(l =>
+                    lang.startsWith(l)
+                );
+
+                if (!match) {
                     return;
                 }
             }
