@@ -121,6 +121,17 @@ header {
 	text-align: left;
 }
 
+#quiz button{
+	width: auto;
+	height: 50px;
+	margin: 10px;
+	padding: 10px 20px;
+	border: none;
+	border-radius: 10px;
+	background-color: var(--primary-color);
+	color: white;
+	cursor: pointer;
+} 
 .buttons {
 	display: flex;
 	justify-content: center;
