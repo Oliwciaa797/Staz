@@ -3,37 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nazwa strony</title>   
+    <title>WiseUp</title>   
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.8.1/dist/nouislider.min.css">
     <link rel="stylesheet" href="start.css">
     <script defer src="https://cdn.jsdelivr.net/npm/nouislider@15.8.1/dist/nouislider.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="start.js"></script> 
 </head>
 <body>
-
+    <div class="background-svg"></div>
 <header>
 
     <div class="top">
 
-        <div id="menuBtn" onclick="toggleMenu()">
+        <div id="menuBtn">
             ☰
         </div>
   
-        <div id="sidebar">
-            <a href="../HomePage/start.html">Strona Startowa</a>
-            <a href="../LogIn/log.html">Logowanie</a>
-            <a href="../SavedMaterials/zapis.html">Zapisane materiały</a>
-            <a href="../Account/prof.html">Profil</a>
-        </div>
+        <div id="sidebar"></div>
 
-        <h1 class="logo">Nazwa strony</h1>
+        <h1 class="logo" onclick="back()">WiseUp</h1>
 
-        <button class="login-btn" onclick="goToLogin()">
-            Zaloguj
-        </button>
+        <div id="userArea" class="user-area">
+
+            <div class="user-info">
+                <img src="avatar.png" class="avatar">
+                <span>Witaj, </span>
+            </div>
+
+    <div class="user-menu">
+
+        <a href="../Profil/prof.html">Profil</a>
+
+        <a href="../wylogowywanie/logout.html">Wyloguj się</a>
+
+    </div>
+
+</div>
     </div>
 
 </header>
+
+<div id="mobilePopup" class="mobile-popup">
+    <span id="closeMobilePopup" class="mobile-popup-close">&times;</span>
+    <p>Zmień na wersję na telefon</p>
+</div>
 
 
     
@@ -47,7 +61,7 @@
                     placeholder="wpisz coś..."
                 >
                 <button id="searchBtn" class="lupa">
-                    <img src="magnifying-glass.png" height="25px" width="25px">
+                    <img src="magnifying-glass.png" height="25px" width="25px" style="position: relative; transform: translateY(5px);">
                 </button>
             </div>
             <div style="color:red; font-size:15px; margin:10px;" class="searchAlert"></div>

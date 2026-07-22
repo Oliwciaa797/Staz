@@ -1,0 +1,470 @@
+@import url(../main.css);
+
+*{ box-sizing: border-box; }
+
+body{
+  margin:0;
+  color: #000;
+  font-family: 'Nunito Sans', sans-serif;
+  min-height:100vh;
+  position: relative;
+  overflow-x:hidden;
+}
+
+
+/* ---------- Header ---------- */
+header{
+  position:relative;
+  z-index:2;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: 22px 36px;
+}
+
+.menu-btn{
+  color: var(--primary-color);
+  top: 15px;
+  left: 15px;
+  font-size: 32px;
+  cursor: pointer;
+  z-index: 1001;
+  user-select: none;
+}
+
+
+.profile-chip{
+  display:flex; align-items:center; gap:10px;
+  background: var(--primary-color);
+  color:#fff;
+  border:none;
+  padding:10px 20px;
+  border-radius: 30px;
+  font-family:'Baloo 2', sans-serif;
+  font-weight:700;
+  font-size:15px;
+  cursor:pointer;
+}
+.profile-chip img{
+  width:26px;height:26px;border-radius:50%;object-fit:cover;
+  border:2px solid #fff;
+}
+
+/* ---------- Layout ---------- */
+main{
+  position:relative;
+  z-index:1;
+  max-width: 1040px;
+  margin: 10px auto 80px;
+  padding: 0 24px;
+}
+
+.panel{
+  background: #fff;
+  border: 4px solid var(--primary-color);
+  border-radius: 20px;
+  padding: 40px 44px 46px;
+}
+
+.panel-top{
+  display:flex; align-items:center; gap:18px; margin-bottom: 18px;
+}
+.back-btn{
+  background:none;border:none;cursor:pointer;color:var(--primary-color);
+  font-size: 22px; line-height:1; padding:4px;
+}
+.panel h1{
+  font-family:'Baloo 2', sans-serif;
+  font-size: 40px;
+  font-weight:800;
+  color: var(--primary-color);
+  margin: 0;
+}
+
+/* ---------- Tabs ---------- */
+.tabs{
+  display:flex;
+  gap:10px;
+  margin: 8px 0 32px;
+  flex-wrap:wrap;
+}
+.tab-btn{
+  font-family:'Baloo 2', sans-serif;
+  font-weight:700;
+  font-size:16px;
+  padding: 12px 26px;
+  border-radius: 24px;
+  border: 2px solid var(--primary-color);
+  background: transparent;
+  color: var(--primary-color);
+  cursor:pointer;
+  transition: all .15s ease;
+}
+.tab-btn:hover{ background: var(--hover-dark); color: #fff;}
+.tab-btn.active{
+  background: var(--primary-color);
+  color: #fff;
+}
+
+.tab-panel{ display:none; }
+.tab-panel.active{ display:block; animation: fade .25s ease; }
+@keyframes fade{ from{opacity:0; transform: translateY(4px);} to{opacity:1; transform:none;} }
+
+/* ---------- Notatki: formularz ---------- */
+.note-form{
+  background: #fff;
+  border-radius: 18px;
+  border: 2px solid var(--secondary-color);
+  padding: 22px 24px;
+  margin-bottom: 30px;
+}
+.note-form h2{
+  font-family:'Baloo 2', sans-serif;
+  font-size: 20px;
+  color: var(--primary-color);
+  margin: 0 0 16px;
+}
+.field{ margin-bottom: 14px; }
+.field label{
+  display:block; font-size:13px; font-weight:700; color: var(--secondary-color);
+  margin-bottom:6px; text-transform:uppercase; letter-spacing:.03em;
+}
+.field input[type="text"], .field textarea{
+  width:100%;
+  border:none;
+  background:transparent;
+  padding: 8px 2px;
+  font-family:'Nunito Sans', sans-serif;
+  font-size:15px;
+  color: #000;
+  resize: vertical;
+}
+.field input:focus, .field textarea:focus{ outline:none; border-color: var(--primary-color); }
+.field textarea{ min-height: 90px; }
+
+.visibility-toggle{
+  display:flex; align-items:center; gap:10px; margin: 16px 0 20px;
+}
+.visibility-toggle input{ width:18px; height:18px; accent-color: var(--primary-color); }
+.visibility-toggle label{ font-size:14px; font-weight:600; color:#000; }
+
+.btn-primary{
+  background: var(--primary-color);
+  color:#fff;
+  border:none;
+  padding: 12px 30px;
+  border-radius: 30px;
+  font-family:'Baloo 2', sans-serif;
+  font-weight:700;
+  font-size:15px;
+  letter-spacing:.03em;
+  cursor:pointer;
+}
+.btn-primary:hover{ background: var(--hover-dark); }
+.btn-primary:disabled{ opacity:.5; cursor:not-allowed; }
+
+/* ---------- Listy ---------- */
+.section-label{
+  font-family:'Baloo 2', sans-serif;
+  font-size: 18px;
+  color: var(--primary-color);
+  margin: 26px 0 14px;
+}
+
+.card-grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 18px;
+}
+
+.item-card{
+  background: #fff;
+  border-radius: 16px;
+  border: 2px solid var(--secondary-color);
+  padding: 18px 18px 16px;
+  display:flex; flex-direction:column;
+  min-height: 150px;
+}
+.item-card .badge{
+  align-self:flex-start;
+  font-size: 11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  padding: 4px 10px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+.badge.public{ background:#E4EBD2; color: var(--primary-color); }
+.badge.private{ background:#F0E4D2; color:#7A4A1E; }
+
+.item-card h3{
+  font-family:'Baloo 2', sans-serif;
+  font-size: 17px;
+  margin: 0 0 8px;
+  color: #000;
+}
+.item-card p{
+  font-size: 13.5px;
+  color: var(--secondary-color);
+  line-height:1.45;
+  margin: 0 0 14px;
+  flex-grow:1;
+}
+.note-content-view{
+    display:none;
+    margin-top:10px;
+}
+
+.note-content-view.expanded{
+    display:block;
+}
+
+.item-card .card-footer{
+  display:flex; justify-content:space-between; align-items:center;
+  font-size: 12px; color: var(--secondary-color);
+}
+.card-actions{ display:flex; gap:12px; }
+.card-actions button{
+  background:none; border:none; cursor:pointer;
+  font-size:12px; font-weight:700;
+  color: var(--primary-color);
+  text-decoration: underline;
+  padding:0;
+}
+.card-actions button.delete{ color: var(--danger); }
+
+.empty-state{
+  text-align:center;
+  padding: 40px 20px;
+  color: var(--secondary-color);
+  font-size: 14.5px;
+}
+.empty-state strong{ display:block; color: var(--primary-color); font-family:'Baloo 2', sans-serif; font-size:17px; margin-bottom:6px; }
+
+.loading-msg{ color: var(--secondary-color); font-size: 14px; padding: 10px 0; }
+
+/* ---------- Tryb edycji wewnątrz karty ---------- */
+.item-card .field{ margin-bottom: 10px; }
+.item-card .field label{ font-size: 11px; }
+.item-card .edit-title,
+.item-card .edit-content{
+  width:100%;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border:1px #CCC solid;
+  background:transparent;
+  padding: 6px 2px;
+  font-family:'Nunito Sans', sans-serif;
+  font-size:14px;
+  color: #000;
+  resize: vertical;
+}
+.item-card .edit-content{ min-height: 60px; }
+.item-card .edit-title:focus,
+.item-card .edit-content:focus{ outline:none; border-color: var(--primary-color); }
+.card-actions button.save-edit{ color: var(--primary-color); }
+.card-actions button.cancel-edit{ color: var(--secondary-color); }
+
+/* ---------- Quizy / Zapisane (placeholder grid podobny do wyszukiwarki) ---------- */
+.quiz-card, .saved-card{
+  background: #fff;
+  border-radius: 12px;
+  overflow:hidden;
+  border: 1px solid var(--background);
+}
+.quiz-card .thumb, .saved-card .thumb{
+  height: 110px;
+  background: linear-gradient(135deg, var(--secondary-color), var(--hover-light));
+  display:flex; align-items:center; justify-content:center;
+  color: var(--primary-color);
+  font-family:'Baloo 2', sans-serif;
+  font-weight:800;
+  font-size: 15px;
+}
+.quiz-card .info, .saved-card .info{ padding: 14px 16px 16px; }
+.quiz-card h3, .saved-card h3{
+  font-family:'Baloo 2', sans-serif;
+  font-size: 15.5px;
+  margin: 0 0 6px;
+  color: #000;
+}
+.quiz-card .meta, .saved-card .meta{ font-size:12.5px; color: var(--secondary-color); margin-bottom:12px; }
+.quiz-card .go-btn, .saved-card .go-btn{
+  background: var(--primary-color); color:#fff; border:none;
+  padding: 9px 16px; border-radius: 8px; font-size:13px;
+  font-family:'Baloo 2', sans-serif; font-weight:700; cursor:pointer;
+}
+
+/* ---------- Toast ---------- */
+#toast{
+  position: fixed; left:50%; bottom: 30px; transform: translateX(-50%) translateY(20px);
+  background: var(--primary-color); color:#fff; padding: 12px 24px; border-radius: 30px;
+  font-size: 14px; font-weight:600; opacity:0; pointer-events:none;
+  transition: all .25s ease; z-index: 50;
+}
+#toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
+
+@media (max-width: 640px){
+  header{ padding: 18px 20px; }
+  .panel{ padding: 28px 22px 32px; border-radius: 20px; }
+  .panel h1{ font-size: 30px; }
+}
+
+/* ===== KRESKI MENU ===== */
+
+#menuBtn {
+    color: var(--primary-color);
+    top: 15px;
+    left: 15px;
+    font-size: 32px;
+    cursor: pointer;
+    z-index: 1001;
+    user-select: none;
+}
+/* ===== USER ===== */
+
+.user-area{
+    position:relative;
+}
+
+.user-menu{
+    position:absolute;
+    right:0;
+    top:110%;
+    width:180px;
+    background:white;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 10px 30px var(--shadow);
+    display:none;
+}
+
+.user-menu a{
+    display:block;
+    padding:14px;
+    color:#222;
+    text-decoration:none;
+}
+
+.user-menu{
+  display: none;
+}
+
+
+.user-menu.active{
+    display:block;
+}
+
+.user-menu a:hover{
+    background:#eee;
+}
+
+.go-btn{
+    background: var(--primary-color);
+    color: #fff;
+
+    border: none;
+    border-radius: 12px;
+
+    padding: 10px 18px;
+
+    cursor: pointer;
+
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+
+    transition: all .25s ease;
+
+    width: 100%;
+}
+
+.go-btn:hover{
+    background: var(--hover-dark);
+    transform: translateY(-2px);
+}
+
+.go-btn:active{
+    transform: translateY(0);
+}
+
+.go-btn{
+    background: transparent;
+    border: 2px solid var(--primary-color);
+
+    color: var(--primary-color);
+
+    padding: 8px 16px;
+    border-radius: 10px;
+
+    font-weight: 700;
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.go-btn:hover{
+    background: var(--hover-dark);
+    color: #fff;
+}
+
+.item-card .go-btn{
+    margin-top: auto;
+}
+
+.big-btn{
+    width:100%;
+    margin-top:12px;
+}
+
+.card-actions{
+    display:flex;
+    gap:8px;
+    margin-top:10px;
+}
+
+.mini-btn{
+    flex:1;
+    padding:8px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+.edit-btn{
+    background:var(--background);
+    color:var(--primary-color);
+}
+
+.delete-btn{
+    background: var(--background);
+    color: var(--danger);
+}
+
+.note-content-view{
+    max-height:80px;
+    overflow:hidden;
+    transition:.3s;
+}
+
+.note-content-view.expanded{
+    max-height:1000px;
+}
+
+#editor {
+  height: 250px;
+}
+
+.edit-content {
+  border: none;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    height: 200px;
+  }
+
+.save-edit {
+  z-index: 1001;
+}

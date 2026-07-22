@@ -1,8 +1,15 @@
 console.log("JS is working");
 
+const SUPABASE_URL = 'https://yewyjfcrwwmftovbobwl.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlld3lqZmNyd3dtZnRvdmJvYndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2NTk0MDYsImV4cCI6MjA5OTIzNTQwNn0.-IEcT_EfGqxjS4AAIKIbmTOonaXtF0MorQ74hEXzVrQ';
+
+const supabaseClient = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
 const cache = {};
 const API_KEY = "AIzaSyCTX8K53tIFW1_vUY828xfjYkvuGygnX_w";
-
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -113,13 +120,14 @@ async function search() {
     document.getElementById("english").checked;
 
 
-    let language = "";
+    let languages = [];
 
-    if (polish && !english) {
-        language = "pl";
+    if (polish) {
+        languages.push("pl");
     }
-    if (!polish && english) {
-        language = "en";
+
+    if (english) {
+        languages.push("en");
     }
 
 
@@ -142,7 +150,7 @@ async function search() {
     // ===== CACHE =====
 
     const cacheKey =
-    value + language + minDuration + maxDuration + ignoreDuration;
+    value + languages + minDuration + maxDuration + ignoreDuration;
 
     if (cache[cacheKey]) {
         results.innerHTML =
@@ -154,9 +162,8 @@ async function search() {
     let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=5&q=${encodeURIComponent(value)}&key=${API_KEY}`;
 
 
-    if (language !== "") {
-        url +=
-        `&relevanceLanguage=${language}`;
+    if (languages.length === 1) {
+        url += `&relevanceLanguage=${languages[0]}`;
     }
 
     try {
@@ -211,8 +218,14 @@ async function search() {
             languages[item.id] =
             item.snippet.defaultAudioLanguage ||
             item.snippet.defaultLanguage ||
-            " ";
+            "";
         });
+        
+            const { data: ratings } =
+            await supabaseClient
+            .from("video_reviews")
+            .select("video_id,rating");
+
 
         let html = "";
 
@@ -220,6 +233,24 @@ async function search() {
 
             const id =
             video.id.videoId;
+
+                const reviewsForVideo =
+ratings.filter(
+    r => r.video_id === id
+);
+
+const reviewCount =
+reviewsForVideo.length;
+
+const averageRating =
+reviewCount > 0
+? (
+    reviewsForVideo.reduce(
+        (sum,r) => sum + r.rating,
+        0
+    ) / reviewCount
+).toFixed(1)
+: "0";
 
             const videoLanguage =
             languages[id];
@@ -229,17 +260,23 @@ async function search() {
                 durations[id]
             );
 
+            // Filtr długości
             if (!ignoreDuration) {
-                if (
-                    minutes < minDuration ||
-                    minutes > maxDuration
-                ) {
+                if (minutes < minDuration || minutes > maxDuration) {
                     return;
                 }
             }
 
-            if(language !== " " && videoLanguage !== "") {
-                if(!videoLanguage.startsWith(language)) {
+            // Filtr języka
+            if (languages.length > 0) {
+
+                const lang = (videoLanguage || "").toLowerCase();
+
+                const match = languages.some(l =>
+                    lang.startsWith(l)
+                );
+
+                if (!match) {
                     return;
                 }
             }
@@ -259,15 +296,20 @@ async function search() {
                     <p>
                     ${Math.round(minutes)} min
                     </p>
-                    <a target="_blank"
+                        <div class="grade-box">
+                        <p class="grade-avg">${averageRating}/5 ⭐</p>
+                        
+                        <a target="_blank"
                         href="../Video/video.html?video=${id}">
                         Otwórz film
-                    </a>
+                        </a>
+                        </div><br>
+                    
                 </div>
             </div>
             `;
         });
-
+// <p class="review-count">${reviewCount} opinii</p>
         if (html === "") {
             document.querySelector(".searchAlert").textContent =
             "Brak filmów spełniających filtry.";
@@ -302,15 +344,207 @@ function categoryDropdown() {
 
 function goToLogin() {
     window.location.href =
-    "../LogIn/log.html";
+    "../logowanie/log.html";
 }
 
+// tutaj sie zaczyna show us
 
-function toggleMenu() {
-    const sidebar =
-    document.getElementById("sidebar");
+async function showUser() {
 
-    if (sidebar) {
-        sidebar.classList.toggle("active");
+    const userArea = document.getElementById("userArea");
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+
+    if (!user) {
+
+        userArea.innerHTML = `
+            <button class="login-btn" onclick="goToLogin()">
+                Zaloguj
+            </button>
+        `;
+
+        return;
+    }
+
+
+
+    const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("profiles, avatar_url")
+        .eq("id", user.id)
+        .single();
+
+
+
+    if (error) {
+        console.log(error);
+        return;
+    }
+
+
+
+   const avatarUrl = profile.avatar_url || "../Profil/avatar.png";
+
+    userArea.innerHTML = `
+
+    <div class="user-area">
+
+    <div class="user-info" id="userInfo">
+
+        <img src="${avatarUrl}" class="avatar">
+
+        <span>Witaj, ${profile.profiles}</span>
+
+    </div>
+
+    <div class="user-menu" id="userMenu">
+
+        <a href="../Profil/prof.html">
+            Profil
+        </a>
+
+        <a href="../wylogowywanie/logout.html">
+            Wyloguj się
+        </a>
+
+    </div>
+
+</div>
+
+`;
+
+const info = document.getElementById("userInfo");
+const menu = document.getElementById("userMenu");
+
+info.addEventListener("click", (e) => {
+
+    e.stopPropagation();
+
+    menu.classList.toggle("active");
+
+});
+}
+
+function toProfile(){
+    window.location.href = "../Profil/prof.html";
+}
+document.addEventListener("DOMContentLoaded", showUser);
+
+async function updateSidebar() {
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    const sidebar = document.getElementById("sidebar");
+
+    if (user) {
+        sidebar.innerHTML = `
+            <a href="../strona startowa/start.html">Strona Startowa</a>
+            <a href="../materialy/not.html">Zapisane materiały</a>
+            <a href="../Profil/prof.html">Profil</a>
+            <a href="../wylogowywanie/logout.html">Wyloguj się</a>
+            <a href="../zglaszanie bledow/blad.html">⚠️Zgłoś błąd⚠️</a>
+        `;
+    } else {
+        sidebar.innerHTML = `
+            <a href="../strona startowa/start.html">Strona Startowa</a>
+            <a href="../logowanie/log.html">Logowanie</a>
+            <a href="../zglaszanie bledow/blad.html">⚠️Zgłoś błąd⚠️</a>
+        `;
     }
 }
+document.addEventListener("DOMContentLoaded", () => {
+    showUser();
+    updateSidebar();
+});
+
+function back(){
+    window.location.href = "../strona startowa/start.html";
+}
+
+document.getElementById("menuBtn").addEventListener("click", (e) => {
+    e.stopPropagation();
+    document.getElementById("sidebar").classList.toggle("active");
+});
+
+document.addEventListener("click", (e) => {
+
+    // sidebar
+    const sidebar = document.getElementById("sidebar");
+    const menuBtn = document.getElementById("menuBtn");
+
+    if (
+        sidebar.classList.contains("active") &&
+        !sidebar.contains(e.target) &&
+        !menuBtn.contains(e.target)
+    ) {
+        sidebar.classList.remove("active");
+    }
+
+
+    // filtry
+    const dropdown = document.getElementById("filtersDropdown");
+    const filtersBtn = document.getElementById("filtersBtn");
+
+    if (
+        dropdown.classList.contains("show") &&
+        !dropdown.contains(e.target) &&
+        !filtersBtn.contains(e.target)
+    ) {
+        dropdown.classList.remove("show");
+    }
+
+});
+document.addEventListener("click", () => {
+
+    const menu = document.getElementById("userMenu");
+
+    if(menu){
+        menu.classList.remove("active");
+    }
+
+});
+
+// Mobile version popup
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    console.log("Popup script started");
+
+    const popup = document.getElementById("mobilePopup");
+    const closeBtn = document.getElementById("closeMobilePopup");
+
+    console.log("Popup:", popup);
+
+    if (!popup) return;
+
+    // TEST
+    popup.classList.add("show");
+
+    const dismissed = localStorage.getItem("mobilePopupDismissed");
+
+    if (window.innerWidth <= 768 && dismissed !== "true") {
+        setTimeout(() => {
+            popup.classList.add("show");
+        }, 500);
+    }
+
+    popup.addEventListener("click", () => {
+        window.location.href =
+            "../Staz-telefon/strona%20startowa/start.html";
+    });
+
+    if (closeBtn) {
+        closeBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+
+            popup.classList.remove("show");
+            popup.classList.add("hide");
+
+            localStorage.setItem(
+                "mobilePopupDismissed",
+                "true"
+            );
+        });
+    }
+});
