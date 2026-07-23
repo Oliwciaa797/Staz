@@ -195,12 +195,16 @@ function enterEditMode(card, note){
   const editQuill = new Quill(editEditor,{
     theme:"snow",
     modules:{
-      toolbar:[
-        ["bold","italic","underline"],
-        [{list:"ordered"},{list:"bullet"}],
-        ["link"],
-        ["clean"]
-      ]
+        toolbar:[
+            [{ header:[1,2,3,false] }],
+            ["bold","italic","underline"],
+            [
+                { list:"ordered" },
+                { list:"bullet" }
+            ],
+            ["link"],
+            ["clean"]
+        ]
     }
   });
 

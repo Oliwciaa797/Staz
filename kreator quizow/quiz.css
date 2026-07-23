@@ -311,7 +311,7 @@ header{
 
 main{
   position:relative;
-  z-index:2;
+  z-index:1;
   max-width: 1040px;
   margin: 10px auto 80px;
   padding: 0 24px;

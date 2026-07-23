@@ -121,6 +121,17 @@ header {
 	text-align: left;
 }
 
+#quiz button{
+	width: auto;
+	height: 50px;
+	margin: 10px;
+	padding: 10px 20px;
+	border: none;
+	border-radius: 10px;
+	background-color: var(--primary-color);
+	color: white;
+	cursor: pointer;
+} 
 .buttons {
 	display: flex;
 	justify-content: center;
@@ -386,13 +397,15 @@ textarea {
 	color: #264500;
 }
 
-.note-card input.noteTitleInput {
+input.noteTitleInput {
+	font-weight: bold;
+	font-size: 16px;
+	font-family: 'Baloo 2', sans-serif;
 	width: 100%;
-	margin-bottom: 10px;
+	margin-bottom: 15px;
 	padding: 10px;
 	border: 1px solid #ddd;
 	border-radius: 6px;
-	font-family: 'Montserrat', sans-serif;
 }
 
 .note-card textarea {
@@ -530,11 +543,6 @@ textarea {
 }
 
 /* ---------- Karty notatek/quizów (item-card) ---------- */
-.card-grid{
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-	gap: 16px;
-}
 
 .item-card{
 	display: flex;
@@ -669,6 +677,8 @@ textarea {
 
 .quill-container,
 .edit-quill{
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
     /* width:400px; */
     max-width:100%;
 }
@@ -683,6 +693,12 @@ textarea {
     min-height:100px;
     max-width:100%;
     overflow-wrap:anywhere;
+}
+
+.ql-toolbar {
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	
 }
 
 .note-content-view{
