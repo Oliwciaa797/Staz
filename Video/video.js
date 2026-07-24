@@ -1,4 +1,66 @@
-﻿const SUPABASE_URL = 'https://yewyjfcrwwmftovbobwl.supabase.co';
+﻿ class Toast {
+  constructor(pos = 'tc', maxStack = 3) {
+    this.maxStack = maxStack;
+    this.container = document.querySelector(`.toast-container[data-position="${pos}"]`);
+    if (!this.container) {
+      this.container = document.createElement('div');
+      this.container.className = 'toast-container';
+      this.container.dataset.position = pos;
+      document.body.appendChild(this.container);
+    }
+  }
+
+  show(type, title, msg, duration = 3000) {
+    const activeToasts = this.container.querySelectorAll('.toast');
+    if (activeToasts.length >= this.maxStack) {
+        activeToasts[0].remove();
+    }
+
+    const t = document.createElement('div');
+    t.className = `toast style-solid toast-${type}`;
+    t.innerHTML = `
+      <div class="toast-icon">${this.getIcon(type)}</div>
+      <div class="toast-content"><b>${title}</b><div>${msg}</div></div>
+      <button class="toast-close">&times;</button>
+      `;
+	  
+    const animMode = 'slide';
+    const baseEntry = 'slideInDown';
+    
+    if (animMode === 'zoom') {
+        t.style.animation = 'zoomIn 0.4s forwards';
+    } else if (animMode === 'shake') {
+        t.style.animation = `${baseEntry} 0.4s forwards, shake 0.4s 0.4s`;
+    } else {
+        t.style.animation = `${baseEntry} 0.4s forwards`;
+    }	  
+    
+    this.container.appendChild(t);
+
+    const currentPos = this.container.dataset.position;
+    let animOut = currentPos.includes('r') ? 'slideOutRight' : 'slideOutLeft';
+    if(currentPos === 'tc') animOut = 'slideOutUp';
+    if(currentPos === 'bc') animOut = 'slideOutDown';
+
+    
+
+    const dismiss = () => {
+        t.style.animation = `${animOut} 0.3s forwards`;
+        t.addEventListener('animationend', () => t.remove());
+    };
+
+    t.querySelector('.toast-close').onclick = dismiss;
+    setTimeout(dismiss, duration);
+  }
+
+  getIcon(type) {
+    const icons = {"success":"<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20 6 9 17l-5-5\"/></svg>","error":"<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m15 9-6 6\"/><path d=\"m9 9 6 6\"/></svg>","warning":"<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z\"/><path d=\"M12 9v4\"/><path d=\"M12 17h.01\"/></svg>","info":"<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 16v-4\"/><path d=\"M12 8h.01\"/></svg>"};
+    return icons[type];
+  }
+}
+
+
+const SUPABASE_URL = 'https://yewyjfcrwwmftovbobwl.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlld3lqZmNyd3dtZnRvdmJvYndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2NTk0MDYsImV4cCI6MjA5OTIzNTQwNn0.-IEcT_EfGqxjS4AAIKIbmTOonaXtF0MorQ74hEXzVrQ';
 
 const supabaseClient =
@@ -23,13 +85,6 @@ function escapeAttr(str){
     return escapeHtml(str).replace(/"/g, '&quot;');
 }
 
-function toggleMenu() {
-    const sidebar = document.getElementById("sidebar");
-    if (sidebar) {
-        sidebar.classList.toggle("active");
-    }
-}
-
 function goToLogin() {
     window.location.href = "../logowanie/log.html";
 }
@@ -40,7 +95,10 @@ const player = document.getElementById("youtubeVideo");
 
 if (videoId) {
     console.log("Video ID:", videoId);
-    player.src = `https://www.youtube.com/embed/${videoId}?rel=0`;
+    if (player && videoId) {
+        player.src = `https://www.youtube.com/embed/${videoId}?rel=0`;
+    }
+    
 } else {
     console.error("Brak video ID");
     document.getElementById("notesContent").innerHTML = "Nie znaleziono filmu.";
@@ -92,28 +150,32 @@ let currentQuiz = [];
 async function generateQuiz() {
 
     const response = await fetch("http://127.0.0.1:5000/quiz", {
-        method:"POST",
-        headers:{
-            "Content-Type":"application/json"
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
         },
-        body:JSON.stringify({
-            url:`https://www.youtube.com/watch?v=${videoId}`
+        body: JSON.stringify({
+            url: `https://www.youtube.com/watch?v=${videoId}`
         })
     });
 
+    if (!response.ok) {
+        throw new Error("Nie udało się wygenerować quizu.");
+    }
+
     const data = await response.json();
 
-    currentQuiz = data.quiz.questions;
-    console.log(Array.isArray(data.quiz.questions));
     displayQuiz(currentQuiz);
 }
-function displayQuiz(quiz) {
+
+
+function displayQuiz(questions) {
 
     const container = document.getElementById("quiz");
 
     container.innerHTML = "";
 
-    quiz.forEach((q, index) => {
+    questions.forEach((q, index) => {
 
         const div = document.createElement("div");
 
@@ -136,9 +198,9 @@ function displayQuiz(quiz) {
         container.appendChild(div);
     });
 
-    // Add the submit button AFTER all questions
     const button = document.createElement("button");
-    button.textContent = "Submit Quiz";
+    button.id = "submitQuiz";
+    button.textContent = "Sprawdź Quiz";
     button.onclick = checkQuiz;
 
     container.appendChild(button);
@@ -159,7 +221,14 @@ function checkQuiz() {
         }
     });
 
-    alert(`Your score: ${score}/${currentQuiz.length}`);
+    const button = document.getElementById("submitQuiz");
+
+    const result = document.createElement("h2");
+    result.style.textAlign = 'center';
+    result.style.color = '#33411C';
+    result.textContent = `Twój wynik: ${score}/${currentQuiz.length}`;
+
+    button.replaceWith(result);
 }
 
 /* ---------- Przełączanie głównych zakładek (Notatki AI / Własne materiały / Quiz) ---------- */
@@ -229,9 +298,6 @@ async function setRating(stars) {
 
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    loadVideoDescription();
-});
 /* ---------- Wczytanie i wyświetlenie recenzji ---------- */
 async function loadReviews() {
 
@@ -310,7 +376,7 @@ async function loadReviews() {
         return;
     }
 
-    const formatDate = (date) => {
+        const formatDate = (date) => {
 
     return new Date(date).toLocaleDateString("pl-PL", {
         day: "2-digit",
@@ -367,6 +433,7 @@ async function loadReviews() {
     }).join("");
 }
 
+const toast = new Toast();
 // Load reviews when page loads
 document.addEventListener('DOMContentLoaded', loadReviews);
 let errorMsg = document.getElementById('errorMsg');
@@ -377,7 +444,7 @@ async function submitReview() {
     } = await supabaseClient.auth.getUser();
 
     if (!user) {
-        alert("Zaloguj się");
+        toast.show('error', 'Zaloguj się', 'Zaloguj się aby wstawić opinie')
         return;
     }
 
@@ -385,9 +452,8 @@ async function submitReview() {
     const reviewText =
         document.getElementById("reviewText").value;
 
-    if (userRating === 0) {
-        errorMsg.textContent = "Wybierz ocenę."
-        return;
+    if (errorMsg) {
+        errorMsg.textContent = "Wybierz ocenę.";
     }
 
     const { error } =
@@ -402,11 +468,11 @@ async function submitReview() {
 
     if (error) {
         console.error(error);
-        alert(error.message);
+        toast.show('error', 'Error', error.message)
         return;
     }
 
-    alert("Opinia dodana!");
+    toast.show('success', 'Gotowe!')
 
     document.getElementById("reviewText").value = "";
 
@@ -763,7 +829,7 @@ function enterNoteEditMode(card, note){
 
 
         if(!plainText){
-            alert("Treść notatki nie może być pusta.");
+            toast.show('error', 'Error', 'Treść notatki nie może być pusta!');
             return;
         }
 
@@ -780,8 +846,10 @@ function enterNoteEditMode(card, note){
 
 
         if(error){
-            alert(
-                "Nie udało się zapisać zmian: "
+            toast.show(
+                'error',
+                'Error',
+                'Nie udało się zapisać zmian: '
                 + error.message
             );
             return;
@@ -909,7 +977,7 @@ async function deletePersonalNote(id){
 
     if(error){
         console.error(error);
-        alert("Nie udało się usunąć notatki.");
+        toast.show('error', 'Error', "Nie udało się usunąć notatki.");
         return;
     }
 
@@ -925,7 +993,7 @@ async function togglePersonalNoteVisibility(id, currentlyPublic){
 
     if(error){
         console.error(error);
-        alert("Nie udało się zmienić widoczności.");
+        toast.show('error','Error',"Nie udało się zmienić widoczności.");
         return;
     }
 
@@ -956,14 +1024,14 @@ document.addEventListener("click", async (e) => {
         const isPublic = publicInput ? publicInput.checked : false;
 
         if(!plainText){
-            alert("Wpisz treść notatki");
+            toast.show('error', 'Error',"Wpisz treść notatki");
             return;
         }
 
         const { data: { user } } = await supabaseClient.auth.getUser();
 
         if(!user){
-            alert("Zaloguj się");
+            toast.show('error', 'Zalouj się', "Zaloguj się aby stworzyć notatkę");
             return;
         }
 
@@ -977,7 +1045,7 @@ document.addEventListener("click", async (e) => {
 
         if(error){
             console.error(error);
-            alert(error.message);
+            toast.show('error','Error', error.message);
             return;
         }
 
@@ -1104,7 +1172,7 @@ async function toggleQuizVisibility(id, currentlyPublic){
 
     if(error){
         console.error(error);
-        alert("Nie udało się zmienić widoczności quizu.");
+        toast.show('error','Error', "Nie udało się zmienić widoczności quizu.");
         return;
     }
 
@@ -1122,7 +1190,7 @@ async function deleteUserQuiz(id){
     .eq("id", id);
 
     if(error){
-        alert("Nie udało się usunąć quizu.");
+        toast.show('error', 'Error', "Nie udało się usunąć quizu.");
         return;
     }
 
@@ -1136,7 +1204,7 @@ async function saveMaterial() {
         await supabaseClient.auth.getUser();
 
     if (!user) {
-        alert("Zaloguj się");
+        toast.show('error','Zaloguj się',"Zaloguj się aby zapisać materiał");
         return;
     }
 
@@ -1151,16 +1219,16 @@ async function saveMaterial() {
 if (error) {
 
     if (error.code === "23505") {
-        alert("Ten materiał jest już zapisany.");
+        toast.show('error','Error',"Ten materiał jest już zapisany.");
         return;
     }
 
     console.error(error);
-    alert(error.message);
+    toast.show('error','Error',error.message);
     return;
 }
 
-    alert("Materiał zapisany!");
+    toast.show('success','Gotowe!', "Materiał został zapisany!");
 }
 
 function reportError(){
