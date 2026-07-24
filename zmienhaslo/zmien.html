@@ -19,13 +19,18 @@
         <h1>Zmień hasło</h1>
 
         <div class="field">
+            <label>Obecne hasło</label>
+            <input type="password" id="currentPassword" autocomplete="current-password">
+        </div>
+
+        <div class="field">
             <label>Nowe hasło (min. 8 znaków)</label>
-            <input type="password" id="newPassword">
+            <input type="password" id="newPassword" autocomplete="new-password">
         </div>
 
         <div class="field">
             <label>Powtórz nowe hasło</label>
-            <input type="password" id="newPassword2">
+            <input type="password" id="newPassword2" autocomplete="new-password">
         </div>
 
         <p id="error" class="error"></p>

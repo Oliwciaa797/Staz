@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     document.getElementById('changeBtn').addEventListener('click', async function () {
+        const currentPassword = document.getElementById('currentPassword').value;
         const pass1 = document.getElementById('newPassword').value;
         const pass2 = document.getElementById('newPassword2').value;
         const errorEl = document.getElementById('error');
@@ -20,21 +21,48 @@ document.addEventListener('DOMContentLoaded', async function () {
         errorEl.textContent = '';
         statusEl.textContent = '';
 
+        if (!currentPassword) {
+            errorEl.textContent = 'Wpisz obecne hasło.';
+            return;
+        }
         if (pass1.length < 8) {
-            errorEl.textContent = 'Hasło musi mieć co najmniej 8 znaków.';
+            errorEl.textContent = 'Nowe hasło musi mieć co najmniej 8 znaków.';
             return;
         }
         if (pass1 !== pass2) {
-            errorEl.textContent = 'Hasła muszą być takie same.';
+            errorEl.textContent = 'Nowe hasła muszą być takie same.';
+            return;
+        }
+        if (pass1 === currentPassword) {
+            errorEl.textContent = 'Nowe hasło musi się różnić od obecnego.';
             return;
         }
 
+        statusEl.textContent = 'Weryfikacja obecnego hasła...';
+
+        // 1. Weryfikujemy obecne hasło próbując się nim zalogować.
+        // Supabase nie ma osobnego endpointu "sprawdź hasło" —
+        // signInWithPassword to standardowy sposób re-autoryzacji.
+        const { data: { user } } = await supabaseClient.auth.getUser();
+
+        const { error: signInError } = await supabaseClient.auth.signInWithPassword({
+            email: user.email,
+            password: currentPassword
+        });
+
+        if (signInError) {
+            errorEl.textContent = 'Obecne hasło jest nieprawidłowe.';
+            statusEl.textContent = '';
+            return;
+        }
+
+        // 2. Hasło poprawne — ustawiamy nowe
         statusEl.textContent = 'Zapisywanie...';
 
-        const { error } = await supabaseClient.auth.updateUser({ password: pass1 });
+        const { error: updateError } = await supabaseClient.auth.updateUser({ password: pass1 });
 
-        if (error) {
-            errorEl.textContent = 'Błąd: ' + error.message;
+        if (updateError) {
+            errorEl.textContent = 'Błąd: ' + updateError.message;
             statusEl.textContent = '';
             return;
         }
