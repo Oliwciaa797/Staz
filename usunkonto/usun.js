@@ -15,6 +15,14 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     document.getElementById('deleteBtn').addEventListener('click', async function () {
         const statusEl = document.getElementById('status');
+        const passwordInput = document.getElementById('passwordInput');
+        const password = passwordInput.value;
+
+        if (!password) {
+            statusEl.textContent = 'Wpisz hasło, aby potwierdzić usunięcie konta.';
+            return;
+        }
+
         statusEl.textContent = 'Usuwanie konta...';
 
         const { data: { user } } = await supabaseClient.auth.getUser();
@@ -47,10 +55,12 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
 
         // 3. Wywołuje funkcję SQL "delete_user" (security definer) w Supabase,
-        // która usuwa profil i konto TYLKO osoby aktualnie zalogowanej.
-        const { error } = await supabaseClient.rpc('delete_user');
+        // która sama weryfikuje hasło i usuwa profil oraz konto
+        // TYLKO osoby aktualnie zalogowanej.
+        const { error } = await supabaseClient.rpc('delete_user', { password });
 
         if (error) {
+            // np. "Nieprawidłowe hasło"
             statusEl.textContent = 'Błąd: ' + error.message;
             return;
         }
