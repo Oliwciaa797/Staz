@@ -414,6 +414,12 @@ async function submitReview() {
             });
 
     if (error) {
+
+        if (error.code === "23505") {
+            alert("Dodałeś już opinię do tego filmu.");
+            return;
+        }
+
         console.error(error);
         alert(error.message);
         return;
@@ -430,18 +436,6 @@ async function submitReview() {
         .forEach(star => star.classList.remove("active"));
 
     loadReviews();
-
-    if (error) {
-
-    if (error.code === "23505") {
-        alert("Dodałeś już opinię do tego filmu.");
-        return;
-    }
-
-    console.error(error);
-    alert(error.message);
-    return;
-}
 
 }
 
