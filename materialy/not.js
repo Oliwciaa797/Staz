@@ -12,7 +12,7 @@ const supabaseClient = supabase.createClient(
 );
 
 const isConfigured = !SUPABASE_URL.includes("TWOJ_") && !SUPABASE_ANON_KEY.includes("TWOJ_");
-
+const toast = new Toast();
 /* ============================================================
    ============================================================ */
 
@@ -32,13 +32,6 @@ const quill = new Quill("#editor", {
     }
 });
 
-/* ---------- Toast ---------- */
-function showToast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(()=> t.classList.remove('show'), 2600);
-}
 
 /* ---------- Tabs (działa zawsze, niezależnie od Supabase) ---------- */
 document.querySelectorAll('.tab-btn').forEach(btn=>{
@@ -56,7 +49,7 @@ if (!isConfigured) {
   document.getElementById('myNotesLoading').textContent =
     'Uzupełnij SUPABASE_URL i SUPABASE_ANON_KEY w pliku script.js, aby notatki zaczęły działać.';
   document.getElementById('publicNotesLoading').textContent = '';
-  showToast('Uzupełnij dane Supabase w script.js');
+  toast.show('error', 'Error','Uzupełnij dane Supabase w script.js');
 } else {
   loadUser();
 }
@@ -244,9 +237,7 @@ function enterEditMode(card, note){
 
       if(!newTitle || !plainText){
 
-          showToast(
-          "Tytuł i treść nie mogą być puste."
-          );
+          toast.show('error','Error',"Tytuł i treść nie mogą być puste.");
 
           return;
       }
@@ -265,7 +256,7 @@ function enterEditMode(card, note){
 
       if(error){
 
-          showToast(
+          toast.show('error', 'Error',
           "Nie udało się zapisać zmian: "
           + error.message
           );
@@ -275,7 +266,7 @@ function enterEditMode(card, note){
 
 
 
-      showToast("Notatka zaktualizowana.");
+      toast.show('success','Gotowe!', "Notatka zaktualizowana.");
 
       loadMyNotes();
 
@@ -369,11 +360,11 @@ document.getElementById('noteForm').addEventListener('submit', async (e)=>{
   e.preventDefault();
 
   if (!isConfigured) {
-    showToast('Najpierw uzupełnij dane Supabase w script.js.');
+    toast.show('error','Error','Najpierw uzupełnij dane Supabase w script.js.');
     return;
   }
   if(!currentUser){
-    showToast('Zaloguj się, aby dodać notatkę.');
+    toast.show('error','Zaloguj się','Zaloguj się, aby dodać notatkę.');
     return;
   }
 
@@ -382,13 +373,13 @@ document.getElementById('noteForm').addEventListener('submit', async (e)=>{
   const plainText = quill.getText().trim();
 
   if(!plainText){
-      showToast("Treść nie może być pusta.");
+      toast.show('error', 'Error', "Treść nie może być pusta.");
       return;
   }
   const length = Math.max(0, quill.getLength() - 1);
 
 if (length > MAX_CHARS) {
-    showToast("Notatka przekracza limit 100 000 znaków.");
+    toast.show('error','Error',"Notatka przekracza limit 100 000 znaków.");
     return;
 }
 
@@ -409,13 +400,13 @@ const { error } = await supabaseClient.from('notes').insert({
   btn.textContent = 'ZAPISZ NOTATKĘ';
 
   if(error){
-    showToast('Błąd zapisu: ' + error.message);
+    toast.show('error','Error','Błąd zapisu: ' + error.message);
     return;
   }
 
   document.getElementById('noteForm').reset();
   quill.setContents([]);
-  showToast('Notatka zapisana!');
+  toast.show('seccess','Gotowe!','Notatka zapisana!');
   loadMyNotes();
   if(isPublic) loadPublicNotes();
 });
