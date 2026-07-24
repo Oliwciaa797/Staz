@@ -1,4 +1,4 @@
-class Toast {
+ class Toast {
   constructor(pos = 'tc', maxStack = 3) {
     this.maxStack = maxStack;
     this.container = document.querySelector(`.toast-container[data-position="${pos}"]`);
