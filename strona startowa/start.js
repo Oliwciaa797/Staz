@@ -1,5 +1,6 @@
 console.log("JS is working");
 
+const toast = new Toast();
 const SUPABASE_URL = 'https://yewyjfcrwwmftovbobwl.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlld3lqZmNyd3dtZnRvdmJvYndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2NTk0MDYsImV4cCI6MjA5OTIzNTQwNn0.-IEcT_EfGqxjS4AAIKIbmTOonaXtF0MorQ74hEXzVrQ';
 
@@ -97,8 +98,7 @@ async function search() {
 
 
     if (query === "") {
-        document.querySelector(".searchAlert").textContent =
-        "Wpisz co chcesz wyszukać!";
+        toast.show('error', 'Error', 'wpisz co chcesz wyszukać')
 
         return;
     }
@@ -174,10 +174,7 @@ async function search() {
         await response.json();
 
         if (!response.ok) {
-            alert(
-                data.error?.message ||
-                "Błąd API"
-            );
+            toast.show('error', 'error', 'błąd API')
 
             return;
         }
@@ -280,7 +277,7 @@ reviewCount > 0
                     return;
                 }
             }
-
+            if (Math.round(minutes) > 1) {
             html += `
             
             <div class="video">
@@ -299,7 +296,7 @@ reviewCount > 0
                         <div class="grade-box">
                         <p class="grade-avg">${averageRating}/5 ⭐</p>
                         
-                        <a target="_blank"
+                        <a
                         href="../Video/video.html?video=${id}">
                         Otwórz film
                         </a>
@@ -308,7 +305,37 @@ reviewCount > 0
                 </div>
             </div>
             `;
+            } else {
+                html += `
+            
+            <div class="video">
+                <img src="${video.snippet.thumbnails.medium.url}">
+
+                <div>
+                    <h3>
+                    ${video.snippet.title}
+                    </h3>
+                    <p>
+                    ${video.snippet.channelTitle}
+                    </p>
+                    <p>
+                    < 1 min
+                    </p>
+                        <div class="grade-box">
+                        <p class="grade-avg">${averageRating}/5 ⭐</p>
+                        
+                        <a 
+                        href="../Video/video.html?video=${id}">
+                        Otwórz film
+                        </a>
+                        </div><br>
+                    
+                </div>
+            </div>
+            `;
+            }
         });
+
 // <p class="review-count">${reviewCount} opinii</p>
         if (html === "") {
             document.querySelector(".searchAlert").textContent =
