@@ -51,8 +51,8 @@
 
                     <iframe
                         id="youtubeVideo"
-                        width="900"
-                        height="500"
+                        width="1200"
+                        height="700"
                         frameborder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowfullscreen>
@@ -66,7 +66,6 @@
 
                     <div class="buttons">
                         <button id="ainotes" onclick="showTab('generated')">Notatki AI</button>
-                        <button id="personalnotes" onclick="showTab('personal')">Własne materiały</button>
                         <button id="quiztab" onclick="showTab('quiz')">Quiz AI</button>
                     </div>
                     <div class="sidepanelcontent">
@@ -78,38 +77,7 @@
                         </div>
 
                         <!-- ===== WŁASNE MATERIAŁY ===== -->
-                        <div id="personal" class="tab">
 
-                            <div class="sub-tabs">
-                                <button class="sub-tab-btn active" data-subtab="personalNotes" onclick="showSubTab('personalNotes')">Notatki</button>
-                                <button class="sub-tab-btn" data-subtab="personalQuizy" onclick="showSubTab('personalQuizy')">Quizy</button>
-                            </div>
-
-                            <div id="personalNotes" class="sub-tab-panel active">
-                            <button id="addNoteBtn" onclick="createPersonalNote()">+ Dodaj notatkę</button>
-
-                            <div class="section-label">Twoje notatki do tego filmu</div>
-                             <div id="personalNotesContainer" class="card-grid">
-                            <p>Brak notatek.</p>
-                            </div>
-                            <div class="section-label">Twoje pozostałe notatki</div>
-                            <div id="myOtherNotesContainer" class="card-grid">
-                                <p>Brak notatek.</p>
-                            </div>
-                            <div class="section-label">Notatki publiczne innych o tym filmie</div>
-                            <div id="publicVideoNotesContainer" class="card-grid">
-                                <p>Brak notatek publicznych.</p>
-                            </div>
-                        </div>
-
-                            <div id="personalQuizy" class="sub-tab-panel">
-                                <button id="addQuizBtn" onclick="window.location.href='../kreator quizow/quiz.html'">+ Nowy quiz</button>
-                                <div id="personalQuizyContainer" class="card-grid">
-                                    <p>Brak quizów.</p>
-                                </div>
-                            </div>
-
-                        </div>
 
                         <div id="quiz" class="tab">
                             <button onclick="generateQuiz()" id="genQuizBtn">Generuj quiz</button>
@@ -140,9 +108,16 @@
             
             
             <textarea id="reviewText" placeholder="Dodaj swoją opinię..."></textarea>
-            <div class="visibility-toggle">
+            <p id="errorMsg" class="error"></p>
+            <div class="visibility-toggle"></div>
+            <div class="review-actions">
+            <button id="submitReviewBtn" onclick="submitReview()">Prześlij opinię</button>
+            <button id="deleteReviewBtn" onclick="deleteMyReview()" style="display:none;">Usuń moją opinię</button>
+</div>      <div class="visibility-toggle">
             </div>
-            <button onclick="submitReview()">Prześlij opinię</button>
+            <div class="review-actions">
+                <button id="submitReviewBtn" onclick="submitReview()">Prześlij opinię</button>
+                <button id="deleteReviewBtn" onclick="deleteMyReview()" style="display:none;">Usuń moją opinię</button>
         </div>
         <div class="grade-summary">
             <div class="grade-box">
@@ -174,5 +149,69 @@
 </section>
 </main>
 
+
+<div id="materialsDrawer" class="materials-drawer">
+
+    <div id="drawerToggle" class="drawer-toggle">
+        
+    </div>
+
+    <div class="drawer-content">
+
+        <div class="drawer-tabs">
+
+            <button
+                class="drawer-tab active"
+                onclick="showDrawerTab(event,'drawerNotes')">
+                Notatki
+            </button>
+
+            <button
+                class="drawer-tab"
+                onclick="showDrawerTab(event,'drawerQuizy')">
+                Quizy
+            </button>
+
+        </div>
+
+        <div id="drawerNotes" class="drawer-panel active">
+
+            <button id="addNoteBtn" onclick="createPersonalNote()">
+                + Dodaj notatkę
+            </button>
+
+            <div class="section-label">
+                Twoje notatki do tego filmu
+            </div>
+
+            <div id="personalNotesContainer"></div>
+
+            <div class="section-label">
+                Twoje pozostałe notatki
+            </div>
+
+            <div id="myOtherNotesContainer"></div>
+
+            <div class="section-label">
+                Notatki publiczne
+            </div>
+
+            <div id="publicVideoNotesContainer"></div>
+
+        </div>
+
+        <div id="drawerQuizy" class="drawer-panel">
+
+            ../kreator quizow/quiz.html
+                + Nowy quiz
+            </button>
+
+            <div id="personalQuizyContainer"></div>
+
+        </div>
+
+    </div>
+
+</div>
 </body>
 </html>
