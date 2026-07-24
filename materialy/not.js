@@ -385,6 +385,13 @@ document.getElementById('noteForm').addEventListener('submit', async (e)=>{
       showToast("Treść nie może być pusta.");
       return;
   }
+  const length = Math.max(0, quill.getLength() - 1);
+
+if (length > MAX_CHARS) {
+    showToast("Notatka przekracza limit 100 000 znaków.");
+    return;
+}
+
   const isPublic = document.getElementById('notePublic').checked;
   const btn = document.getElementById('saveNoteBtn');
 
@@ -721,3 +728,25 @@ function quiz(){
 function back(){
   window.location.href = "../Profil/prof.html"
 }
+
+const MAX_CHARS = 100000;
+
+const counter = document.getElementById("charCounter");
+
+function updateCounter() {
+
+    // Quill zawsze dodaje znak końca linii,
+    // dlatego odejmujemy 1
+    const length = Math.max(0, quill.getLength() - 1);
+
+    counter.textContent = `${length} / ${MAX_CHARS} znaków`;
+
+    counter.classList.toggle(
+        "limit",
+        length > MAX_CHARS
+    );
+}
+
+quill.on("text-change", updateCounter);
+
+updateCounter();
