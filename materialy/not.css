@@ -296,6 +296,19 @@ main{
   font-family:'Baloo 2', sans-serif; font-weight:700; cursor:pointer;
 }
 
+.char-counter{
+    text-align:right;
+    margin-top:8px;
+    font-size:14px;
+    color:#666;
+    transition:0.2s;
+}
+
+.char-counter.limit{
+    color:#e53935;
+    font-weight:bold;
+}
+
 /* ---------- Toast ---------- */
 #toast{
   position: fixed; left:50%; bottom: 30px; transform: translateX(-50%) translateY(20px);

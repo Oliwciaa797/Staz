@@ -68,8 +68,25 @@ async function loadProfile() {
 }
 
 function handleAvatarPreview(e) {
+
     const file = e.target.files[0];
     if (!file) return;
+
+
+    const allowedTypes = [
+        "image/png",
+        "image/jpeg",
+        "image/webp"
+    ];
+
+
+    if (!allowedTypes.includes(file.type)) {
+
+        alert("Dozwolone są tylko pliki PNG, JPG, JPEG oraz WEBP.");
+
+        e.target.value = "";
+        return;
+    }
 
     selectedAvatarFile = file;
 
@@ -101,6 +118,22 @@ async function saveProfile() {
     }
 
     // Jeśli wybrano nowe zdjęcie -> wgraj je do Supabase Storage
+    if (selectedAvatarFile) {
+
+    const allowedTypes = [
+        "image/png",
+        "image/jpeg",
+        "image/webp"
+    ];
+
+    if (!allowedTypes.includes(selectedAvatarFile.type)) {
+
+        alert("Nieprawidłowy format zdjęcia.");
+        selectedAvatarFile = null;
+        return;
+    }
+}
+
     if (selectedAvatarFile) {
         // --- DEBUG: sprawdzenie sesji przed uploadem ---
         const { data: sessionCheck } = await supabaseClient.auth.getSession();
@@ -282,20 +315,19 @@ async function updateSidebar() {
 
     const sidebar = document.getElementById("sidebar");
 
-    const inviteHtml = `
-        <a href="#" id="inviteFriendBtn">Dołącz znajomego</a>
-        <div id="inviteFriendBox" class="invite-friend-box" style="display:none;">
-            <input type="email" id="inviteFriendEmail" placeholder="Email znajomego">
-            <button id="inviteFriendSend">Wyślij</button>
-        </div>
-    `;
+    // const inviteHtml = `
+    //     <a href="#" id="inviteFriendBtn">Dołącz znajomego</a>
+    //     <div id="inviteFriendBox" class="invite-friend-box" style="display:none;">
+    //         <input type="email" id="inviteFriendEmail" placeholder="Email znajomego">
+    //         <button id="inviteFriendSend">Wyślij</button>
+    //     </div>
+    // `;
 
     if (user) {
         sidebar.innerHTML = `
             <a href="../strona startowa/start.html">Strona Startowa</a>
             <a href="../materialy/not.html">Zapisane materiały</a>
             <a href="../Profil/prof.html">Profil</a>
-            ${inviteHtml}
             <a href="../wylogowywanie/logout.html">Wyloguj się</a>
             <a href="../zglaszanie bledow/blad.html">⚠️Zgłoś błąd⚠️</a>
         `;
@@ -308,46 +340,93 @@ async function updateSidebar() {
     }
 }
 
-document.addEventListener("click", (e) => {
+// document.addEventListener("click", (e) => {
 
-    // otwieranie/zamykanie boxa po kliknięciu w link
-    const inviteBtn = e.target.closest("#inviteFriendBtn");
-    if (inviteBtn) {
-        e.preventDefault();
-        const box = document.getElementById("inviteFriendBox");
-        box.style.display = box.style.display === "flex" ? "none" : "flex";
+//     // otwieranie/zamykanie boxa po kliknięciu w link
+//     const inviteBtn = e.target.closest("#inviteFriendBtn");
+//     if (inviteBtn) {
+//         e.preventDefault();
+//         const box = document.getElementById("inviteFriendBox");
+//         box.style.display = box.style.display === "flex" ? "none" : "flex";
+//         return;
+//     }
+
+//     // wysyłanie zaproszenia
+//     const sendBtn = e.target.closest("#inviteFriendSend");
+//     if (sendBtn) {
+//         sendFriendInvite();
+//         return;
+//     }
+// });
+
+// async function sendFriendInvite() {
+
+//     const emailInput = document.getElementById("inviteFriendEmail");
+//     const email = emailInput.value.trim();
+
+//     if (email === "") {
+//         alert("Wpisz adres email!");
+//         return;
+//     }
+
+//     try {
+//         // TU podłącz właściwą wysyłkę maila
+//         // np. supabase edge function, backend endpoint albo supabaseClient.functions.invoke(...)
+//         console.log("Wysyłanie zaproszenia do:", email);
+
+//         // po sukcesie:
+//         emailInput.value = "";
+//         document.getElementById("inviteFriendBox").style.display = "none";
+
+//     } catch (error) {
+//         console.error(error);
+//         alert("Nie udało się wysłać zaproszenia.");
+//     }
+// }
+
+async function init() {
+
+    await updateSidebar();
+    const { data: { session } } = await supabaseClient.auth.getSession();
+
+    if (!session) {
+        window.location.href = '../logowanie/log.html';
         return;
     }
 
-    // wysyłanie zaproszenia
-    const sendBtn = e.target.closest("#inviteFriendSend");
-    if (sendBtn) {
-        sendFriendInvite();
-        return;
+    currentUser = session.user;
+    document.getElementById('email').value = currentUser.email;
+
+    await loadProfile();
+    await loadUserStats();
+
+    // --- LIMIT ZNAKÓW W NAZWIE UŻYTKOWNIKA ---
+    const USERNAME_MAX_LENGTH = 20;
+    const usernameInput = document.getElementById('username');
+    const usernameCounter = document.getElementById('usernameCounter');
+
+    function updateUsernameCounter() {
+        // wycina nadmiar znaków, np. przy wklejeniu dłuższego tekstu
+        if (usernameInput.value.length > USERNAME_MAX_LENGTH) {
+            usernameInput.value = usernameInput.value.slice(0, USERNAME_MAX_LENGTH);
+        }
+        usernameCounter.textContent = `${usernameInput.value.length}/${USERNAME_MAX_LENGTH}`;
+        usernameCounter.classList.toggle('limit-reached', usernameInput.value.length >= USERNAME_MAX_LENGTH);
     }
-});
 
-async function sendFriendInvite() {
+    usernameInput.addEventListener('input', updateUsernameCounter);
+    updateUsernameCounter(); // ustawia licznik od razu po wczytaniu profilu
+    // --- KONIEC LIMITU ---
 
-    const emailInput = document.getElementById("inviteFriendEmail");
-    const email = emailInput.value.trim();
-
-    if (email === "") {
-        alert("Wpisz adres email!");
-        return;
-    }
-
-    try {
-        // TU podłącz właściwą wysyłkę maila
-        // np. supabase edge function, backend endpoint albo supabaseClient.functions.invoke(...)
-        console.log("Wysyłanie zaproszenia do:", email);
-
-        // po sukcesie:
-        emailInput.value = "";
-        document.getElementById("inviteFriendBox").style.display = "none";
-
-    } catch (error) {
-        console.error(error);
-        alert("Nie udało się wysłać zaproszenia.");
-    }
+    document.getElementById('avatarWrapper').addEventListener('click', () => {
+        document.getElementById('avatarInput').click();
+    });
+    document.getElementById('avatarInput').addEventListener('change', handleAvatarPreview);
+    document.getElementById('saveBtn').addEventListener('click', saveProfile);
+    document.getElementById('changePasswordBtn').addEventListener('click', () => {
+        window.location.href = '../zmienhaslo/zmien.html';
+    });
+    document.getElementById('deleteAccountBtn').addEventListener('click', () => {
+        window.location.href = '../usunkonto/usun.html';
+    });
 }

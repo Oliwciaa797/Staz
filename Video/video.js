@@ -11,6 +11,7 @@ supabase.createClient(
 
 console.log("video.js loaded");
 
+const MAX_NOTE_CHARS = 100000;
 
 
 /* ---------- Pomocnicze: bezpieczne wstawianie tekstu do HTML ---------- */
@@ -394,6 +395,19 @@ async function submitReview() {
         errorMsg.textContent = "Wybierz ocenę.";
     }
 
+    const { data: existingReview } = await supabaseClient
+        .from("video_reviews")
+        .select("id")
+        .eq("video_id", videoId)
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+    if (existingReview) {
+        alert("Dodałeś już opinię do tego filmu.");
+        return;
+    }
+
+
     const { error } =
         await supabaseClient
             .from("video_reviews")
@@ -405,6 +419,12 @@ async function submitReview() {
             });
 
     if (error) {
+
+        if (error.code === "23505") {
+            alert("Dodałeś już opinię do tego filmu.");
+            return;
+        }
+
         console.error(error);
         toast.show('error', 'Error', error.message)
         return;
@@ -421,6 +441,7 @@ async function submitReview() {
         .forEach(star => star.classList.remove("active"));
 
     loadReviews();
+
 }
 
 async function showUser() {
@@ -585,6 +606,11 @@ function createPersonalNote() {
 
         <div class="quill-container"></div>
 
+        <div class="char-counter">
+            <span class="currentChars">0</span> / 100000 znaków
+        </div>
+
+
         <div class="visibility-toggle">
             <input 
                 type="checkbox" 
@@ -629,6 +655,26 @@ function createPersonalNote() {
         }
 
     });
+
+    const counter = div.querySelector(".char-counter");
+    const current = div.querySelector(".currentChars");
+
+    function updateCounter() {
+
+        const length = Math.max(0, noteQuill.getLength() - 1);
+
+        current.textContent = length;
+
+        counter.classList.toggle(
+            "limit",
+            length > MAX_NOTE_CHARS
+        );
+    }
+
+noteQuill.on("text-change", updateCounter);
+
+updateCounter();
+
 
 }
 function timeAgo(date){
@@ -702,6 +748,10 @@ function enterNoteEditMode(card, note){
         <div class="field">
             <label>Treść</label>
             <div class="edit-quill"></div>
+            <div class="char-counter">
+                <span class="currentChars">0</span> / 100000 znaków
+            </div>
+
         </div>
 
         <div class="card-footer">
@@ -741,6 +791,26 @@ function enterNoteEditMode(card, note){
     // wczytanie starej treści
     editQuill.root.innerHTML = note.content || "";
 
+    const counter = card.querySelector(".char-counter");
+    const current = card.querySelector(".currentChars");
+
+    function updateCounter(){
+
+        const length = Math.max(0, editQuill.getLength() - 1);
+
+        current.textContent = length;
+
+        counter.classList.toggle(
+            "limit",
+            length > MAX_NOTE_CHARS
+        );
+    }
+
+editQuill.on("text-change", updateCounter);
+
+updateCounter();
+
+
 
     card.querySelector(".cancel-edit")
     .addEventListener("click",()=>{
@@ -763,6 +833,13 @@ function enterNoteEditMode(card, note){
 
         const plainText =
         editQuill.getText().trim();
+        const length = Math.max(0, editQuill.getLength() - 1);
+
+        if (length > MAX_NOTE_CHARS) {
+            alert("Notatka może mieć maksymalnie 100000 znaków.");
+            return;
+        }
+
 
 
 
@@ -801,6 +878,7 @@ function enterNoteEditMode(card, note){
 }
 /* ---------- Wczytywanie 3 list ---------- */
 async function loadPersonalNotes(){
+
 
     const { data: { user } } = await supabaseClient.auth.getUser();
     const container = document.getElementById("personalNotesContainer");
@@ -958,6 +1036,13 @@ document.addEventListener("click", async (e) => {
 
         const plainText =
         noteQuill.getText().trim();
+        const length = Math.max(0, noteQuill.getLength() - 1);
+
+        if (length > MAX_NOTE_CHARS) {
+            alert("Notatka może mieć maksymalnie 100000 znaków.");
+            return;
+        }
+
         const publicInput = card.querySelector(".notePublicInput");
         const isPublic = publicInput ? publicInput.checked : false;
 
