@@ -351,3 +351,50 @@ async function sendFriendInvite() {
         alert("Nie udało się wysłać zaproszenia.");
     }
 }
+
+async function init() {
+
+    await updateSidebar();
+    const { data: { session } } = await supabaseClient.auth.getSession();
+
+    if (!session) {
+        window.location.href = '../logowanie/log.html';
+        return;
+    }
+
+    currentUser = session.user;
+    document.getElementById('email').value = currentUser.email;
+
+    await loadProfile();
+    await loadUserStats();
+
+    // --- LIMIT ZNAKÓW W NAZWIE UŻYTKOWNIKA ---
+    const USERNAME_MAX_LENGTH = 20;
+    const usernameInput = document.getElementById('username');
+    const usernameCounter = document.getElementById('usernameCounter');
+
+    function updateUsernameCounter() {
+        // wycina nadmiar znaków, np. przy wklejeniu dłuższego tekstu
+        if (usernameInput.value.length > USERNAME_MAX_LENGTH) {
+            usernameInput.value = usernameInput.value.slice(0, USERNAME_MAX_LENGTH);
+        }
+        usernameCounter.textContent = `${usernameInput.value.length}/${USERNAME_MAX_LENGTH}`;
+        usernameCounter.classList.toggle('limit-reached', usernameInput.value.length >= USERNAME_MAX_LENGTH);
+    }
+
+    usernameInput.addEventListener('input', updateUsernameCounter);
+    updateUsernameCounter(); // ustawia licznik od razu po wczytaniu profilu
+    // --- KONIEC LIMITU ---
+
+    document.getElementById('avatarWrapper').addEventListener('click', () => {
+        document.getElementById('avatarInput').click();
+    });
+    document.getElementById('avatarInput').addEventListener('change', handleAvatarPreview);
+    document.getElementById('saveBtn').addEventListener('click', saveProfile);
+    document.getElementById('changePasswordBtn').addEventListener('click', () => {
+        window.location.href = '../zmienhaslo/zmien.html';
+    });
+    document.getElementById('deleteAccountBtn').addEventListener('click', () => {
+        window.location.href = '../usunkonto/usun.html';
+    });
+}
