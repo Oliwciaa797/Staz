@@ -390,6 +390,19 @@ async function submitReview() {
         return;
     }
 
+    const { data: existingReview } = await supabaseClient
+        .from("video_reviews")
+        .select("id")
+        .eq("video_id", videoId)
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+    if (existingReview) {
+        alert("Dodałeś już opinię do tego filmu.");
+        return;
+    }
+
+
     const { error } =
         await supabaseClient
             .from("video_reviews")
@@ -401,6 +414,12 @@ async function submitReview() {
             });
 
     if (error) {
+
+        if (error.code === "23505") {
+            alert("Dodałeś już opinię do tego filmu.");
+            return;
+        }
+
         console.error(error);
         alert(error.message);
         return;
@@ -417,6 +436,7 @@ async function submitReview() {
         .forEach(star => star.classList.remove("active"));
 
     loadReviews();
+
 }
 
 async function showUser() {
