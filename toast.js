@@ -59,6 +59,7 @@
   }
 }
 
+window.Toast = Toast;
 // USAGE
 // const toast = new Toast();
 // toast.show('success', 'Hello!', 'Mission complete.');
