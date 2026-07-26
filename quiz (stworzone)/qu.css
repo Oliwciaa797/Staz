@@ -74,3 +74,38 @@ h1{
 .back{
     cursor: pointer;
 }
+
+@media (max-width: 640px){
+  .quiz-container{
+    margin: 16px auto;
+    padding: 18px 16px;
+    border-radius: 16px;
+  }
+
+  h1{
+    font-size: 22px;
+  }
+
+  .question{
+    padding: 14px;
+    margin-bottom: 18px;
+  }
+
+  .question h3{
+    font-size: 16px;
+  }
+
+  .answer{
+    font-size: 14px;
+    padding: 4px 0;
+  }
+
+  #finishBtn{
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  #quizResult{
+    font-size: 18px;
+  }
+}
