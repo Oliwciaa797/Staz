@@ -91,3 +91,25 @@ button:disabled {
 	font-size: 14px;
 	text-align: center;
 }
+
+@media (max-width: 480px) {
+  .profile-container{
+    padding: 12px;
+  }
+
+  .left-section{
+    padding: 28px 22px;
+    border-width: 3px;
+    border-radius: 20px;
+  }
+
+  h1{
+    font-size: 24px;
+    margin-bottom: 22px;
+  }
+
+  button{
+    padding: 12px;
+    font-size: 14px;
+  }
+}
