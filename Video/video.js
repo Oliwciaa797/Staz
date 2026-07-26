@@ -1260,3 +1260,28 @@ function reportError(){
     "../zglaszanie bledow/blad.html";
 
 }
+
+async function saveWatchHistory(videoId) {
+    const {
+        data: { user }
+    } = await supabaseClient.auth.getUser();
+
+    if (!user) return;
+
+    const { error } = await supabaseClient
+        .from("watch_history")
+        .insert({
+            user_id: user.id,
+            video_id: videoId
+        });
+
+    if (error) {
+        console.error("Couldn't save history:", error);
+    }
+}
+
+if (videoId) {
+    player.src = `https://www.youtube.com/embed/${videoId}?rel=0`;
+
+    saveWatchHistory(videoId);
+}
