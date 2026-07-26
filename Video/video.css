@@ -195,9 +195,10 @@ header {
 }
 
 #generated, #quiz {
+	text-align: left;
 	flex-direction: column;
 	justify-content: flex-start;
-	align-items: center;
+	/* align-items: center; */
 }
 
 #gennotes, #genQuizBtn, .user-review button {
@@ -740,3 +741,16 @@ input.noteTitleInput {
 /* .review-item div {
 	margin-left: 10px;
 } */
+
+.char-counter{
+    margin-top:8px;
+    text-align:right;
+    font-size:13px;
+    color:#666;
+    transition:0.2s;
+}
+
+.char-counter.limit{
+    color:#e53935;
+    font-weight:700;
+}
