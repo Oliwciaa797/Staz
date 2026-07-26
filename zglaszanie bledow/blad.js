@@ -8,6 +8,7 @@ supabase.createClient(
     SUPABASE_KEY
 );
 
+const toast = new Toast();
 async function sendReport(){
 
     const {
@@ -17,7 +18,7 @@ async function sendReport(){
 
     if(!user){
 
-        alert("Zaloguj się");
+        toast.show('error','Zaloguj się',"Zaloguj się aby zgłosić błąd");
 
         return;
     }
@@ -36,7 +37,7 @@ async function sendReport(){
 
     if(!description){
 
-        alert("Opisz problem");
+        toast.show('error','Błąd',"Opisz problem przed zgłoszeniem błędu");
 
         return;
     }
@@ -60,15 +61,12 @@ async function sendReport(){
 
         console.error(error);
 
-        alert("Nie udało się wysłać");
+        toast.show('error','Błąd',"Zgłoszenie błędu nie powiodło się");
 
         return;
     }
 
-    document
-    .getElementById("msg")
-    .textContent =
-    "✅ Zgłoszenie wysłane";
+    toast.show('success', 'Gotowe!','Zgłoszenie zostało wysłane')
 
     document
     .getElementById("description")

@@ -6,6 +6,7 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 // nazwa Twojego bucketu ze zdjęciami — popraw jeśli inna
 const AVATAR_BUCKET = 'avatars';
 
+const toast = new toast();
 document.addEventListener('DOMContentLoaded', async function () {
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (!session) {
@@ -35,7 +36,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             .single();
 
         if (profileError) {
-            statusEl.textContent = 'Błąd: ' + profileError.message;
+            toast.show('error','Błąd', profileError.message);
             return;
         }
 
@@ -61,7 +62,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         if (error) {
             // np. "Nieprawidłowe hasło"
-            statusEl.textContent = 'Błąd: ' + error.message;
+            toast.show('error','Błąd', error.message);
             return;
         }
 

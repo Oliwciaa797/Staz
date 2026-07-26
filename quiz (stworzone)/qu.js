@@ -23,6 +23,8 @@ document.addEventListener(
     loadQuiz
 );
 
+const toast = new Toast();
+
 async function loadQuiz(){
 
     const { data, error } =
@@ -126,7 +128,9 @@ function checkQuiz(){
         if(question.type === "multi"){
 
             if(checked.length === 0){
-                alert(
+                toast.show(
+                    'error',
+                    'Błąd',
                     `Zaznacz odpowiedź w pytaniu ${i + 1}`
                 );
                 return;
@@ -134,7 +138,9 @@ function checkQuiz(){
 
         } else {
             if(checked.length === 0){
-                alert(
+                toast.show(
+                    'error',
+                    'Błąd',
                     `Zaznacz odpowiedź w pytaniu ${i + 1}`
                 );
                 return;

@@ -103,9 +103,6 @@ async function search() {
         return;
     }
 
-    document.querySelector(".searchAlert").textContent = "";
-
-
     const value = query + " tutorial";
 
     document.getElementById("mainContent").classList.add("search-mode");
@@ -352,7 +349,9 @@ reviewCount > 0
 
     catch(error) {
         console.error(error);
-        alert(
+        toast.show(
+            'error',
+            'Błąd',
             "Nie można połączyć się z YouTube."
         );
     }

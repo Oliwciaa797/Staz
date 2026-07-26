@@ -49,7 +49,7 @@ if (!isConfigured) {
   document.getElementById('myNotesLoading').textContent =
     'Uzupełnij SUPABASE_URL i SUPABASE_ANON_KEY w pliku script.js, aby notatki zaczęły działać.';
   document.getElementById('publicNotesLoading').textContent = '';
-  toast.show('error', 'Error','Uzupełnij dane Supabase w script.js');
+  toast.show('error', 'Błąd','Uzupełnij dane Supabase w script.js');
 } else {
   loadUser();
 }
@@ -237,7 +237,7 @@ function enterEditMode(card, note){
 
       if(!newTitle || !plainText){
 
-          toast.show('error','Error',"Tytuł i treść nie mogą być puste.");
+          toast.show('error','Błąd',"Tytuł i treść nie mogą być puste.");
 
           return;
       }
@@ -256,7 +256,7 @@ function enterEditMode(card, note){
 
       if(error){
 
-          toast.show('error', 'Error',
+          toast.show('error', 'Błąd',
           "Nie udało się zapisać zmian: "
           + error.message
           );
@@ -360,7 +360,7 @@ document.getElementById('noteForm').addEventListener('submit', async (e)=>{
   e.preventDefault();
 
   if (!isConfigured) {
-    toast.show('error','Error','Najpierw uzupełnij dane Supabase w script.js.');
+    toast.show('error','Błąd','Najpierw uzupełnij dane Supabase w script.js.');
     return;
   }
   if(!currentUser){
@@ -373,13 +373,13 @@ document.getElementById('noteForm').addEventListener('submit', async (e)=>{
   const plainText = quill.getText().trim();
 
   if(!plainText){
-      toast.show('error', 'Error', "Treść nie może być pusta.");
+      toast.show('error', 'Błąd', "Treść nie może być pusta.");
       return;
   }
   const length = Math.max(0, quill.getLength() - 1);
 
 if (length > MAX_CHARS) {
-    toast.show('error','Error',"Notatka przekracza limit 100 000 znaków.");
+    toast.show('error','Błąd',"Notatka przekracza limit 100 000 znaków.");
     return;
 }
 
@@ -400,7 +400,7 @@ const { error } = await supabaseClient.from('notes').insert({
   btn.textContent = 'ZAPISZ NOTATKĘ';
 
   if(error){
-    toast.show('error','Error','Błąd zapisu: ' + error.message);
+    toast.show('error','Błąd','Błąd zapisu: ' + error.message);
     return;
   }
 
@@ -416,7 +416,7 @@ async function deleteNote(id){
   if(!confirm('Na pewno usunąć tę notatkę?')) return;
   const { error } = await supabaseClient.from('notes').delete().eq('id', id);
   if(error){
-    showToast('Nie udało się usunąć notatki.');
+    toast.show('error','Błąd','Nie udało się usunąć notatki.');
     return;
   }
   showToast('Notatka usunięta.');
@@ -431,10 +431,10 @@ async function toggleVisibility(id, currentlyPublic){
     .update({ is_public: !currentlyPublic })
     .eq('id', id);
   if(error){
-    showToast('Nie udało się zmienić widoczności.');
+    toast.show('error','Błąd','Nie udało się zmienić widoczności.');
     return;
   }
-  showToast(!currentlyPublic ? 'Notatka jest teraz publiczna.' : 'Notatka jest teraz prywatna.');
+  toast.show('success', 'Gotowe', !currentlyPublic ? 'Notatka jest teraz publiczna.' : 'Notatka jest teraz prywatna.');
   loadMyNotes();
   loadPublicNotes();
 }
@@ -695,11 +695,11 @@ async function deleteQuiz(id){
 
     if(error){
         console.error(error);
-        showToast("Nie udało się usunąć quizu.");
+        toast.show('error','Błąd',"Nie udało się usunąć quizu.");
         return;
     }
 
-    showToast("Quiz usunięty.");
+    toast.show('success','Gotowe!',"Quiz został usunięty.");
 
     loadMyQuizy();
     loadPublicQuizy();

@@ -403,7 +403,7 @@ async function submitReview() {
         .maybeSingle();
 
     if (existingReview) {
-        alert("Dodałeś już opinię do tego filmu.");
+        toast.show('error','Błąd',"Dodałeś już opinię do tego filmu.");
         return;
     }
 
@@ -421,7 +421,7 @@ async function submitReview() {
     if (error) {
 
         if (error.code === "23505") {
-            alert("Dodałeś już opinię do tego filmu.");
+            toast.show('error','Błąd',"Dodałeś już opinię do tego filmu.");
             return;
         }
 
@@ -836,7 +836,7 @@ updateCounter();
         const length = Math.max(0, editQuill.getLength() - 1);
 
         if (length > MAX_NOTE_CHARS) {
-            alert("Notatka może mieć maksymalnie 100000 znaków.");
+            toast.show('error','Błąd',"Notatka może mieć maksymalnie 100000 znaków.");
             return;
         }
 
@@ -1039,7 +1039,7 @@ document.addEventListener("click", async (e) => {
         const length = Math.max(0, noteQuill.getLength() - 1);
 
         if (length > MAX_NOTE_CHARS) {
-            alert("Notatka może mieć maksymalnie 100000 znaków.");
+            toast.show('error','Błąd',"Notatka może mieć maksymalnie 100000 znaków.");
             return;
         }
 
