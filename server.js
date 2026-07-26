@@ -4,8 +4,8 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 
-// To automatycznie serwuje WSZYSTKIE pliki z folderu (css, js, obrazki, inne strony)
-app.use(express.static(path.join(__dirname, 'strona-startowa')));
+// Serwuj pliki statyczne z GŁÓWNEGO katalogu (bo tam leży main.css, toast.js itd.)
+app.use(express.static(__dirname));
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'strona-startowa', 'start.html'));
