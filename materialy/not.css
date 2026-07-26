@@ -274,13 +274,19 @@ main{
   border: 1px solid var(--background);
 }
 .quiz-card .thumb, .saved-card .thumb{
-  height: 110px;
+  height: 220px;
   background: linear-gradient(135deg, var(--secondary-color), var(--hover-light));
   display:flex; align-items:center; justify-content:center;
   color: var(--primary-color);
   font-family:'Baloo 2', sans-serif;
   font-weight:800;
   font-size: 15px;
+}
+
+.thumb img {
+  height: 220px;
+  z-index: 1;
+  width: auto;
 }
 .quiz-card .info, .saved-card .info{ padding: 14px 16px 16px; }
 .quiz-card h3, .saved-card h3{

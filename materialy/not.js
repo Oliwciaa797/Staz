@@ -133,18 +133,9 @@ function renderNoteCard(note, { editable }){
   const showBtn =
 div.querySelector(".show-note-btn");
 
-showBtn.addEventListener("click",()=>{
-
-    const content =
-    div.querySelector(".note-content-view");
-
-    content.classList.toggle("expanded");
-
-    showBtn.textContent =
-    content.classList.contains("expanded")
-    ? "Ukryj notatkę"
-    : "Pokaż notatkę";
-
+showBtn.addEventListener("click", () => {
+    sessionStorage.setItem("selectedNote", JSON.stringify(note));
+    window.location.href = "notatka/note.html";
 });
   return div;
 }
@@ -655,11 +646,13 @@ async function loadSavedMaterials(){
         <div class="saved-card">
 
             <div class="thumb">
-                FILM
+                <img
+                  src="https://img.youtube.com/vi/${item.video_id}/hqdefault.jpg"
+                  alt="Thumbnail">
             </div>
 
             <div class="info">
-                <h3>Film YouTube</h3>
+                <h3>${item.video_title}</h3>
                 <button class="go-btn" onclick="openVideo('${item.video_id}')"> Otwórz materiał </button>
             </div>
 
