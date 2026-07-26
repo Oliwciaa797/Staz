@@ -26,13 +26,7 @@ const TYPE_LABELS = {
   boolean: 'Prawda / Fałsz'
 };
 
-/* ---------- Toast ---------- */
-function showToast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(()=> t.classList.remove('show'), 2600);
-}
+const toast = new Toast();
 
 function escapeHtml(str){
   const d = document.createElement('div');
@@ -68,7 +62,7 @@ async function init(){
     renderQuestionsList();
   } catch (e) {
     console.error(e);
-    showToast('Nie udało się połączyć z Supabase.');
+    toast.show('error', 'Błąd', 'Nie udało się połączyć z Supabase.');
   }
 }
 
@@ -123,7 +117,7 @@ function renderQuestionForm(type){
     document.getElementById('qfCancelBtn').addEventListener('click', resetAddQuestionUI);
     document.getElementById('qfAddBtn').addEventListener('click', () => {
       const text = document.getElementById('qfText').value.trim();
-      if(!text){ showToast('Podaj treść pytania.'); return; }
+      if(!text){ toast.show('error', 'Błąd', 'Podaj treść pytania.'); return; }
       const correctVal = document.querySelector('input[name="qfBoolCorrect"]:checked').value;
 
       questions.push({
@@ -166,7 +160,7 @@ function renderQuestionForm(type){
 
   function addOptionRow(){
     const rows = optionsList.querySelectorAll('.option-row').length;
-    if(rows >= 6){ showToast('Maksymalnie 6 opcji.'); return; }
+    if(rows >= 6){ toast.show('error','Błąd','Maksymalnie 6 opcji.'); return; }
     const row = document.createElement('div');
     row.className = 'option-row';
     row.innerHTML = `
@@ -176,7 +170,7 @@ function renderQuestionForm(type){
     `;
     row.querySelector('.remove-option').addEventListener('click', () => {
       if(optionsList.querySelectorAll('.option-row').length <= 2){
-        showToast('Pytanie musi mieć co najmniej 2 opcje.');
+        toast.show('error','Błąd','Pytanie musi mieć co najmniej 2 opcje.');
         return;
       }
       row.remove();
@@ -193,7 +187,7 @@ function renderQuestionForm(type){
 
   document.getElementById('qfAddBtn').addEventListener('click', () => {
     const text = document.getElementById('qfText').value.trim();
-    if(!text){ showToast('Podaj treść pytania.'); return; }
+    if(!text){ toast.show('error','Błąd','Podaj treść pytania.'); return; }
 
     const rows = Array.from(optionsList.querySelectorAll('.option-row'));
     const options = [];
@@ -208,8 +202,8 @@ function renderQuestionForm(type){
       }
     });
 
-    if(options.length < 2){ showToast('Podaj co najmniej 2 wypełnione opcje.'); return; }
-    if(correct.length === 0){ showToast('Zaznacz co najmniej jedną poprawną odpowiedź.'); return; }
+    if(options.length < 2){ toast.show('error','Błąd','Podaj co najmniej 2 wypełnione opcje.'); return; }
+    if(correct.length === 0){ toast.show('error','Błąd','Zaznacz co najmniej jedną poprawną odpowiedź.'); return; }
 
     questions.push({
       id: genId(),
@@ -276,7 +270,7 @@ function renderQuestionsList(){
 document.getElementById('saveQuizBtn').addEventListener('click', async () => {
 
     if(!currentUser){
-        showToast('Zaloguj się, aby zapisać quiz.');
+        toast.show('error','Zaloguj się','Zaloguj się, aby zapisać quiz.');
         return;
     }
 
@@ -287,12 +281,12 @@ document.getElementById('saveQuizBtn').addEventListener('click', async () => {
     document.getElementById('quizPublic').checked;
 
     if(!title){
-        showToast('Podaj nazwę quizu.');
+        toast.show('error','Błąd','Podaj nazwę quizu.');
         return;
     }
 
     if(questions.length === 0){
-        showToast('Dodaj co najmniej jedno pytanie.');
+        toast.show('error','Błąd','Dodaj co najmniej jedno pytanie.');
         return;
     }
 
@@ -339,11 +333,13 @@ document.getElementById('saveQuizBtn').addEventListener('click', async () => {
         : 'ZAPISZ QUIZ';
 
     if(error){
-        showToast('Błąd zapisu: ' + error.message);
+        toast.show('error', 'Błąd zapisu: ', error.message);
         return;
     }
 
-    showToast(
+    toast.show(
+        'success',
+        'Gotowe!',
         editQuizId
         ? 'Quiz zaktualizowany!'
         : 'Quiz zapisany!'
@@ -391,11 +387,7 @@ async function showUser() {
         userMenu.classList.toggle("active");
     };
 
-    document.addEventListener("click", (e) => {
-        if (!document.getElementById("userArea").contains(e.target)) {
-            userMenu.classList.remove("active");
-        }
-    });
+z
 }
 
 
