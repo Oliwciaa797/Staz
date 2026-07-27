@@ -3,47 +3,8 @@
 // This enables autocomplete, go to definition, etc.
 
 // Setup type definitions for built-in Supabase Runtime APIs
- import "@supabase/functions-js/edge-runtime.d.ts";
-import { withSupabase } from "@supabase/server";
+import "@supabase/functions-js/edge-runtime.d.ts";
 
- /*console.log("Hello from Functions!");
-
-// This endpoint uses 'publishable' | 'secret' access, apiKey is required.
-// Use publishable for Client-facing, key-validated endpoints
-// Use secret for Server-to-server, internal calls
-export default {
-  fetch: withSupabase({ auth: ["publishable", "secret"] }, async (req, ctx) => {
-    // Called by another service with a secret key
-    // ctx.supabaseAdmin bypasses RLS — use for privileged operations
-  
-    if (ctx.authMode === "secret") {
-      const { user_id } = await req.json();
-      const { data } = await ctx.supabaseAdmin.auth.admin.getUserById(user_id);
-
-      return Response.json({
-        email: data?.user?.email,
-      });
-    }
-    */
-/* 
-    const { name } = await req.json();
-
-    return Response.json({
-      message: `Hello ${name}!`,
-    });
-  }),
-};
-
-To invoke locally:
-
-  1. Run `supabase start` (see: https://supabase.com/docs/reference/cli/supabase-start)
-  2. Make an HTTP request:
-
-  curl -i --location --request POST 'http://127.0.0.1:54321/functions/v1/send-reset-email' \
-    --header 'apiKey: sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH' \
-    --data '{"name":"Functions"}'
-
-*/
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
@@ -65,6 +26,9 @@ Deno.serve(async (req: Request) => {
         const supabaseAdmin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
 
         // 1. Poproś Supabase o wygenerowanie bezpiecznego linku resetującego
+        //    UWAGA: dla type: 'recovery' Supabase wymaga, żeby użytkownik
+        //    z tym adresem e-mail JUŻ ISTNIAŁ w auth.users - w przeciwnym
+        //    razie generateLink zwróci błąd i poniższy warunek zadziała.
         const { data, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
             type: 'recovery',
             email: email,
@@ -85,8 +49,6 @@ Deno.serve(async (req: Request) => {
         // 2. Wyślij ten link przez Resend, w ładnym szablonie HTML
         const emailHtml = buildEmailHtml(resetLink);
 
-        
-
         const resendRes = await fetch('https://api.resend.com/emails', {
             method: 'POST',
             headers: {
@@ -100,10 +62,15 @@ Deno.serve(async (req: Request) => {
                 html: emailHtml,
             }),
         });
+
+        // WAŻNE: resendData musi być odczytane PRZED jakimkolwiek console.log,
+        // które się do niego odwołuje - const ma "temporal dead zone" i użycie
+        // przed deklaracją rzuca ReferenceError (to był powód crashy funkcji).
+        const resendData = await resendRes.json();
+
         console.log('EMAIL:', email);
         console.log('RESEND STATUS:', resendRes.status);
         console.log('RESEND DATA:', resendData);
-        const resendData = await resendRes.json();
 
         if (!resendRes.ok) {
             return jsonResponse({ error: resendData }, 500);
@@ -112,12 +79,12 @@ Deno.serve(async (req: Request) => {
         return jsonResponse({ success: true, id: resendData.id }, 200);
 
     } catch (err) {
-    console.error("CATCH ERROR:", err);
+        console.error("CATCH ERROR:", err);
 
-    return jsonResponse({
-        error: String(err)
-    }, 500);
-}
+        return jsonResponse({
+            error: String(err)
+        }, 500);
+    }
 
 });
 
@@ -152,7 +119,6 @@ function buildEmailHtml(resetLink: string) {
               </table>
               <p style="margin:24px 0 0 0; color:#999; font-size:13px;">
                 Jeśli to nie Ty prosiłeś o zmianę hasła, zignoruj tę wiadomość.
-                file:///D:/Users/admin-3.AM-T-07477/Documents/staz/Staz/reset/odn.html
               </p>
             </td>
           </tr>
