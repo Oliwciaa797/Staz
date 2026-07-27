@@ -12,7 +12,7 @@ const supabaseClient = supabase.createClient(
 );
 
 const isConfigured = !SUPABASE_URL.includes("TWOJ_") && !SUPABASE_ANON_KEY.includes("TWOJ_");
-
+const toast = new Toast();
 /* ============================================================
    ============================================================ */
 
@@ -32,12 +32,29 @@ const quill = new Quill("#editor", {
     }
 });
 
-/* ---------- Toast ---------- */
-function showToast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(()=> t.classList.remove('show'), 2600);
+let tagSelect;
+
+async function loadTags() {
+    const { data, error } = await supabaseClient
+        .from("tags")
+        .select("name")
+        .order("name");
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    tagSelect = new TomSelect("#noteTags", {
+        plugins: ["remove_button"],
+        valueField: "name",
+        labelField: "name",
+        searchField: "name",
+        options: data,
+        items: [],
+        create: true,
+        persist: false
+    });
 }
 
 /* ---------- Tabs (działa zawsze, niezależnie od Supabase) ---------- */
@@ -56,7 +73,7 @@ if (!isConfigured) {
   document.getElementById('myNotesLoading').textContent =
     'Uzupełnij SUPABASE_URL i SUPABASE_ANON_KEY w pliku script.js, aby notatki zaczęły działać.';
   document.getElementById('publicNotesLoading').textContent = '';
-  showToast('Uzupełnij dane Supabase w script.js');
+  toast.show('error', 'Błąd','Uzupełnij dane Supabase w script.js');
 } else {
   loadUser();
 }
@@ -100,6 +117,7 @@ async function loadUser(){
 
     loadMyNotes();
     loadPublicNotes();
+    await loadTags();
 
     
 loadMyQuizy();
@@ -124,6 +142,13 @@ function renderNoteCard(note, { editable }){
   div.innerHTML = `
     ${badge}
     <h3 class="note-title-view">${escapeHtml(note.title)}</h3>
+    <div class="note-tags">
+        ${
+            (note.tags || [])
+                .map(tag => `<span class="tag">${tag}</span>`)
+                .join("")
+        }
+    </div>
     <div class="note-content-view">${note.content}</div>
     <button class="go-btn big-btn show-note-btn">Pokaż notatkę</button>
     <div class="card-footer">
@@ -140,18 +165,9 @@ function renderNoteCard(note, { editable }){
   const showBtn =
 div.querySelector(".show-note-btn");
 
-showBtn.addEventListener("click",()=>{
-
-    const content =
-    div.querySelector(".note-content-view");
-
-    content.classList.toggle("expanded");
-
-    showBtn.textContent =
-    content.classList.contains("expanded")
-    ? "Ukryj notatkę"
-    : "Pokaż notatkę";
-
+showBtn.addEventListener("click", () => {
+    sessionStorage.setItem("selectedNote", JSON.stringify(note));
+    window.location.href = "notatka/note.html";
 });
   return div;
 }
@@ -244,9 +260,7 @@ function enterEditMode(card, note){
 
       if(!newTitle || !plainText){
 
-          showToast(
-          "Tytuł i treść nie mogą być puste."
-          );
+          toast.show('error','Błąd',"Tytuł i treść nie mogą być puste.");
 
           return;
       }
@@ -265,7 +279,7 @@ function enterEditMode(card, note){
 
       if(error){
 
-          showToast(
+          toast.show('error', 'Błąd',
           "Nie udało się zapisać zmian: "
           + error.message
           );
@@ -275,7 +289,7 @@ function enterEditMode(card, note){
 
 
 
-      showToast("Notatka zaktualizowana.");
+      toast.show('success','Gotowe!', "Notatka zaktualizowana.");
 
       loadMyNotes();
 
@@ -334,34 +348,58 @@ async function loadMyNotes(){
 }
 
 /* ---------- Wczytanie notatek publicznych (innych użytkowników) ---------- */
-async function loadPublicNotes(){
-  const loadingEl = document.getElementById('publicNotesLoading');
-  const grid = document.getElementById('publicNotesGrid');
-  loadingEl.style.display = 'block';
-  grid.innerHTML = '';
+async function loadPublicNotes(search = "") {
 
-  const { data, error } = await supabaseClient
-    .from('notes')
-    .select('*')
-    .eq('is_public', true)
-    .order('created_at', { ascending: false })
-    .limit(30);
+    const loadingEl = document.getElementById("publicNotesLoading");
+    const grid = document.getElementById("publicNotesGrid");
 
-  loadingEl.style.display = 'none';
+    loadingEl.style.display = "block";
+    grid.innerHTML = "";
 
-  if(error){
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">Nie udało się wczytać notatek publicznych.</div>`;
-    return;
-  }
+    let query = supabaseClient
+        .from("notes")
+        .select("*")
+        .eq("is_public", true);
 
-  const filtered = currentUser ? data.filter(n => n.user_id !== currentUser.id) : data;
+    if (search.trim() !== "") {
+        query = query.or(
+            `title.ilike.%${search}%,content.ilike.%${search}%`
+        );
+    }
 
-  if(!filtered || filtered.length === 0){
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">Nikt jeszcze nie udostępnił publicznej notatki.</div>`;
-    return;
-  }
+    const { data, error } = await query
+        .order("created_at", { ascending: false })
+        .limit(30);
 
-  filtered.forEach(note => grid.appendChild(renderNoteCard(note, { editable: false })));
+    loadingEl.style.display = "none";
+
+    if (error) {
+        grid.innerHTML = "Błąd wczytywania notatek.";
+        return;
+    }
+
+    const filtered = data.filter(note => {
+
+        if (currentUser && note.user_id === currentUser.id)
+            return false;
+
+        if (search.trim() === "")
+            return true;
+
+        const s = search.toLowerCase();
+
+        return (
+            note.title.toLowerCase().includes(s) ||
+            note.content.toLowerCase().includes(s) ||
+            (note.tags || []).some(tag =>
+                tag.toLowerCase().includes(s)
+            )
+        );
+    });
+
+    filtered.forEach(note =>
+        grid.appendChild(renderNoteCard(note, { editable: false }))
+    );
 }
 
 /* ---------- Dodawanie notatki ---------- */
@@ -369,11 +407,11 @@ document.getElementById('noteForm').addEventListener('submit', async (e)=>{
   e.preventDefault();
 
   if (!isConfigured) {
-    showToast('Najpierw uzupełnij dane Supabase w script.js.');
+    toast.show('error','Błąd','Najpierw uzupełnij dane Supabase w script.js.');
     return;
   }
   if(!currentUser){
-    showToast('Zaloguj się, aby dodać notatkę.');
+    toast.show('error','Zaloguj się','Zaloguj się, aby dodać notatkę.');
     return;
   }
 
@@ -382,40 +420,61 @@ document.getElementById('noteForm').addEventListener('submit', async (e)=>{
   const plainText = quill.getText().trim();
 
   if(!plainText){
-      showToast("Treść nie może być pusta.");
+      toast.show('error', 'Błąd', "Treść nie może być pusta.");
       return;
   }
   const length = Math.max(0, quill.getLength() - 1);
 
 if (length > MAX_CHARS) {
-    showToast("Notatka przekracza limit 100 000 znaków.");
+    toast.show('error','Błąd',"Notatka przekracza limit 100 000 znaków.");
     return;
 }
-
   const isPublic = document.getElementById('notePublic').checked;
-  const btn = document.getElementById('saveNoteBtn');
+const btn = document.getElementById('saveNoteBtn');
 
-  btn.disabled = true;
-  btn.textContent = 'ZAPISYWANIE…';
+btn.disabled = true;
+btn.textContent = 'ZAPISYWANIE…';
 
-const { error } = await supabaseClient.from('notes').insert({
-    user_id: currentUser.id,
-    title,
-    content,
-    is_public: isPublic
-});
+const tags = tagSelect.items;
+for (const tag of tags) {
+
+    const { data } = await supabaseClient
+        .from("tags")
+        .select("id")
+        .eq("name", tag);
+
+    if (!data || data.length === 0) {
+
+        await supabaseClient
+            .from("tags")
+            .insert({
+                name: tag
+            });
+
+    }
+}
+const { error } = await supabaseClient
+    .from("notes")
+    .insert({
+        user_id: currentUser.id,
+        title,
+        content,
+        tags,
+        is_public: isPublic
+    });
 
   btn.disabled = false;
   btn.textContent = 'ZAPISZ NOTATKĘ';
 
   if(error){
-    showToast('Błąd zapisu: ' + error.message);
+    toast.show('error','Błąd','Błąd zapisu: ' + error.message);
     return;
   }
 
   document.getElementById('noteForm').reset();
   quill.setContents([]);
-  showToast('Notatka zapisana!');
+  tagSelect.clear();
+  toast.show('seccess','Gotowe!','Notatka zapisana!');
   loadMyNotes();
   if(isPublic) loadPublicNotes();
 });
@@ -425,7 +484,7 @@ async function deleteNote(id){
   if(!confirm('Na pewno usunąć tę notatkę?')) return;
   const { error } = await supabaseClient.from('notes').delete().eq('id', id);
   if(error){
-    showToast('Nie udało się usunąć notatki.');
+    toast.show('error','Błąd','Nie udało się usunąć notatki.');
     return;
   }
   showToast('Notatka usunięta.');
@@ -440,10 +499,10 @@ async function toggleVisibility(id, currentlyPublic){
     .update({ is_public: !currentlyPublic })
     .eq('id', id);
   if(error){
-    showToast('Nie udało się zmienić widoczności.');
+    toast.show('error','Błąd','Nie udało się zmienić widoczności.');
     return;
   }
-  showToast(!currentlyPublic ? 'Notatka jest teraz publiczna.' : 'Notatka jest teraz prywatna.');
+  toast.show('success', 'Gotowe', !currentlyPublic ? 'Notatka jest teraz publiczna.' : 'Notatka jest teraz prywatna.');
   loadMyNotes();
   loadPublicNotes();
 }
@@ -488,7 +547,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function loadMyQuizy(){
-
+    document.getElementById("myQuizyLoading").style.display = 'block';
     const grid =
     document.getElementById("myQuizyGrid");
 
@@ -505,7 +564,7 @@ async function loadMyQuizy(){
         console.error(error);
         return;
     }
-
+    document.getElementById("myQuizyLoading").style.display = 'none';
     if(!data || data.length === 0){
 
         grid.innerHTML = `
@@ -540,6 +599,13 @@ async function loadMyQuizy(){
                     }
                 </span> 
             <h3>${quiz.title}</h3>
+            <div class="quiz-tags">
+                ${
+                    (quiz.tags || [])
+                    .map(tag => `<span class="tag">${tag}</span>`)
+                    .join("")
+                }
+            </div>
             <p>${count} pytań</p>
 
 <button
@@ -568,68 +634,95 @@ async function loadMyQuizy(){
     });
 }
 
-async function loadPublicQuizy(){
+async function loadPublicQuizy(search = "") {
 
-    const grid =
-    document.getElementById("publicQuizyGrid");
+  const loadingEl = document.getElementById("publicQuizyLoading");
 
+    loadingEl.style.display = "block";
+
+    const grid = document.getElementById("publicQuizyGrid");
     grid.innerHTML = "";
 
-    const { data, error } =
-    await supabaseClient
-    .from("quizzes")
-    .select("*")
-    .eq("is_public", true)
-    .order("created_at",{ascending:false});
+    let query = supabaseClient
+        .from("quizzes")
+        .select("*")
+        .eq("is_public", true);
 
-    if(error){
+    const { data, error } = await query.order("created_at", {
+        ascending: false
+    });
+    loadingEl.style.display = "none";
+
+    if (error) {
         console.error(error);
         return;
     }
 
-    const filtered =
-    data.filter(
-        q => q.user_id !== currentUser.id
+    const filtered = data.filter(quiz => {
+
+    if (quiz.user_id === currentUser.id)
+        return false;
+
+    if (search.trim() === "")
+        return true;
+
+    const s = search.toLowerCase();
+
+    return (
+        quiz.title.toLowerCase().includes(s) ||
+
+        (quiz.tags || []).some(tag =>
+            tag.toLowerCase().includes(s)
+        ) ||
+
+        (quiz.questions || []).some(q =>
+            q.question.toLowerCase().includes(s)
+        )
     );
+});
 
-    if(filtered.length === 0){
-
+    if (filtered.length === 0) {
         grid.innerHTML = `
             <div class="empty-state">
-                Brak publicznych quizów.
+                Nie znaleziono quizów.
             </div>
         `;
-
         return;
     }
 
     filtered.forEach(quiz => {
 
-    const count =
-    Array.isArray(quiz.questions)
-    ? quiz.questions.length
-    : 0;
+        const count = Array.isArray(quiz.questions)
+            ? quiz.questions.length
+            : 0;
 
-    grid.innerHTML += `
-        <div class="item-card">
+        grid.innerHTML += `
+            <div class="item-card">
 
-            <span class="badge public">
-                Publiczny
-            </span>
+                <span class="badge public">Publiczny</span>
 
-            <h3>${quiz.title}</h3>
+                <h3>${quiz.title}</h3>
 
-            <p>${count} pytań</p>
+                <div class="quiz-tags">
+                    ${
+                        (quiz.tags || [])
+                            .map(tag => `<span class="tag">${tag}</span>`)
+                            .join("")
+                    }
+                </div>
 
-            <button
-                class="go-btn big-btn"
-                onclick="openQuiz('${quiz.id}')">
-                Rozwiąż quiz
-            </button>
+                <p>${count} pytań</p>
 
-        </div>
-    `;
-});
+                <button
+                    class="go-btn big-btn"
+                    onclick="openQuiz('${quiz.id}')">
+                    Rozwiąż quiz
+                </button>
+
+            </div>
+        `;
+    });
+    
 }
 
 async function loadSavedMaterials(){
@@ -664,11 +757,13 @@ async function loadSavedMaterials(){
         <div class="saved-card">
 
             <div class="thumb">
-                FILM
+                <img
+                  src="https://img.youtube.com/vi/${item.video_id}/hqdefault.jpg"
+                  alt="Thumbnail">
             </div>
 
             <div class="info">
-                <h3>Film YouTube</h3>
+                <h3>${item.video_title}</h3>
                 <button class="go-btn" onclick="openVideo('${item.video_id}')"> Otwórz materiał </button>
             </div>
 
@@ -704,11 +799,11 @@ async function deleteQuiz(id){
 
     if(error){
         console.error(error);
-        showToast("Nie udało się usunąć quizu.");
+        toast.show('error','Błąd',"Nie udało się usunąć quizu.");
         return;
     }
 
-    showToast("Quiz usunięty.");
+    toast.show('success','Gotowe!',"Quiz został usunięty.");
 
     loadMyQuizy();
     loadPublicQuizy();
@@ -750,3 +845,16 @@ function updateCounter() {
 quill.on("text-change", updateCounter);
 
 updateCounter();
+
+const searchInput = document.getElementById("searchNotes");
+
+// podczas pisania
+searchInput.addEventListener("input", () => {
+    loadPublicNotes(searchInput.value);
+});
+
+const searchQuizInput = document.getElementById("searchQuiz");
+
+searchQuizInput.addEventListener("input", () => {
+    loadPublicQuizy(searchQuizInput.value);
+});

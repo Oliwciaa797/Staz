@@ -7,6 +7,7 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+const toast = new Toast();
 let currentUser = null;
 let selectedAvatarFile = null;
 
@@ -82,7 +83,7 @@ function handleAvatarPreview(e) {
 
     if (!allowedTypes.includes(file.type)) {
 
-        alert("Dozwolone są tylko pliki PNG, JPG, JPEG oraz WEBP.");
+        toast.show('error','Błąd',"Dozwolone są tylko pliki PNG, JPG, JPEG oraz WEBP.");
 
         e.target.value = "";
         return;
@@ -128,7 +129,7 @@ async function saveProfile() {
 
     if (!allowedTypes.includes(selectedAvatarFile.type)) {
 
-        alert("Nieprawidłowy format zdjęcia.");
+        toast.show('error','Błąd',"Nieprawidłowy format zdjęcia.");
         selectedAvatarFile = null;
         return;
     }
@@ -153,7 +154,7 @@ async function saveProfile() {
 
         if (uploadError) {
             console.error('UPLOAD ERROR:', uploadError);
-            alert(JSON.stringify(uploadError, null, 2));
+            toast.show('error', 'Błąd', JSON.stringify(uploadError, null, 2));
 
             statusEl.textContent =
             'Błąd wysyłania zdjęcia: ' + uploadError.message;
