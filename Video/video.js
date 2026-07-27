@@ -553,6 +553,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateSidebar();
     loadAllNoteLists();
     loadMyReview();
+    checkSavedMaterial();
 });
 
 function back(){
@@ -1294,7 +1295,6 @@ function openQuiz(id){
     window.location.href = `../kreator quizow/quiz.html?quiz=${id}`;
 }
 
-
 async function toggleQuizVisibility(id, currentlyPublic){
 
     const { error } =
@@ -1333,6 +1333,41 @@ async function deleteUserQuiz(id){
 
 }
 
+let materialSaved = false;
+
+/* Sprawdzenie, czy bieżący film jest już zapisany przez użytkownika
+   (ustawia stan przycisku przy wczytaniu strony) */
+async function checkSavedMaterial(){
+
+    const btn = document.getElementById("saveMaterialBtn");
+    if(!btn) return;
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    if(!user){
+        materialSaved = false;
+        btn.classList.remove("saved");
+        btn.innerHTML = "❤️ Zapisz";
+        return;
+    }
+
+    const { data, error } = await supabaseClient
+        .from("saved_materials")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("video_id", videoId)
+        .maybeSingle();
+
+    if(error){
+        console.error(error);
+        return;
+    }
+
+    materialSaved = !!data;
+    btn.classList.toggle("saved", materialSaved);
+    btn.innerHTML = materialSaved ? "❤️ Zapisano" : "❤️ Zapisz";
+}
+
 async function saveMaterial() {
 
     const { data: { user } } =
@@ -1343,6 +1378,31 @@ async function saveMaterial() {
         return;
     }
 
+    const btn = document.getElementById("saveMaterialBtn");
+
+    // Materiał już zapisany -> usuwamy zapis i wracamy do normalnego koloru
+    if(materialSaved){
+
+        const { error } = await supabaseClient
+            .from("saved_materials")
+            .delete()
+            .eq("user_id", user.id)
+            .eq("video_id", videoId);
+
+        if(error){
+            console.error(error);
+            toast.show('error','Error', error.message);
+            return;
+        }
+
+        materialSaved = false;
+        btn.classList.remove("saved");
+        btn.innerHTML = "❤️ Zapisz";
+        toast.show('success','Gotowe!', "Materiał usunięty z zapisanych.");
+        return;
+    }
+
+    // Materiał jeszcze niezapisany -> zapisujemy i zmieniamy kolor przycisku
     const { error } =
         await supabaseClient
             .from("saved_materials")
@@ -1351,18 +1411,25 @@ async function saveMaterial() {
                 video_id: videoId
             });
 
-if (error) {
+    if (error) {
 
-    if (error.code === "23505") {
-        toast.show('error','Error',"Ten materiał jest już zapisany.");
+        if (error.code === "23505") {
+            // Już zapisane w bazie (np. z innej karty) - dostosuj wygląd przycisku
+            materialSaved = true;
+            btn.classList.add("saved");
+            btn.innerHTML = "❤️ Zapisano";
+            toast.show('error','Error',"Ten materiał jest już zapisany.");
+            return;
+        }
+
+        console.error(error);
+        toast.show('error','Error',error.message);
         return;
     }
 
-    console.error(error);
-    toast.show('error','Error',error.message);
-    return;
-}
-
+    materialSaved = true;
+    btn.classList.add("saved");
+    btn.innerHTML = "❤️ Zapisano";
     toast.show('success','Gotowe!', "Materiał został zapisany!");
 }
 
