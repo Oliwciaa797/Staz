@@ -217,6 +217,34 @@ function showTab(tabId) {
 // Domyślnie pokaż pierwszą zakładkę
 showTab("generated");
 
+/* ---------- Przełączanie pod-zakładek ---------- */
+function showSubTab(subTabId){
+
+    document.querySelectorAll(".sub-tab-btn").forEach(btn =>
+        btn.classList.remove("active")
+    );
+
+    document.querySelectorAll(".sub-tab-panel").forEach(panel =>
+        panel.classList.remove("active")
+    );
+
+    const btn = document.querySelector(
+        `.sub-tab-btn[data-subtab="${subTabId}"]`
+    );
+
+    if(btn) btn.classList.add("active");
+
+    const panel = document.getElementById(subTabId);
+
+    if(panel) panel.classList.add("active");
+
+    if(subTabId.includes("Quiz")){
+        loadAllQuizLists();
+    } else {
+        loadAllNoteLists();
+    }
+}
+
 let userRating = 0;
 
 // Ustawienie oceny gwiazdkowej
@@ -382,7 +410,7 @@ async function loadReviews() {
 const toast = new Toast();
 // Wczytaj recenzje po załadowaniu strony
 document.addEventListener('DOMContentLoaded', loadReviews);
-let errorMsg = document.getElementById('errorMsg');
+// let errorMsg = document.getElementById('errorMsg');
 
 async function submitReview() {
 
@@ -399,11 +427,9 @@ async function submitReview() {
         document.getElementById("reviewText").value;
 
     if (userRating === 0) {
-        errorMsg.textContent = "Wybierz ocenę.";
+        toast.show('error','Błąd','Wybierz ocenę.');
         return;
     }
-
-    errorMsg.textContent = "";
 
     const { data: existing, error: checkError } =
     await supabaseClient
@@ -937,14 +963,14 @@ async function loadMyOtherNotes(){
     }
 
     const { data, error } = await supabaseClient
-        console.log("Other Notes:", data)
-        console.log("Error:", error)
-        console.log("Current videoId:", videoId)
-        .from('notes')
-        .select('*')
-        .eq('user_id', user.id)
-        .neq('video_id', videoId)
-        .order('created_at', { ascending: false });
+    .from("notes")
+    .select("*")
+    .eq("user_id", user.id)
+    .neq("video_id", videoId)
+    .order("created_at", { ascending: false });
+
+    console.log(data);
+    console.log(error);
 
     if(error){
         console.error(error);
@@ -969,16 +995,20 @@ async function loadPublicVideoNotes(){
     if(!container) return;
 
     const { data, error } = await supabaseClient
-        console.log("Public Notes:", data)
-        console.log("Error:", error)
-        .from('notes')
-        .select(`
+    .from("notes")
+    .select(`
             *,
-            profiles!user_id ( profiles, avatar_url )
+            profiles!user_id (
+                profiles,
+                avatar_url
+            )
         `)
-        .eq('video_id', videoId)
-        .eq('is_public', true)
-        .order('created_at', { ascending: false });
+        .eq("video_id", videoId)
+        .eq("is_public", true)
+        .order("created_at", { ascending: false });
+
+    console.log("Public Notes:", data);
+    console.log("Error:", error);
 
     if(error){
         console.error(error);
