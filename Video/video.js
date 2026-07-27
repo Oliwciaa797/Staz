@@ -188,21 +188,6 @@ function showTab(tabId) {
 showTab("generated");
 
 /* ---------- Przełączanie pod-zakładek w "Własne materiały" (Notatki / Quizy) ---------- */
-function showSubTab(subTabId){
-
-    document.querySelectorAll(".sub-tab-btn").forEach(btn => btn.classList.remove("active"));
-    document.querySelectorAll(".sub-tab-panel").forEach(panel => panel.classList.remove("active"));
-
-    const btn = document.querySelector(`.sub-tab-btn[data-subtab="${subTabId}"]`);
-    if(btn) btn.classList.add("active");
-
-    const panel = document.getElementById(subTabId);
-    if(panel) panel.classList.add("active");
-
-    if(subTabId === "personalQuizy"){
-        loadUserQuizy();
-    }
-}
 
 let userRating = 0;
 
@@ -345,13 +330,15 @@ async function loadReviews() {
         new Date(review.created_at)
         .toLocaleString("pl-PL");
 
+        const myReview = user && review.user_id === user.id;
         return `
-            <div class="review-item">
+                <div class="review-item ${myReview ? 'my-review' : ''}">
 
                 <div class="review-header">
 
                     <div class="review-user">
                         ${escapeHtml(review.profiles?.profiles || "Użytkownik")}
+                        ${myReview ? '<span class="badge">Twoja opinia</span>' : ''}
                     </div>
 
                     <div class="review-date">
@@ -387,29 +374,57 @@ async function submitReview() {
         return;
     }
 
-
     const reviewText =
         document.getElementById("reviewText").value;
 
-    if (errorMsg) {
+    if (userRating === 0) {
         errorMsg.textContent = "Wybierz ocenę.";
-    }
-
-    const { data: existingReview } = await supabaseClient
-        .from("video_reviews")
-        .select("id")
-        .eq("video_id", videoId)
-        .eq("user_id", user.id)
-        .maybeSingle();
-
-    if (existingReview) {
-        alert("Dodałeś już opinię do tego filmu.");
         return;
     }
 
+    const { data: existing, error: checkError } =
+    await supabaseClient
+        .from("video_reviews")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("video_id", videoId)
+        .maybeSingle();
 
-    const { error } =
-        await supabaseClient
+    if(checkError){
+        console.error(checkError);
+        return;
+    }
+
+    let result;
+
+    const { data: existing, error: checkError } =
+    await supabaseClient
+        .from("video_reviews")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("video_id", videoId)
+        .maybeSingle();
+
+    if(checkError){
+        console.error(checkError);
+        return;
+    }
+
+    let result;
+
+    if(existing){
+
+        result = await supabaseClient
+            .from("video_reviews")
+            .update({
+                rating: userRating,
+                comment: reviewText
+            })
+            .eq("id", existing.id);
+
+    }else{
+
+        result = await supabaseClient
             .from("video_reviews")
             .insert({
                 video_id: videoId,
@@ -418,30 +433,22 @@ async function submitReview() {
                 comment: reviewText
             });
 
-    if (error) {
+    }
 
-        if (error.code === "23505") {
-            alert("Dodałeś już opinię do tego filmu.");
-            return;
-        }
-
-        console.error(error);
-        toast.show('error', 'Error', error.message)
+    if(result.error){
+        console.error(result.error);
+        alert(result.error.message);
         return;
     }
 
-    toast.show('success', 'Gotowe!', 'Opinia została dodana')
-
-    document.getElementById("reviewText").value = "";
-
-    userRating = 0;
-
-    document
-        .querySelectorAll(".rating-stars .star")
-        .forEach(star => star.classList.remove("active"));
+    alert(
+        existing
+        ? "Opinia zaktualizowana!"
+        : "Opinia dodana!"
+    );
 
     loadReviews();
-
+    loadMyReview();
 }
 
 async function showUser() {
@@ -548,6 +555,7 @@ document.addEventListener("DOMContentLoaded", () => {
     showUser();
     updateSidebar();
     loadAllNoteLists();
+    loadMyReview();
 });
 
 function back(){
@@ -1259,4 +1267,168 @@ function reportError(){
     window.location.href =
     "../zglaszanie bledow/blad.html";
 
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const drawer =
+        document.getElementById("materialsDrawer");
+
+    const drawerToggle =
+        document.getElementById("drawerToggle");
+
+    drawerToggle.addEventListener("click", () => {
+
+        drawer.classList.toggle("open");
+
+        if(drawer.classList.contains("open")){
+            drawerToggle.innerHTML = ">";
+        }
+        else{
+            drawerToggle.innerHTML = "<";
+        }
+
+    });
+
+});
+function showDrawerTab(event, tabId){
+
+    document
+        .querySelectorAll(".drawer-tab")
+        .forEach(btn => btn.classList.remove("active"));
+
+    document
+        .querySelectorAll(".drawer-panel")
+        .forEach(panel => panel.classList.remove("active"));
+
+    event.currentTarget.classList.add("active");
+
+    document
+        .getElementById(tabId)
+        .classList.add("active");
+
+    if(tabId === "drawerQuizy"){
+        loadUserQuizy();
+    }
+}
+// Limit znaków notatki. Backend (Supabase) ma dodatkowy twardy limit
+// 100 000 znaków na kolumnie notes.content — patrz migracja.sql.
+const NOTE_CHAR_LIMIT = 100000;
+ 
+/* ---------- Licznik znaków + blokada przekroczenia limitu ---------- */
+function attachNoteCounter(quill, counterEl, saveBtn){
+ 
+    function update(){
+ 
+        // Quill.getLength() liczy dodatkowy znak nowej linii na końcu
+        const length = quill.getLength() - 1;
+ 
+        if(length > NOTE_CHAR_LIMIT){
+            quill.deleteText(NOTE_CHAR_LIMIT, length - NOTE_CHAR_LIMIT);
+            return; // deleteText wywoła kolejny text-change, update() odpali się ponownie
+        }
+ 
+        counterEl.textContent = `${length} / ${NOTE_CHAR_LIMIT} znaków`;
+        counterEl.classList.toggle("limit-reached", length >= NOTE_CHAR_LIMIT);
+ 
+        if(saveBtn){
+            saveBtn.classList.remove("saved");
+            if(saveBtn.dataset.defaultLabel){
+                saveBtn.textContent = saveBtn.dataset.defaultLabel;
+            }
+        }
+    }
+ 
+    quill.on("text-change", update);
+    update();
+}
+ 
+/* ---------- Wizualne potwierdzenie zapisu na przycisku ---------- */
+function markSaved(btn, label){
+ 
+    if(!btn) return;
+ 
+    if(!btn.dataset.defaultLabel){
+        btn.dataset.defaultLabel = btn.textContent;
+    }
+ 
+    btn.classList.add("saved");
+    btn.textContent = label || "✓ Zapisano";
+}
+
+async function loadMyReview() {
+
+    const { data:{user} } =
+    await supabaseClient.auth.getUser();
+
+    if(!user) return;
+
+    const { data } =
+    await supabaseClient
+    .from("video_reviews")
+    .select("*")
+    .eq("user_id", user.id)
+    .eq("video_id", videoId)
+    .maybeSingle();
+
+    if(!data) return;
+
+    userRating = data.rating;
+
+    document.getElementById("reviewText").value =
+        data.comment || "";
+
+    setRating(data.rating);
+
+    document.getElementById("submitReviewBtn")
+        .textContent = "Aktualizuj opinię";
+
+    document.getElementById("deleteReviewBtn")
+        .style.display = "inline-block";
+}
+
+async function deleteMyReview(){
+
+    const {
+        data:{user}
+    } = await supabaseClient.auth.getUser();
+
+    if(!user) return;
+
+    const confirmDelete =
+    confirm("Usunąć opinię?");
+
+    if(!confirmDelete) return;
+
+    const { error } =
+    await supabaseClient
+    .from("video_reviews")
+    .delete()
+    .eq("user_id", user.id)
+    .eq("video_id", videoId);
+
+    if(error){
+        alert(error.message);
+        return;
+    }
+
+    document.getElementById("reviewText").value = "";
+
+    document
+        .getElementById("deleteReviewBtn")
+        .style.display = "none";
+
+    document
+        .getElementById("submitReviewBtn")
+        .textContent = "Prześlij opinię";
+
+    userRating = 0;
+
+    document
+        .querySelectorAll(".star")
+        .forEach(star =>
+            star.classList.remove("active")
+        );
+
+    loadReviews();
 }

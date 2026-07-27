@@ -115,7 +115,7 @@ header {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
-	width: 1000px;
+	width: 700px;
 	height: auto;
 	background-color: var(--background);
 	text-align: left;
@@ -169,6 +169,7 @@ header {
 #youtubeVideo {
 	border-radius: 10px;
 	box-shadow: 5px 5px 5px var(--shadow);
+	border: 3px solid #33411C;
 }
 
 .sidepanelcontent {
@@ -221,10 +222,9 @@ header {
 }
 
 .reviews-top {
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	gap: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .grade-summary {
@@ -253,7 +253,6 @@ header {
 
 .user-review {
     box-shadow: 0 2px 8px var(--shadow);
-	flex-grow: 1;
 	margin: 20px 0;
 	padding: 20px;
 	border-radius: 8px;
@@ -295,7 +294,9 @@ header {
 }
 
 .review-text {
-	width: 800px;
+    width: 100%;
+    max-width: 800px;
+    word-wrap: break-word;
 	color: #333;
 	line-height: 1.6;
 }
@@ -742,15 +743,197 @@ input.noteTitleInput {
 	margin-left: 10px;
 } */
 
-.char-counter{
-    margin-top:8px;
-    text-align:right;
-    font-size:13px;
-    color:#666;
-    transition:0.2s;
+/* =======================
+   WYSUWANE WŁASNE MATERIAŁY
+   ======================= */
+
+.materials-drawer{
+
+    position: fixed;
+
+    top: 50%;
+
+    right: -850px;
+
+    transform: translateY(-50%);
+
+    width: 650px;
+
+    height: 80vh;
+
+    background: white;
+
+    z-index: 5000;
+
+    border: 3px solid #33411C;
+
+	border-radius: 10px 0 0 10px;
+
+    box-shadow: -5px 0 25px rgba(0,0,0,.15);
+
+    transition: right .35s ease;
 }
 
-.char-counter.limit{
-    color:#e53935;
-    font-weight:700;
+.materials-drawer.open{
+    right: 0;
+}
+
+.drawer-toggle{
+
+    position: absolute;
+
+    left: -45px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    width: 45px;
+
+    height: 100px;
+
+    background: #33411C;
+
+    color: white;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 15px 0 0 15px;
+
+    cursor: pointer;
+
+    font-size: 28px;
+
+    font-weight: bold;
+}
+
+.drawer-content{
+
+    height: 100%;
+
+    overflow-y: auto;
+
+    padding: 20px;
+}
+
+.drawer-tabs{
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-bottom: 20px;
+}
+
+.drawer-tab{
+
+    flex: 1;
+
+    border: none;
+
+    padding: 12px;
+
+    border-radius: 10px;
+
+    background: #ddd;
+
+    cursor: pointer;
+
+    font-weight: bold;
+}
+
+.drawer-tab.active{
+
+    background: var(--primary-color);
+
+    color: white;
+}
+
+.drawer-panel{
+    display:none;
+}
+
+.drawer-panel.active{
+    display:block;
+}
+
+.materials-drawer{
+    position: fixed;
+    top: 50%;
+    right: -620px; /* było -550 */
+    transform: translateY(-50%);
+
+    width: 650px;
+    height: 80vh;
+
+    background: white;
+    z-index: 5000;
+
+    transition: right .35s ease;
+}
+
+.materials-drawer.open{
+    right: 0;
+}
+
+.note-form-card,
+.item-card{
+    width:100%;
+}
+
+#personalNotesContainer,
+#myOtherNotesContainer,
+#publicVideoNotesContainer,
+#personalQuizyContainer{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+/* Licznik znaków pod edytorem notatki */
+.char-counter {
+    font-size: 0.85em;
+    color: #888;
+    text-align: right;
+    margin-top: 4px;
+}
+ 
+.char-counter.limit-reached {
+    color: #e53935;
+    font-weight: bold;
+}
+ 
+/* Przyciski pod formularzem opinii */
+.review-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+}
+ 
+#deleteReviewBtn {
+    background-color: transparent;
+    border: 1px solid #e53935;
+    color: #e53935;
+}
+
+.review-item.my-review{
+    border-left:4px solid #4CAF50;
+    background:#f4fff4;
+}
+
+.review-item .badge{
+    background:#4CAF50;
+    color:white;
+
+    padding:2px 8px;
+
+    border-radius:5px;
+
+    font-size:11px;
+
+    margin-left:10px;
 }
