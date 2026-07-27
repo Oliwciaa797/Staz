@@ -32,6 +32,30 @@ const quill = new Quill("#editor", {
     }
 });
 
+let tagSelect;
+
+async function loadTags() {
+    const { data, error } = await supabaseClient
+        .from("tags")
+        .select("name")
+        .order("name");
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    tagSelect = new TomSelect("#noteTags", {
+        plugins: ["remove_button"],
+        valueField: "name",
+        labelField: "name",
+        searchField: "name",
+        options: data,
+        items: [],
+        create: true,
+        persist: false
+    });
+}
 
 /* ---------- Tabs (działa zawsze, niezależnie od Supabase) ---------- */
 document.querySelectorAll('.tab-btn').forEach(btn=>{
@@ -93,6 +117,7 @@ async function loadUser(){
 
     loadMyNotes();
     loadPublicNotes();
+    await loadTags();
 
     
 loadMyQuizy();
@@ -117,6 +142,13 @@ function renderNoteCard(note, { editable }){
   div.innerHTML = `
     ${badge}
     <h3 class="note-title-view">${escapeHtml(note.title)}</h3>
+    <div class="note-tags">
+        ${
+            (note.tags || [])
+                .map(tag => `<span class="tag">${tag}</span>`)
+                .join("")
+        }
+    </div>
     <div class="note-content-view">${note.content}</div>
     <button class="go-btn big-btn show-note-btn">Pokaż notatkę</button>
     <div class="card-footer">
@@ -316,34 +348,58 @@ async function loadMyNotes(){
 }
 
 /* ---------- Wczytanie notatek publicznych (innych użytkowników) ---------- */
-async function loadPublicNotes(){
-  const loadingEl = document.getElementById('publicNotesLoading');
-  const grid = document.getElementById('publicNotesGrid');
-  loadingEl.style.display = 'block';
-  grid.innerHTML = '';
+async function loadPublicNotes(search = "") {
 
-  const { data, error } = await supabaseClient
-    .from('notes')
-    .select('*')
-    .eq('is_public', true)
-    .order('created_at', { ascending: false })
-    .limit(30);
+    const loadingEl = document.getElementById("publicNotesLoading");
+    const grid = document.getElementById("publicNotesGrid");
 
-  loadingEl.style.display = 'none';
+    loadingEl.style.display = "block";
+    grid.innerHTML = "";
 
-  if(error){
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">Nie udało się wczytać notatek publicznych.</div>`;
-    return;
-  }
+    let query = supabaseClient
+        .from("notes")
+        .select("*")
+        .eq("is_public", true);
 
-  const filtered = currentUser ? data.filter(n => n.user_id !== currentUser.id) : data;
+    if (search.trim() !== "") {
+        query = query.or(
+            `title.ilike.%${search}%,content.ilike.%${search}%`
+        );
+    }
 
-  if(!filtered || filtered.length === 0){
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">Nikt jeszcze nie udostępnił publicznej notatki.</div>`;
-    return;
-  }
+    const { data, error } = await query
+        .order("created_at", { ascending: false })
+        .limit(30);
 
-  filtered.forEach(note => grid.appendChild(renderNoteCard(note, { editable: false })));
+    loadingEl.style.display = "none";
+
+    if (error) {
+        grid.innerHTML = "Błąd wczytywania notatek.";
+        return;
+    }
+
+    const filtered = data.filter(note => {
+
+        if (currentUser && note.user_id === currentUser.id)
+            return false;
+
+        if (search.trim() === "")
+            return true;
+
+        const s = search.toLowerCase();
+
+        return (
+            note.title.toLowerCase().includes(s) ||
+            note.content.toLowerCase().includes(s) ||
+            (note.tags || []).some(tag =>
+                tag.toLowerCase().includes(s)
+            )
+        );
+    });
+
+    filtered.forEach(note =>
+        grid.appendChild(renderNoteCard(note, { editable: false }))
+    );
 }
 
 /* ---------- Dodawanie notatki ---------- */
@@ -373,19 +429,39 @@ if (length > MAX_CHARS) {
     toast.show('error','Błąd',"Notatka przekracza limit 100 000 znaków.");
     return;
 }
-
   const isPublic = document.getElementById('notePublic').checked;
-  const btn = document.getElementById('saveNoteBtn');
+const btn = document.getElementById('saveNoteBtn');
 
-  btn.disabled = true;
-  btn.textContent = 'ZAPISYWANIE…';
+btn.disabled = true;
+btn.textContent = 'ZAPISYWANIE…';
 
-const { error } = await supabaseClient.from('notes').insert({
-    user_id: currentUser.id,
-    title,
-    content,
-    is_public: isPublic
-});
+const tags = tagSelect.items;
+for (const tag of tags) {
+
+    const { data } = await supabaseClient
+        .from("tags")
+        .select("id")
+        .eq("name", tag);
+
+    if (!data || data.length === 0) {
+
+        await supabaseClient
+            .from("tags")
+            .insert({
+                name: tag
+            });
+
+    }
+}
+const { error } = await supabaseClient
+    .from("notes")
+    .insert({
+        user_id: currentUser.id,
+        title,
+        content,
+        tags,
+        is_public: isPublic
+    });
 
   btn.disabled = false;
   btn.textContent = 'ZAPISZ NOTATKĘ';
@@ -397,6 +473,7 @@ const { error } = await supabaseClient.from('notes').insert({
 
   document.getElementById('noteForm').reset();
   quill.setContents([]);
+  tagSelect.clear();
   toast.show('seccess','Gotowe!','Notatka zapisana!');
   loadMyNotes();
   if(isPublic) loadPublicNotes();
@@ -734,3 +811,10 @@ function updateCounter() {
 quill.on("text-change", updateCounter);
 
 updateCounter();
+
+const searchInput = document.getElementById("searchNotes");
+
+// podczas pisania
+searchInput.addEventListener("input", () => {
+    loadPublicNotes(searchInput.value);
+});

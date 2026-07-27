@@ -487,3 +487,42 @@ main{
 .save-edit {
   z-index: 1001;
 }
+
+.note-tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin:10px 0;
+}
+
+.tag{
+    background:var(--hover-light);
+    color: var(--primary-color);
+    padding:4px 10px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:600;
+}
+
+#searchNotes {
+  align-self: center;
+  width: 900px;
+  margin: 15px 0;
+  padding: 10px;
+  border-bottom: var(--primary-color) 2px solid;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+}
+
+#searchNotes:active {
+  border-bottom: var(--secondary-color) 2px solid;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+}
+
+.search-notes {
+  display: flex;
+  justify-content: center;
+}
