@@ -32,6 +32,18 @@ const params = new URLSearchParams(window.location.search);
 const videoId = params.get("video");
 const player = document.getElementById("youtubeVideo");
 
+async function getVideoInfo(videoId) {
+    const response = await fetch(
+        `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`
+    );
+
+    if (!response.ok) {
+        throw new Error("Couldn't get video information.");
+    }
+
+    return await response.json();
+}
+
 if (videoId) {
     console.log("Video ID:", videoId);
     if (player && videoId) {
@@ -1227,7 +1239,17 @@ async function saveMaterial() {
         await supabaseClient.auth.getUser();
 
     if (!user) {
-        toast.show('error','Zaloguj się',"Zaloguj się aby zapisać materiał");
+        toast.show('error', 'Zaloguj się', "Zaloguj się aby zapisać materiał");
+        return;
+    }
+
+    let info;
+
+    try {
+        info = await getVideoInfo(videoId);
+    } catch (err) {
+        console.error(err);
+        toast.show('error', 'Error', 'Nie udało się pobrać informacji o filmie.');
         return;
     }
 
@@ -1236,22 +1258,24 @@ async function saveMaterial() {
             .from("saved_materials")
             .insert({
                 user_id: user.id,
-                video_id: videoId
+                video_id: videoId,
+                title: info.title,
+                thumbnail: info.thumbnail_url
             });
 
-if (error) {
+    if (error) {
 
-    if (error.code === "23505") {
-        toast.show('error','Error',"Ten materiał jest już zapisany.");
+        if (error.code === "23505") {
+            toast.show('error', 'Error', "Ten materiał jest już zapisany.");
+            return;
+        }
+
+        console.error(error);
+        toast.show('error', 'Error', error.message);
         return;
     }
 
-    console.error(error);
-    toast.show('error','Error',error.message);
-    return;
-}
-
-    toast.show('success','Gotowe!', "Materiał został zapisany!");
+    toast.show('success', 'Gotowe!', "Materiał został zapisany!");
 }
 
 function reportError(){
