@@ -426,7 +426,7 @@ async function submitReview() {
         }
 
         console.error(error);
-        toast.show('error', 'Error', error.message)
+        toast.show('error', 'Błąd', 'Twoja opinia jest za długa!')
         return;
     }
 
