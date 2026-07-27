@@ -418,11 +418,12 @@ async function init() {
     updateUsernameCounter(); // ustawia licznik od razu po wczytaniu profilu
     // --- KONIEC LIMITU ---
 
-    } catch (error) {
-        console.error(error);
-        alert("Nie udało się wysłać zaproszenia.");
-    }
+    // } catch (error) {
+    //     console.error(error);
+    //     alert("Nie udało się wysłać zaproszenia.");
+    // }
 }
+
 
 async function init() {
 
