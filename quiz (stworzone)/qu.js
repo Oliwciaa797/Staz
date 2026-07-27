@@ -87,30 +87,21 @@ function renderQuestions(questions){
 
             ${question.options.map(
                 (option,optIndex)=>`
-
                     <label class="answer">
-
                         <input
                             type="${inputType}"
                             name="q${index}"
                             value="${optIndex}"
                         >
-
                         ${option}
-
                     </label>
-
                 `
             ).join("")}
-
         `;
-
         container.appendChild(
             questionDiv
         );
-
     });
-
 }
 
 document
@@ -135,27 +126,21 @@ function checkQuiz(){
         if(question.type === "multi"){
 
             if(checked.length === 0){
-
                 alert(
                     `Zaznacz odpowiedź w pytaniu ${i + 1}`
                 );
-
                 return;
             }
 
         } else {
-
             if(checked.length === 0){
-
                 alert(
                     `Zaznacz odpowiedź w pytaniu ${i + 1}`
                 );
-
                 return;
             }
-
         }
-
+        
     }
 
     let score = 0;
@@ -210,9 +195,7 @@ function checkQuiz(){
             ){
                 score++;
             }
-
         }
-
     });
 
     document.getElementById(
@@ -272,6 +255,15 @@ loadedQuiz.questions.forEach(
     });
 
 });
+
+const finishBtn = document.getElementById("finishBtn");
+
+finishBtn.textContent = "Powrót do panelu materiałów";
+
+finishBtn.onclick = () => {
+    window.location.href = "../materialy/not.html";
+};
+
 }
 
 function back() {
