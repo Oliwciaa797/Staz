@@ -196,9 +196,10 @@ header {
 }
 
 #generated, #quiz {
+	text-align: left;
 	flex-direction: column;
 	justify-content: flex-start;
-	align-items: center;
+	/* align-items: center; */
 }
 
 #gennotes, #genQuizBtn, .user-review button {
