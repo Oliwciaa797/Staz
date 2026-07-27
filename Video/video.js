@@ -937,6 +937,9 @@ async function loadMyOtherNotes(){
     }
 
     const { data, error } = await supabaseClient
+        console.log("Other Notes:", data)
+        console.log("Error:", error)
+        console.log("Current videoId:", videoId)
         .from('notes')
         .select('*')
         .eq('user_id', user.id)
@@ -966,6 +969,8 @@ async function loadPublicVideoNotes(){
     if(!container) return;
 
     const { data, error } = await supabaseClient
+        console.log("Public Notes:", data)
+        console.log("Error:", error)
         .from('notes')
         .select(`
             *,
@@ -1374,6 +1379,30 @@ async function checkSavedMaterial(){
     materialSaved = !!data;
     btn.classList.toggle("saved", materialSaved);
     btn.innerHTML = materialSaved ? "❤️ Zapisano" : "❤️ Zapisz";
+
+    if(materialSaved){
+
+    console.log("Usuwam zapisany materiał");
+
+    const { error } = await supabaseClient
+        .from("saved_materials")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("video_id", videoId);
+
+    console.log("Delete error:", error);
+
+    if(error){
+        console.error(error);
+        toast.show('error','Error', error.message);
+        return;
+    }
+
+    materialSaved = false;
+    btn.classList.remove("saved");
+    btn.innerHTML = "❤️ Zapisz";
+    return;
+}
 }
 
 async function saveMaterial() {
@@ -1482,5 +1511,6 @@ async function saveWatchHistory(videoId) {
 if (videoId) {
     player.src = `https://www.youtube.com/embed/${videoId}?rel=0`;
 
-    saveWatchHistory(videoId);
+    loadReviews();
 }
+
