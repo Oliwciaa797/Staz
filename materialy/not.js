@@ -547,7 +547,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function loadMyQuizy(){
-
+    document.getElementById("myQuizyLoading").style.display = 'block';
     const grid =
     document.getElementById("myQuizyGrid");
 
@@ -564,7 +564,7 @@ async function loadMyQuizy(){
         console.error(error);
         return;
     }
-
+    document.getElementById("myQuizyLoading").style.display = 'none';
     if(!data || data.length === 0){
 
         grid.innerHTML = `
@@ -599,6 +599,13 @@ async function loadMyQuizy(){
                     }
                 </span> 
             <h3>${quiz.title}</h3>
+            <div class="quiz-tags">
+                ${
+                    (quiz.tags || [])
+                    .map(tag => `<span class="tag">${tag}</span>`)
+                    .join("")
+                }
+            </div>
             <p>${count} pytań</p>
 
 <button
@@ -627,68 +634,95 @@ async function loadMyQuizy(){
     });
 }
 
-async function loadPublicQuizy(){
+async function loadPublicQuizy(search = "") {
 
-    const grid =
-    document.getElementById("publicQuizyGrid");
+  const loadingEl = document.getElementById("publicQuizyLoading");
 
+    loadingEl.style.display = "block";
+
+    const grid = document.getElementById("publicQuizyGrid");
     grid.innerHTML = "";
 
-    const { data, error } =
-    await supabaseClient
-    .from("quizzes")
-    .select("*")
-    .eq("is_public", true)
-    .order("created_at",{ascending:false});
+    let query = supabaseClient
+        .from("quizzes")
+        .select("*")
+        .eq("is_public", true);
 
-    if(error){
+    const { data, error } = await query.order("created_at", {
+        ascending: false
+    });
+    loadingEl.style.display = "none";
+
+    if (error) {
         console.error(error);
         return;
     }
 
-    const filtered =
-    data.filter(
-        q => q.user_id !== currentUser.id
+    const filtered = data.filter(quiz => {
+
+    if (quiz.user_id === currentUser.id)
+        return false;
+
+    if (search.trim() === "")
+        return true;
+
+    const s = search.toLowerCase();
+
+    return (
+        quiz.title.toLowerCase().includes(s) ||
+
+        (quiz.tags || []).some(tag =>
+            tag.toLowerCase().includes(s)
+        ) ||
+
+        (quiz.questions || []).some(q =>
+            q.question.toLowerCase().includes(s)
+        )
     );
+});
 
-    if(filtered.length === 0){
-
+    if (filtered.length === 0) {
         grid.innerHTML = `
             <div class="empty-state">
-                Brak publicznych quizów.
+                Nie znaleziono quizów.
             </div>
         `;
-
         return;
     }
 
     filtered.forEach(quiz => {
 
-    const count =
-    Array.isArray(quiz.questions)
-    ? quiz.questions.length
-    : 0;
+        const count = Array.isArray(quiz.questions)
+            ? quiz.questions.length
+            : 0;
 
-    grid.innerHTML += `
-        <div class="item-card">
+        grid.innerHTML += `
+            <div class="item-card">
 
-            <span class="badge public">
-                Publiczny
-            </span>
+                <span class="badge public">Publiczny</span>
 
-            <h3>${quiz.title}</h3>
+                <h3>${quiz.title}</h3>
 
-            <p>${count} pytań</p>
+                <div class="quiz-tags">
+                    ${
+                        (quiz.tags || [])
+                            .map(tag => `<span class="tag">${tag}</span>`)
+                            .join("")
+                    }
+                </div>
 
-            <button
-                class="go-btn big-btn"
-                onclick="openQuiz('${quiz.id}')">
-                Rozwiąż quiz
-            </button>
+                <p>${count} pytań</p>
 
-        </div>
-    `;
-});
+                <button
+                    class="go-btn big-btn"
+                    onclick="openQuiz('${quiz.id}')">
+                    Rozwiąż quiz
+                </button>
+
+            </div>
+        `;
+    });
+    
 }
 
 async function loadSavedMaterials(){
@@ -817,4 +851,10 @@ const searchInput = document.getElementById("searchNotes");
 // podczas pisania
 searchInput.addEventListener("input", () => {
     loadPublicNotes(searchInput.value);
+});
+
+const searchQuizInput = document.getElementById("searchQuiz");
+
+searchQuizInput.addEventListener("input", () => {
+    loadPublicQuizy(searchQuizInput.value);
 });

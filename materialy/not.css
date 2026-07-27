@@ -60,6 +60,7 @@ main{
 }
 
 .panel{
+  min-height: 1120px;
   background: #fff;
   border: 4px solid var(--primary-color);
   border-radius: 20px;
@@ -488,13 +489,12 @@ main{
   z-index: 1001;
 }
 
-.note-tags{
+.note-tags, .quiz-tags{
     display:flex;
     flex-wrap:wrap;
     gap:6px;
     margin:10px 0;
 }
-
 .tag{
     background:var(--hover-light);
     color: var(--primary-color);
@@ -504,7 +504,7 @@ main{
     font-weight:600;
 }
 
-#searchNotes {
+#searchNotes, #searchQuiz {
   align-self: center;
   width: 900px;
   margin: 15px 0;
@@ -515,14 +515,20 @@ main{
   border-top: none;
 }
 
-#searchNotes:active {
-  border-bottom: var(--secondary-color) 2px solid;
-  border-left: none;
-  border-right: none;
-  border-top: none;
-}
-
-.search-notes {
+.search-notes, .search-quiz {
   display: flex;
   justify-content: center;
+}
+
+#myNotesGrid,
+#publicNotesGrid,
+#myQuizyGrid,
+#publicQuizyGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 kolumny */
+    gap: 20px;
+
+    max-height: 700px;   /* wysokość na ok. 6 kart (2 rzędy) */
+    overflow-y: auto;    /* pionowy scroll */
+    padding-right: 8px;
 }
