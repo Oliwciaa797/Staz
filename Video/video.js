@@ -482,6 +482,7 @@ async function submitReview() {
     loadReviews();
 }
 
+
 async function showUser() {
 
     const userArea = document.getElementById("userArea");
