@@ -1,0 +1,57 @@
+@import url(../../main.css);
+
+body {
+    display: flex;
+    justify-self: center;
+    align-items: center;
+}
+
+.note-container {
+    width: 900px;
+    margin:40px auto;
+    background:white;
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 5px 20px rgba(0,0,0,.1);
+}
+
+#title {
+    border: 2px var(--hover-light) solid;
+    padding: 15px;
+    border-radius: 15px;
+    color: var(--primary-color);
+    font-size: 40px;
+    margin: 0 5px;
+    text-transform: capitalize;
+    
+}
+
+.author {
+    line-height: 5px;
+    margin: 20px 10px;
+}
+
+#content {
+    padding: 15px;
+    margin: 40px 10px;
+}
+.note-tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin:10px 0;
+}
+
+.tag{
+    background:var(--hover-light);
+    color: var(--primary-color);
+    padding:4px 10px;
+    margin: 5px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:600;
+}
+
+#tags {
+    margin: 10px;
+}

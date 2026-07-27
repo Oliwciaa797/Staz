@@ -401,9 +401,8 @@ async function submitReview() {
         .eq("video_id", videoId)
         .maybeSingle();
 
-    if(checkError){
-        console.error(checkError);
-        toast.show('error', 'Error', checkError.message);
+    if (existingReview) {
+        toast.show('error','Błąd',"Dodałeś już opinię do tego filmu.");
         return;
     }
 
@@ -430,7 +429,12 @@ async function submitReview() {
                 comment: reviewText
             });
 
-    }
+    if (error) {
+
+        if (error.code === "23505") {
+            toast.show('error','Błąd',"Dodałeś już opinię do tego filmu.");
+            return;
+        }
 
     if(result.error){
         console.error(result.error);
@@ -842,7 +846,7 @@ updateCounter();
         const length = Math.max(0, editQuill.getLength() - 1);
 
         if (length > MAX_NOTE_CHARS) {
-            toast.show('error', 'Error', "Notatka może mieć maksymalnie 100000 znaków.");
+            toast.show('error','Błąd',"Notatka może mieć maksymalnie 100000 znaków.");
             return;
         }
 
@@ -850,7 +854,7 @@ updateCounter();
 
 
         if(!plainText){
-            toast.show('error', 'Error', 'Treść notatki nie może być pusta!');
+            toast.show('error', 'Błąd', 'Treść notatki nie może być pusta!');
             return;
         }
 
@@ -999,7 +1003,7 @@ async function deletePersonalNote(id){
 
     if(error){
         console.error(error);
-        toast.show('error', 'Error', "Nie udało się usunąć notatki.");
+        toast.show('error', 'Błąd', "Nie udało się usunąć notatki.");
         return;
     }
 
@@ -1015,7 +1019,7 @@ async function togglePersonalNoteVisibility(id, currentlyPublic){
 
     if(error){
         console.error(error);
-        toast.show('error','Error',"Nie udało się zmienić widoczności.");
+        toast.show('error','Błąd',"Nie udało się zmienić widoczności.");
         return;
     }
 
@@ -1045,7 +1049,7 @@ document.addEventListener("click", async (e) => {
         const length = Math.max(0, noteQuill.getLength() - 1);
 
         if (length > MAX_NOTE_CHARS) {
-            toast.show('error', 'Error', "Notatka może mieć maksymalnie 100000 znaków.");
+            toast.show('error','Błąd',"Notatka może mieć maksymalnie 100000 znaków.");
             return;
         }
 
@@ -1053,7 +1057,7 @@ document.addEventListener("click", async (e) => {
         const isPublic = publicInput ? publicInput.checked : false;
 
         if(!plainText){
-            toast.show('error', 'Error',"Wpisz treść notatki");
+            toast.show('error', 'Błąd',"Wpisz treść notatki");
             return;
         }
 
@@ -1074,7 +1078,7 @@ document.addEventListener("click", async (e) => {
 
         if(error){
             console.error(error);
-            toast.show('error','Error', error.message);
+            toast.show('error','Błąd', error.message);
             return;
         }
 
@@ -1307,7 +1311,7 @@ async function toggleQuizVisibility(id, currentlyPublic){
 
     if(error){
         console.error(error);
-        toast.show('error','Error', "Nie udało się zmienić widoczności quizu.");
+        toast.show('error','Błąd', "Nie udało się zmienić widoczności quizu.");
         return;
     }
 
@@ -1325,7 +1329,7 @@ async function deleteUserQuiz(id){
     .eq("id", id);
 
     if(error){
-        toast.show('error', 'Error', "Nie udało się usunąć quizu.");
+        toast.show('error', 'Błąd', "Nie udało się usunąć quizu.");
         return;
     }
 
@@ -1391,7 +1395,7 @@ async function saveMaterial() {
 
         if(error){
             console.error(error);
-            toast.show('error','Error', error.message);
+            toast.show('error','Błąd', error.message);
             return;
         }
 
@@ -1418,12 +1422,12 @@ async function saveMaterial() {
             materialSaved = true;
             btn.classList.add("saved");
             btn.innerHTML = "❤️ Zapisano";
-            toast.show('error','Error',"Ten materiał jest już zapisany.");
+            toast.show('error','Błąd',"Ten materiał jest już zapisany.");
             return;
         }
 
         console.error(error);
-        toast.show('error','Error',error.message);
+        toast.show('error','Błąd',error.message);
         return;
     }
 
@@ -1440,123 +1444,27 @@ function reportError(){
 
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-
-    const drawer =
-        document.getElementById("materialsDrawer");
-
-    const drawerToggle =
-        document.getElementById("drawerToggle");
-
-    drawerToggle.addEventListener("click", () => {
-
-        drawer.classList.toggle("open");
-
-        if(drawer.classList.contains("open")){
-            drawerToggle.innerHTML = ">";
-        }
-        else{
-            drawerToggle.innerHTML = "<";
-        }
-
-    });
-
-});
-function showDrawerTab(event, tabId){
-
-    document
-        .querySelectorAll(".drawer-tab")
-        .forEach(btn => btn.classList.remove("active"));
-
-    document
-        .querySelectorAll(".drawer-panel")
-        .forEach(panel => panel.classList.remove("active"));
-
-    event.currentTarget.classList.add("active");
-
-    document
-        .getElementById(tabId)
-        .classList.add("active");
-
-    if(tabId === "drawerQuizy"){
-        loadAllQuizLists();
-    }
-}
-
-/* ---------- Wczytanie własnej recenzji użytkownika ---------- */
-async function loadMyReview() {
-
-    const { data:{user} } =
-    await supabaseClient.auth.getUser();
-
-    if(!user) return;
-
-    const { data } =
-    await supabaseClient
-    .from("video_reviews")
-    .select("*")
-    .eq("user_id", user.id)
-    .eq("video_id", videoId)
-    .maybeSingle();
-
-    if(!data) return;
-
-    userRating = data.rating;
-
-    document.getElementById("reviewText").value =
-        data.comment || "";
-
-    setRating(data.rating);
-
-    document.getElementById("submitReviewBtn")
-        .textContent = "Aktualizuj opinię";
-
-    document.getElementById("deleteReviewBtn")
-        .style.display = "inline-block";
-}
-
-async function deleteMyReview(){
-
+async function saveWatchHistory(videoId) {
     const {
-        data:{user}
+        data: { user }
     } = await supabaseClient.auth.getUser();
 
-    if(!user) return;
+    if (!user) return;
 
-    const confirmDelete =
-    confirm("Usunąć opinię?");
+    const { error } = await supabaseClient
+        .from("watch_history")
+        .insert({
+            user_id: user.id,
+            video_id: videoId
+        });
 
-    if(!confirmDelete) return;
-
-    const { error } =
-    await supabaseClient
-    .from("video_reviews")
-    .delete()
-    .eq("user_id", user.id)
-    .eq("video_id", videoId);
-
-    if(error){
-        toast.show('error', 'Error', error.message);
-        return;
+    if (error) {
+        console.error("Couldn't save history:", error);
     }
+}
 
-    document.getElementById("reviewText").value = "";
+if (videoId) {
+    player.src = `https://www.youtube.com/embed/${videoId}?rel=0`;
 
-    document
-        .getElementById("deleteReviewBtn")
-        .style.display = "none";
-
-    document
-        .getElementById("submitReviewBtn")
-        .textContent = "Prześlij opinię";
-
-    userRating = 0;
-
-    document
-        .querySelectorAll(".star")
-        .forEach(star =>
-            star.classList.remove("active")
-        );
-
-    loadReviews();
+    saveWatchHistory(videoId);
 }

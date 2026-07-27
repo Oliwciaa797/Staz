@@ -64,6 +64,58 @@ body, header, button{
 #sidebar a:hover {
     background-color:var(--hover-sidebar);
 }
+.history-menu{
+    position:relative;
+    list-style:none;
+    cursor:pointer;
+}
+
+.history-dropdown{
+    position:absolute;
+    left:100%;
+    top:0;
+
+    width:260px;
+    background:#202020;
+    border-radius:10px;
+    padding:8px;
+
+    display:none;
+    box-shadow:0 5px 20px rgba(0,0,0,.4);
+}
+
+.history-menu:hover .history-dropdown{
+    display:block;
+}
+
+.history-video{
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    padding:6px;
+    text-decoration:none;
+    color:white;
+    border-radius:6px;
+}
+
+.history-video:hover{
+    background:#333;
+}
+
+.history-video img{
+    width:50px;
+    height:28px;
+    object-fit:cover;
+    border-radius:4px;
+}
+
+.history-video span{
+    font-size:13px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
 
 * {
   scrollbar-width: 10px;

@@ -60,6 +60,7 @@ main{
 }
 
 .panel{
+  min-height: 1120px;
   background: #fff;
   border: 4px solid var(--primary-color);
   border-radius: 20px;
@@ -274,13 +275,19 @@ main{
   border: 1px solid var(--background);
 }
 .quiz-card .thumb, .saved-card .thumb{
-  height: 110px;
+  height: 220px;
   background: linear-gradient(135deg, var(--secondary-color), var(--hover-light));
   display:flex; align-items:center; justify-content:center;
   color: var(--primary-color);
   font-family:'Baloo 2', sans-serif;
   font-weight:800;
   font-size: 15px;
+}
+
+.thumb img {
+  height: 220px;
+  z-index: 1;
+  width: auto;
 }
 .quiz-card .info, .saved-card .info{ padding: 14px 16px 16px; }
 .quiz-card h3, .saved-card h3{
@@ -482,51 +489,46 @@ main{
   z-index: 1001;
 }
 
-@media (max-width: 640px){
-  header{ padding: 18px 20px; }
-  .panel{ padding: 28px 22px 32px; border-radius: 20px; }
-  .panel h1{ font-size: 30px; }
+.note-tags, .quiz-tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin:10px 0;
+}
+.tag{
+    background:var(--hover-light);
+    color: var(--primary-color);
+    padding:4px 10px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:600;
+}
 
-  /* DODAJ TO: */
-  .panel-top{
-    gap: 12px;
-  }
+#searchNotes, #searchQuiz {
+  align-self: center;
+  width: 900px;
+  margin: 15px 0;
+  padding: 10px;
+  border-bottom: var(--primary-color) 2px solid;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+}
 
-  .tabs{
-    gap: 8px;
-  }
-  .tab-btn{
-    padding: 10px 18px;
-    font-size: 14px;
-    flex: 1 1 auto;
-    text-align: center;
-  }
+.search-notes, .search-quiz {
+  display: flex;
+  justify-content: center;
+}
 
-  .note-form{
-    padding: 16px 16px;
-  }
+#myNotesGrid,
+#publicNotesGrid,
+#myQuizyGrid,
+#publicQuizyGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 kolumny */
+    gap: 20px;
 
-  .card-grid{
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
-
-  .item-card{
-    min-height: auto;
-  }
-
-  .quiz-card .thumb, .saved-card .thumb{
-    height: 90px;
-    font-size: 13px;
-  }
-
-  #toast{
-    left: 16px;
-    right: 16px;
-    transform: translateY(20px);
-    text-align: center;
-  }
-  #toast.show{
-    transform: translateY(0);
-  }
+    max-height: 700px;   /* wysokość na ok. 6 kart (2 rzędy) */
+    overflow-y: auto;    /* pionowy scroll */
+    padding-right: 8px;
 }
