@@ -1112,6 +1112,21 @@ document.addEventListener("click", async (e) => {
         return;
     }
 
+    if(e.target.classList.contains("open-quiz-btn")){
+        openQuiz(e.target.dataset.id);
+        return;
+    }
+
+    if(e.target.classList.contains("toggle-quiz-vis")){
+        toggleQuizVisibility(e.target.dataset.id, e.target.dataset.public === "true");
+        return;
+    }
+
+    if(e.target.classList.contains("deleteQuizBtn")){
+        deleteUserQuiz(e.target.dataset.id);
+        return;
+    }
+
 });
 
 /* ============================================================
@@ -1120,26 +1135,60 @@ document.addEventListener("click", async (e) => {
    tutaj tylko wyświetlamy i usuwamy)
    ============================================================ */
 
-async function loadUserQuizy(){
+/* ---------- Renderowanie pojedynczej karty quizu (analogicznie do notatek) ---------- */
+function renderQuizCard(quiz, { editable, showAuthor }){
 
-    const container =
-    document.getElementById("personalQuizyContainer");
+    const div = document.createElement('div');
+    div.className = 'item-card';
+    div.dataset.id = quiz.id;
 
-    const {
-        data:{user}
-    } = await supabaseClient.auth.getUser();
+    const count = Array.isArray(quiz.questions) ? quiz.questions.length : 0;
+
+    const badge = quiz.is_public
+        ? '<span class="badge public">Publiczny</span>'
+        : '<span class="badge private">Prywatny</span>';
+
+    const footerLeft = showAuthor
+        ? escapeHtml(quiz.profiles?.profiles || "Użytkownik")
+        : timeAgo(quiz.created_at);
+
+    div.innerHTML = `
+        ${badge}
+        <h3>${escapeHtml(quiz.title || "Bez tytułu")}</h3>
+        <p>${count} ${count === 1 ? 'pytanie' : 'pytań'}</p>
+        <button type="button" class="go-btn big-btn open-quiz-btn" data-id="${quiz.id}">Rozwiąż quiz</button>
+        <div class="card-footer">
+            <span>${footerLeft}</span>
+            ${editable ? `
+            <div class="card-actions">
+                <button type="button" class="toggle-quiz-vis" data-id="${quiz.id}" data-public="${quiz.is_public}">
+                    ${quiz.is_public ? 'Ukryj' : 'Upublicznij'}
+                </button>
+                <button type="button" class="deleteQuizBtn" data-id="${quiz.id}">Usuń</button>
+            </div>` : ''}
+        </div>
+    `;
+
+    return div;
+}
+
+/* ---------- Twoje quizy do tego filmu ---------- */
+async function loadPersonalQuizzes(){
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const container = document.getElementById("personalQuizyContainer");
 
     if(!user){
         container.innerHTML = "<p>Zaloguj się, aby zobaczyć swoje quizy.</p>";
         return;
     }
 
-    const { data, error } =
-    await supabaseClient
-    .from('quizzes')
-    .select('*')
-    .eq('user_id', user.id)
-    .order('created_at', { ascending:false });
+    const { data, error } = await supabaseClient
+        .from('quizzes')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('video_id', videoId)
+        .order('created_at', { ascending: false });
 
     if(error){
         console.error(error);
@@ -1147,45 +1196,96 @@ async function loadUserQuizy(){
         return;
     }
 
+    container.innerHTML = "";
+
     if(!data || data.length === 0){
-        container.innerHTML = "<p>Brak quizów.</p>";
+        container.innerHTML = "<p>Brak quizów do tego filmu.</p>";
         return;
     }
 
-    container.innerHTML =
-    data.map(quiz => {
+    data.forEach(quiz => container.appendChild(renderQuizCard(quiz, { editable: true, showAuthor: false })));
+}
 
-        const count =
-        Array.isArray(quiz.questions) ? quiz.questions.length : 0;
+/* ---------- Twoje pozostałe quizy (inne filmy) ---------- */
+async function loadMyOtherQuizzes(){
 
-        const badge =
-        quiz.is_public ? "Publiczny" : "Prywatny";
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const container = document.getElementById("myOtherQuizyContainer");
+    if(!container) return;
 
-        return `
-            <div class="item-card" data-id="${quiz.id}">
-                <span class="badge ${quiz.is_public ? 'public' : 'private'}">${badge}</span>
-                <h3>${escapeHtml(quiz.title)}</h3>
-                <p>${count} ${count === 1 ? 'pytanie' : 'pytań'}</p>
-                <button class="go-btn big-btn" data-id="${quiz.id}" onclick="openQuiz('${quiz.id}')">Rozwiąż quiz</button>
-                <div class="card-footer">
-                    <div class="card-actions">
-                        <button class="toggle-quiz-vis" data-id="${quiz.id}" data-public="${quiz.is_public}">
-                            ${quiz.is_public ? 'Ukryj' : 'Upublicznij'}
-                        </button>
-                        <button class="deleteQuizBtn" data-id="${quiz.id}">Usuń</button>
-                    </div>
-                </div>
-            </div>
-        `;
-    }).join("");
+    if(!user){
+        container.innerHTML = "<p>Zaloguj się, aby zobaczyć swoje quizy.</p>";
+        return;
+    }
 
-    container.querySelectorAll(".deleteQuizBtn").forEach(btn => {
-        btn.addEventListener("click", () => deleteUserQuiz(btn.dataset.id));
-    });
+    const { data, error } = await supabaseClient
+        .from('quizzes')
+        .select('*')
+        .eq('user_id', user.id)
+        .neq('video_id', videoId)
+        .order('created_at', { ascending: false });
 
-    container.querySelectorAll(".toggle-quiz-vis").forEach(btn => {
-        btn.addEventListener("click", () => toggleQuizVisibility(btn.dataset.id, btn.dataset.public === "true"));
-    });
+    if(error){
+        console.error(error);
+        container.innerHTML = "<p>Nie udało się wczytać quizów.</p>";
+        return;
+    }
+
+    container.innerHTML = "";
+
+    if(!data || data.length === 0){
+        container.innerHTML = "<p>Brak innych quizów.</p>";
+        return;
+    }
+
+    data.forEach(quiz => container.appendChild(renderQuizCard(quiz, { editable: true, showAuthor: false })));
+}
+
+/* ---------- Quizy publiczne innych użytkowników do tego filmu ---------- */
+async function loadPublicVideoQuizzes(){
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const container = document.getElementById("publicVideoQuizyContainer");
+    if(!container) return;
+
+    const { data, error } = await supabaseClient
+        .from('quizzes')
+        .select(`
+            *,
+            profiles!user_id ( profiles, avatar_url )
+        `)
+        .eq('video_id', videoId)
+        .eq('is_public', true)
+        .order('created_at', { ascending: false });
+
+    if(error){
+        console.error(error);
+        container.innerHTML = "<p>Nie udało się wczytać quizów publicznych.</p>";
+        return;
+    }
+
+    const filtered = user ? (data || []).filter(q => q.user_id !== user.id) : (data || []);
+
+    container.innerHTML = "";
+
+    if(filtered.length === 0){
+        container.innerHTML = "<p>Brak quizów publicznych do tego filmu.</p>";
+        return;
+    }
+
+    filtered.forEach(quiz => container.appendChild(renderQuizCard(quiz, { editable: false, showAuthor: true })));
+}
+
+async function loadAllQuizLists(){
+    await loadPersonalQuizzes();
+    await loadMyOtherQuizzes();
+    await loadPublicVideoQuizzes();
+}
+
+// Przejście do tworzenia nowego quizu, z przekazaniem ID bieżącego filmu,
+// żeby kreator zapisał quiz z poprawnym video_id
+function goToQuizCreator(){
+    window.location.href = `../kreator quizow/quiz.html?video=${videoId}`;
 }
 
 // Przejście do rozwiązywania konkretnego quizu (kreator quizow/quiz.html musi
@@ -1210,7 +1310,7 @@ async function toggleQuizVisibility(id, currentlyPublic){
         return;
     }
 
-    loadUserQuizy();
+    loadAllQuizLists();
 }
 
 async function deleteUserQuiz(id){
@@ -1228,8 +1328,8 @@ async function deleteUserQuiz(id){
         return;
     }
 
-    loadUserQuizy();
-    
+    loadAllQuizLists();
+
 }
 
 async function saveMaterial() {
@@ -1311,7 +1411,7 @@ function showDrawerTab(event, tabId){
         .classList.add("active");
 
     if(tabId === "drawerQuizy"){
-        loadUserQuizy();
+        loadAllQuizLists();
     }
 }
 
