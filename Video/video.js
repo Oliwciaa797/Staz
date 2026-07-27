@@ -1294,6 +1294,12 @@ function openQuiz(id){
     window.location.href = `../kreator quizow/quiz.html?quiz=${id}`;
 }
 
+// Przejście do rozwiązywania konkretnego quizu (kreator quizow/quiz.html musi
+// odczytać ?quiz=ID z URL i wczytać pytania z tabeli "quizzes")
+function openQuiz(id){
+    window.location.href = `../kreator quizow/quiz.html?quiz=${id}`;
+}
+
 async function toggleQuizVisibility(id, currentlyPublic){
 
     const { error } =
