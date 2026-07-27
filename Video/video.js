@@ -413,7 +413,7 @@ async function submitReview() {
         .eq("video_id", videoId)
         .maybeSingle();
 
-    if (existingReview) {
+    if (existing) {
         toast.show('error','Błąd',"Dodałeś już opinię do tego filmu.");
         return;
     }
@@ -440,14 +440,7 @@ async function submitReview() {
                 rating: userRating,
                 comment: reviewText
             });
-
-    if (error) {
-
-        if (error.code === "23505") {
-            toast.show('error','Błąd',"Dodałeś już opinię do tego filmu.");
-            return;
-        }
-
+    }
     if(result.error){
         console.error(result.error);
         toast.show('error', 'Error', result.error.message);
@@ -461,7 +454,6 @@ async function submitReview() {
     );
 
     loadReviews();
-    loadMyReview();
 }
 
 async function showUser() {
@@ -568,8 +560,8 @@ document.addEventListener("DOMContentLoaded", () => {
     showUser();
     updateSidebar();
     loadAllNoteLists();
-    loadMyReview();
     checkSavedMaterial();
+    loadAllQuizLists();
 });
 
 function back(){
