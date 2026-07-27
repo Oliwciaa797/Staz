@@ -37,7 +37,7 @@ if (videoId) {
     if (player && videoId) {
         player.src = `https://www.youtube.com/embed/${videoId}?rel=0`;
     }
-    
+
 } else {
     console.error("Brak video ID");
     document.getElementById("notesContent").innerHTML = "Nie znaleziono filmu.";
@@ -88,23 +88,41 @@ let currentQuiz = [];
 
 async function generateQuiz() {
 
-    const response = await fetch("http://127.0.0.1:5000/quiz", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            url: `https://www.youtube.com/watch?v=${videoId}`
-        })
-    });
+    const quizContainer = document.getElementById("quiz");
 
-    if (!response.ok) {
-        throw new Error("Nie udało się wygenerować quizu.");
+    try {
+
+        const response = await fetch("http://127.0.0.1:5000/quiz", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                url: `https://www.youtube.com/watch?v=${videoId}`
+            })
+        });
+
+        if (!response.ok) {
+            toast.show('error', 'Error', "Nie udało się wygenerować quizu.");
+            return;
+        }
+
+        const data = await response.json();
+
+        // Backend może zwrócić pytania pod różnymi kluczami - obsłuż oba warianty
+        currentQuiz = data.questions || data.quiz || [];
+
+        if (!currentQuiz.length) {
+            toast.show('error', 'Error', "Backend nie zwrócił żadnych pytań.");
+            return;
+        }
+
+        displayQuiz(currentQuiz);
+
+    } catch (error) {
+        console.error(error);
+        toast.show('error', 'Error', "Nie udało się połączyć z backendem.");
     }
-
-    const data = await response.json();
-
-    displayQuiz(currentQuiz);
 }
 
 
@@ -119,7 +137,7 @@ function displayQuiz(questions) {
         const div = document.createElement("div");
 
         div.innerHTML = `
-            <h3>${index + 1}. ${q.question}</h3>
+            <h3>${index + 1}. ${escapeHtml(q.question)}</h3>
 
             ${q.answers.map((a, i) => `
                 <label>
@@ -127,7 +145,7 @@ function displayQuiz(questions) {
                         type="radio"
                         name="q${index}"
                         value="${i}">
-                    ${a}
+                    ${escapeHtml(a)}
                 </label><br>
             `).join("")}
 
@@ -170,7 +188,7 @@ function checkQuiz() {
     button.replaceWith(result);
 }
 
-/* ---------- Przełączanie głównych zakładek (Notatki AI / Własne materiały / Quiz) ---------- */
+/* ---------- Przełączanie głównych zakładek (Notatki AI / Quiz) ---------- */
 function showTab(tabId) {
 
     console.log("Przełączam na:", tabId);
@@ -187,26 +205,9 @@ function showTab(tabId) {
 // Domyślnie pokaż pierwszą zakładkę
 showTab("generated");
 
-/* ---------- Przełączanie pod-zakładek w "Własne materiały" (Notatki / Quizy) ---------- */
-function showSubTab(subTabId){
-
-    document.querySelectorAll(".sub-tab-btn").forEach(btn => btn.classList.remove("active"));
-    document.querySelectorAll(".sub-tab-panel").forEach(panel => panel.classList.remove("active"));
-
-    const btn = document.querySelector(`.sub-tab-btn[data-subtab="${subTabId}"]`);
-    if(btn) btn.classList.add("active");
-
-    const panel = document.getElementById(subTabId);
-    if(panel) panel.classList.add("active");
-
-    if(subTabId === "personalQuizy"){
-        loadUserQuizy();
-    }
-}
-
 let userRating = 0;
 
-// Set star rating
+// Ustawienie oceny gwiazdkowej
 async function setRating(stars) {
 
     userRating = stars;
@@ -239,6 +240,9 @@ async function setRating(stars) {
 
 /* ---------- Wczytanie i wyświetlenie recenzji ---------- */
 async function loadReviews() {
+
+    // Potrzebne, żeby oznaczyć własną recenzję (badge "Twoja opinia")
+    const { data: { user } } = await supabaseClient.auth.getUser();
 
     const sort =
         document.getElementById("sortReviews")?.value || "newest";
@@ -315,18 +319,6 @@ async function loadReviews() {
         return;
     }
 
-        const formatDate = (date) => {
-
-    return new Date(date).toLocaleDateString("pl-PL", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-    });
-
-};
-
     const averageRating = (
         reviews.reduce((sum, r) => sum + r.rating, 0) /
         reviews.length
@@ -345,13 +337,16 @@ async function loadReviews() {
         new Date(review.created_at)
         .toLocaleString("pl-PL");
 
+        const myReview = !!(user && review.user_id === user.id);
+
         return `
-            <div class="review-item">
+                <div class="review-item ${myReview ? 'my-review' : ''}">
 
                 <div class="review-header">
 
                     <div class="review-user">
                         ${escapeHtml(review.profiles?.profiles || "Użytkownik")}
+                        ${myReview ? '<span class="badge">Twoja opinia</span>' : ''}
                     </div>
 
                     <div class="review-date">
@@ -373,9 +368,10 @@ async function loadReviews() {
 }
 
 const toast = new Toast();
-// Load reviews when page loads
+// Wczytaj recenzje po załadowaniu strony
 document.addEventListener('DOMContentLoaded', loadReviews);
 let errorMsg = document.getElementById('errorMsg');
+
 async function submitReview() {
 
     const {
@@ -387,29 +383,45 @@ async function submitReview() {
         return;
     }
 
-
     const reviewText =
         document.getElementById("reviewText").value;
 
-    if (errorMsg) {
+    if (userRating === 0) {
         errorMsg.textContent = "Wybierz ocenę.";
-    }
-
-    const { data: existingReview } = await supabaseClient
-        .from("video_reviews")
-        .select("id")
-        .eq("video_id", videoId)
-        .eq("user_id", user.id)
-        .maybeSingle();
-
-    if (existingReview) {
-        alert("Dodałeś już opinię do tego filmu.");
         return;
     }
 
+    errorMsg.textContent = "";
 
-    const { error } =
-        await supabaseClient
+    const { data: existing, error: checkError } =
+    await supabaseClient
+        .from("video_reviews")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("video_id", videoId)
+        .maybeSingle();
+
+    if(checkError){
+        console.error(checkError);
+        toast.show('error', 'Error', checkError.message);
+        return;
+    }
+
+    let result;
+
+    if(existing){
+
+        result = await supabaseClient
+            .from("video_reviews")
+            .update({
+                rating: userRating,
+                comment: reviewText
+            })
+            .eq("id", existing.id);
+
+    }else{
+
+        result = await supabaseClient
             .from("video_reviews")
             .insert({
                 video_id: videoId,
@@ -418,30 +430,21 @@ async function submitReview() {
                 comment: reviewText
             });
 
-    if (error) {
-
-        if (error.code === "23505") {
-            alert("Dodałeś już opinię do tego filmu.");
-            return;
-        }
+    }
 
         console.error(error);
         toast.show('error', 'Błąd', 'Twoja opinia jest za długa!')
         return;
     }
 
-    toast.show('success', 'Gotowe!', 'Opinia została dodana')
-
-    document.getElementById("reviewText").value = "";
-
-    userRating = 0;
-
-    document
-        .querySelectorAll(".rating-stars .star")
-        .forEach(star => star.classList.remove("active"));
+    toast.show(
+        'success',
+        'Gotowe!',
+        existing ? "Opinia zaktualizowana!" : "Opinia dodana!"
+    );
 
     loadReviews();
-
+    loadMyReview();
 }
 
 async function showUser() {
@@ -520,7 +523,6 @@ info.addEventListener("click", (e) => {
 function toProfile(){
     window.location.href = "../Profil/prof.html";
 }
-document.addEventListener("DOMContentLoaded", showUser);
 
 async function updateSidebar() {
 
@@ -544,10 +546,12 @@ async function updateSidebar() {
         `;
     }
 }
+
 document.addEventListener("DOMContentLoaded", () => {
     showUser();
     updateSidebar();
     loadAllNoteLists();
+    loadMyReview();
 });
 
 function back(){
@@ -666,8 +670,8 @@ function createPersonalNote() {
         current.textContent = length;
 
         counter.classList.toggle(
-            "limit",
-            length > MAX_NOTE_CHARS
+            "limit-reached",
+            length >= MAX_NOTE_CHARS
         );
     }
 
@@ -801,8 +805,8 @@ function enterNoteEditMode(card, note){
         current.textContent = length;
 
         counter.classList.toggle(
-            "limit",
-            length > MAX_NOTE_CHARS
+            "limit-reached",
+            length >= MAX_NOTE_CHARS
         );
     }
 
@@ -836,7 +840,7 @@ updateCounter();
         const length = Math.max(0, editQuill.getLength() - 1);
 
         if (length > MAX_NOTE_CHARS) {
-            alert("Notatka może mieć maksymalnie 100000 znaków.");
+            toast.show('error', 'Error', "Notatka może mieć maksymalnie 100000 znaków.");
             return;
         }
 
@@ -1039,7 +1043,7 @@ document.addEventListener("click", async (e) => {
         const length = Math.max(0, noteQuill.getLength() - 1);
 
         if (length > MAX_NOTE_CHARS) {
-            alert("Notatka może mieć maksymalnie 100000 znaków.");
+            toast.show('error', 'Error', "Notatka może mieć maksymalnie 100000 znaków.");
             return;
         }
 
@@ -1054,7 +1058,7 @@ document.addEventListener("click", async (e) => {
         const { data: { user } } = await supabaseClient.auth.getUser();
 
         if(!user){
-            toast.show('error', 'Zalouj się', "Zaloguj się aby stworzyć notatkę");
+            toast.show('error', 'Zaloguj się', "Zaloguj się aby stworzyć notatkę");
             return;
         }
 
@@ -1161,7 +1165,7 @@ async function loadUserQuizy(){
                 <span class="badge ${quiz.is_public ? 'public' : 'private'}">${badge}</span>
                 <h3>${escapeHtml(quiz.title)}</h3>
                 <p>${count} ${count === 1 ? 'pytanie' : 'pytań'}</p>
-                <button class="go-btn big-btn" onclick="openQuiz('${quiz.id}')">Rozwiąż quiz</button>
+                <button class="go-btn big-btn" data-id="${quiz.id}" onclick="openQuiz('${quiz.id}')">Rozwiąż quiz</button>
                 <div class="card-footer">
                     <div class="card-actions">
                         <button class="toggle-quiz-vis" data-id="${quiz.id}" data-public="${quiz.is_public}">
@@ -1181,6 +1185,12 @@ async function loadUserQuizy(){
     container.querySelectorAll(".toggle-quiz-vis").forEach(btn => {
         btn.addEventListener("click", () => toggleQuizVisibility(btn.dataset.id, btn.dataset.public === "true"));
     });
+}
+
+// Przejście do rozwiązywania konkretnego quizu (kreator quizow/quiz.html musi
+// odczytać ?quiz=ID z URL i wczytać pytania z tabeli "quizzes")
+function openQuiz(id){
+    window.location.href = `../kreator quizow/quiz.html?quiz=${id}`;
 }
 
 async function toggleQuizVisibility(id, currentlyPublic){
@@ -1259,4 +1269,125 @@ function reportError(){
     window.location.href =
     "../zglaszanie bledow/blad.html";
 
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const drawer =
+        document.getElementById("materialsDrawer");
+
+    const drawerToggle =
+        document.getElementById("drawerToggle");
+
+    drawerToggle.addEventListener("click", () => {
+
+        drawer.classList.toggle("open");
+
+        if(drawer.classList.contains("open")){
+            drawerToggle.innerHTML = ">";
+        }
+        else{
+            drawerToggle.innerHTML = "<";
+        }
+
+    });
+
+});
+function showDrawerTab(event, tabId){
+
+    document
+        .querySelectorAll(".drawer-tab")
+        .forEach(btn => btn.classList.remove("active"));
+
+    document
+        .querySelectorAll(".drawer-panel")
+        .forEach(panel => panel.classList.remove("active"));
+
+    event.currentTarget.classList.add("active");
+
+    document
+        .getElementById(tabId)
+        .classList.add("active");
+
+    if(tabId === "drawerQuizy"){
+        loadUserQuizy();
+    }
+}
+
+/* ---------- Wczytanie własnej recenzji użytkownika ---------- */
+async function loadMyReview() {
+
+    const { data:{user} } =
+    await supabaseClient.auth.getUser();
+
+    if(!user) return;
+
+    const { data } =
+    await supabaseClient
+    .from("video_reviews")
+    .select("*")
+    .eq("user_id", user.id)
+    .eq("video_id", videoId)
+    .maybeSingle();
+
+    if(!data) return;
+
+    userRating = data.rating;
+
+    document.getElementById("reviewText").value =
+        data.comment || "";
+
+    setRating(data.rating);
+
+    document.getElementById("submitReviewBtn")
+        .textContent = "Aktualizuj opinię";
+
+    document.getElementById("deleteReviewBtn")
+        .style.display = "inline-block";
+}
+
+async function deleteMyReview(){
+
+    const {
+        data:{user}
+    } = await supabaseClient.auth.getUser();
+
+    if(!user) return;
+
+    const confirmDelete =
+    confirm("Usunąć opinię?");
+
+    if(!confirmDelete) return;
+
+    const { error } =
+    await supabaseClient
+    .from("video_reviews")
+    .delete()
+    .eq("user_id", user.id)
+    .eq("video_id", videoId);
+
+    if(error){
+        toast.show('error', 'Error', error.message);
+        return;
+    }
+
+    document.getElementById("reviewText").value = "";
+
+    document
+        .getElementById("deleteReviewBtn")
+        .style.display = "none";
+
+    document
+        .getElementById("submitReviewBtn")
+        .textContent = "Prześlij opinię";
+
+    userRating = 0;
+
+    document
+        .querySelectorAll(".star")
+        .forEach(star =>
+            star.classList.remove("active")
+        );
+
+    loadReviews();
 }
