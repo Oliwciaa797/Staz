@@ -933,6 +933,9 @@ async function loadMyOtherNotes(){
     }
 
     const { data, error } = await supabaseClient
+        console.log("Other Notes:", data)
+        console.log("Error:", error)
+        console.log("Current videoId:", videoId)
         .from('notes')
         .select('*')
         .eq('user_id', user.id)
@@ -962,6 +965,8 @@ async function loadPublicVideoNotes(){
     if(!container) return;
 
     const { data, error } = await supabaseClient
+        console.log("Public Notes:", data)
+        console.log("Error:", error)
         .from('notes')
         .select(`
             *,
