@@ -275,3 +275,26 @@ finishBtn.onclick = () => {
 function back() {
     history.back();
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const drawer =
+        document.getElementById("materialsDrawer");
+
+    const drawerToggle =
+        document.getElementById("drawerToggle");
+
+    drawerToggle.addEventListener("click", () => {
+
+        drawer.classList.toggle("open");
+
+        if(drawer.classList.contains("open")){
+            drawerToggle.innerHTML = ">";
+        }else{
+            drawerToggle.innerHTML = "<";
+        }
+
+    });
+
+});
+``
