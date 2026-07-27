@@ -429,7 +429,7 @@ async function submitReview() {
                 comment: reviewText
             });
 
-    if (error) {
+        }
 
         if (error.code === "23505") {
             toast.show('error','Błąd',"Dodałeś już opinię do tego filmu.");
@@ -451,6 +451,7 @@ async function submitReview() {
     loadReviews();
     loadMyReview();
 }
+
 
 async function showUser() {
 
