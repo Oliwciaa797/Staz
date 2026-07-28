@@ -131,14 +131,29 @@
 
     <!-- ===== ZAPISANE ===== -->
     <section class="tab-panel" id="tab-zapisane">
-      <div class="section-label">Zapisane materiały</div>
-      <div class="card-grid" id="savedGrid">
-        <div class="empty-state" style="grid-column:1/-1;">
-          <strong>Nic tu jeszcze nie ma</strong>
-          Miejsce na filmy / poradniki oznaczone przez użytkownika jako „Zapisz". Podłącz własną tabelę np. <code>saved_items</code>.
-        </div>
+
+    <div class="section-label">Zapisane filmy i materiały</div>
+    <div class="card-grid" id="savedMaterialsGrid">
+      <div class="empty-state" style="grid-column:1/-1;">
+        <strong>Brak zapisanych materiałów.</strong>
       </div>
-    </section>
+    </div>
+
+    <div class="section-label" style="margin-top:32px;">Zapisane notatki</div>
+    <div class="card-grid" id="savedNotesGrid">
+      <div class="empty-state" style="grid-column:1/-1;">
+        <strong>Brak zapisanych notatek.</strong>
+      </div>
+    </div>
+
+    <div class="section-label" style="margin-top:32px;">Zapisane quizy</div>
+    <div class="card-grid" id="savedQuizzesGrid">
+      <div class="empty-state" style="grid-column:1/-1;">
+        <strong>Brak zapisanych quizów.</strong>
+      </div>
+    </div>
+
+  </section>
 
   </div>
 </main>
