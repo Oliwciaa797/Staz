@@ -26,6 +26,33 @@ const TYPE_LABELS = {
   boolean: 'Prawda / Fałsz'
 };
 
+let quizTagSelect;
+
+
+async function loadQuizTags() {
+
+    const { data, error } = await supabaseClient
+        .from("tags")
+        .select("name")
+        .order("name");
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    quizTagSelect = new TomSelect("#quizTags", {
+        plugins: ["remove_button"],
+        valueField: "name",
+        labelField: "name",
+        searchField: "name",
+        options: data,
+        create: true,
+        persist: false
+    });
+
+}
+
 const toast = new Toast();
 
 function escapeHtml(str){
@@ -53,12 +80,15 @@ async function init(){
 
     await showUser();
 
+    document.getElementById('authNotice').style.display = 'none';
+    document.getElementById('quizBuilder').style.display = 'block';
+
+    await loadQuizTags();
+
     if(editQuizId){
         await loadQuizToEdit();
     }
 
-    document.getElementById('authNotice').style.display = 'none';
-    document.getElementById('quizBuilder').style.display = 'block';
     renderQuestionsList();
   } catch (e) {
     console.error(e);
@@ -290,6 +320,21 @@ document.getElementById('saveQuizBtn').addEventListener('click', async () => {
         return;
     }
 
+    const tags = quizTagSelect.items;
+
+    for (const tag of tags) {
+
+        const { data } = await supabaseClient
+            .from("tags")
+            .select("id")
+            .eq("name", tag);
+
+        if (!data || data.length === 0) {
+            await supabaseClient
+                .from("tags")
+                .insert({ name: tag });
+        }
+    }
     const btn =
     document.getElementById('saveQuizBtn');
 
@@ -306,7 +351,8 @@ document.getElementById('saveQuizBtn').addEventListener('click', async () => {
         .update({
             title,
             is_public: isPublic,
-            questions
+            questions,
+            tags
         })
         .eq("id", editQuizId);
 
@@ -386,8 +432,6 @@ async function showUser() {
         e.stopPropagation();
         userMenu.classList.toggle("active");
     };
-
-z
 }
 
 
@@ -482,6 +526,17 @@ async function loadQuizToEdit(){
 
     questions = data.questions || [];
 
+    if (quizTagSelect) {
+      quizTagSelect.clear(true);
+
+      (data.tags || []).forEach(tag => {
+          quizTagSelect.addOption({
+              name: tag
+          });
+          quizTagSelect.addItem(tag, true);
+      });
+    }
+    
     renderQuestionsList();
 
     document.querySelector("h1").textContent =
