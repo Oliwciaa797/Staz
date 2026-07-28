@@ -37,12 +37,15 @@ async function init() {
     const { data: profile } =
     await supabaseClient
     .from("profiles")
-    .select("profiles")
+    .select("profiles, avatar_url")
     .eq("id", loadedQuiz.user_id)
     .single();
 
     document.getElementById("author").textContent =
-    profile?.profiles || "Nieznany użytkownik";
+        profile?.profiles || "Nieznany użytkownik";
+
+    document.getElementById("authorAvatar").src =
+        profile?.avatar_url || "../Profil/avatar.png";
 
     await checkIfSaved();
 

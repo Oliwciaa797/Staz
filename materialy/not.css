@@ -223,7 +223,7 @@ main{
 }
 
 .item-card .card-footer{
-  display:flex; justify-content:space-between; align-items:center;
+  display:flex; justify-content:flex-end; align-items:center;
   font-size: 12px; color: var(--secondary-color);
 }
 .card-actions{ display:flex; gap:12px; }
@@ -532,4 +532,50 @@ main{
     max-height: 700px;   /* wysokość na ok. 6 kart (2 rzędy) */
     overflow-y: auto;    /* pionowy scroll */
     padding-right: 8px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-box {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    width: 350px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,.3);
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.modal-actions button {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+#confirmQuizDelete, #confirmNoteDelete {
+    background: #e74c3c;
+    color:white;
+}
+
+#cancelNoteDelete, #cancelNoteDelete {
+    background:#ddd;
 }
