@@ -154,12 +154,8 @@ function renderNoteCard(note, { editable }){
     <div class="note-content-view">${note.content}</div>
     <button class="go-btn big-btn show-note-btn">Pokaż notatkę</button>
     <div class="card-footer">
-      <span>${editable ? date : escapeHtml(note.author_name || 'Użytkownik')}</span>
       ${editable ? `<div class="card-actions">
         <button class="edit" data-id="${note.id}">Edytuj</button>
-        <button class="toggle-vis" data-id="${note.id}" data-public="${note.is_public}">
-          ${note.is_public ? 'Ukryj' : 'Upublicznij'}
-        </button>
         <button class="delete" data-id="${note.id}">Usuń</button>
       </div>` : ''}
     </div>
@@ -360,7 +356,13 @@ async function loadPublicNotes(search = "") {
 
     let query = supabaseClient
         .from("notes")
-        .select("*")
+        .select(`
+            *,
+            profiles (
+                profiles,
+                avatar_url
+            )
+        `)
         .eq("is_public", true);
 
     if (search.trim() !== "") {
@@ -615,7 +617,7 @@ async function loadMyQuizy(){
     onclick="openQuiz('${quiz.id}')">
     Rozwiąż quiz
 </button>
-
+<div class="card-footer">
 <div class="card-actions">
 
     <button
@@ -625,12 +627,13 @@ async function loadMyQuizy(){
     </button>
 
     <button
-        class="mini-btn delete-btn"
+        class="mini-btn delete"
         onclick="deleteQuiz('${quiz.id}')">
         Usuń
     </button>
 
 </div>
+            </div>
             </div>
         `;
     });

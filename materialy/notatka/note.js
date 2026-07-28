@@ -24,7 +24,18 @@ async function init() {
         .map(tag => `<span class="tag">${tag}</span>`)
         .join("");
 
-    document.getElementById("author").textContent = note.user_id;
+    const { data: profile } =
+    await supabaseClient
+    .from("profiles")
+    .select("profiles, avatar_url")
+    .eq("id", note.user_id)
+    .single();
+
+    document.getElementById("author").textContent =
+        profile?.profiles || "Nieznany użytkownik";
+
+    document.getElementById("authorAvatar").src =
+        profile?.avatar_url || "../Profil/avatar.png";
     document.getElementById("content").innerHTML = note.content;
 
     await checkIfSaved();
