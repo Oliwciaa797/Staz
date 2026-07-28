@@ -32,18 +32,6 @@ const params = new URLSearchParams(window.location.search);
 const videoId = params.get("video");
 const player = document.getElementById("youtubeVideo");
 
-async function getVideoInfo(videoId) {
-    const response = await fetch(
-        `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`
-    );
-
-    if (!response.ok) {
-        throw new Error("Couldn't get video information.");
-    }
-
-    return await response.json();
-}
-
 if (videoId) {
     console.log("Video ID:", videoId);
     if (player && videoId) {
@@ -217,34 +205,6 @@ function showTab(tabId) {
 // Domyślnie pokaż pierwszą zakładkę
 showTab("generated");
 
-/* ---------- Przełączanie pod-zakładek ---------- */
-function showSubTab(subTabId){
-
-    document.querySelectorAll(".sub-tab-btn").forEach(btn =>
-        btn.classList.remove("active")
-    );
-
-    document.querySelectorAll(".sub-tab-panel").forEach(panel =>
-        panel.classList.remove("active")
-    );
-
-    const btn = document.querySelector(
-        `.sub-tab-btn[data-subtab="${subTabId}"]`
-    );
-
-    if(btn) btn.classList.add("active");
-
-    const panel = document.getElementById(subTabId);
-
-    if(panel) panel.classList.add("active");
-
-    if(subTabId.includes("Quiz")){
-        loadAllQuizLists();
-    } else {
-        loadAllNoteLists();
-    }
-}
-
 let userRating = 0;
 
 // Ustawienie oceny gwiazdkowej
@@ -386,16 +346,7 @@ async function loadReviews() {
 
                     <div class="review-user">
                         ${escapeHtml(review.profiles?.profiles || "Użytkownik")}
-                        ${myReview ? `
-<span class="badge">Twoja opinia</span>
-
-<button
-    class="edit-review-btn"
-    data-rating="${review.rating}"
-    data-comment="${escapeAttr(review.comment || '')}">
-    Edytuj
-</button>
-` : ''}
+                        ${myReview ? '<span class="badge">Twoja opinia</span>' : ''}
                     </div>
 
                     <div class="review-date">
@@ -419,7 +370,7 @@ async function loadReviews() {
 const toast = new Toast();
 // Wczytaj recenzje po załadowaniu strony
 document.addEventListener('DOMContentLoaded', loadReviews);
-// let errorMsg = document.getElementById('errorMsg');
+let errorMsg = document.getElementById('errorMsg');
 
 async function submitReview() {
 
@@ -436,9 +387,11 @@ async function submitReview() {
         document.getElementById("reviewText").value;
 
     if (userRating === 0) {
-        toast.show('error','Błąd','Wybierz ocenę.');
+        errorMsg.textContent = "Wybierz ocenę.";
         return;
     }
+
+    errorMsg.textContent = "";
 
     const { data: existing, error: checkError } =
     await supabaseClient
@@ -447,6 +400,11 @@ async function submitReview() {
         .eq("user_id", user.id)
         .eq("video_id", videoId)
         .maybeSingle();
+
+    if (existingReview) {
+        toast.show('error','Błąd',"Dodałeś już opinię do tego filmu.");
+        return;
+    }
 
     let result;
 
@@ -473,7 +431,7 @@ async function submitReview() {
 
         }
 
-        if (result.error?.code === "23505") {
+        if (error.code === "23505") {
             toast.show('error','Błąd',"Dodałeś już opinię do tego filmu.");
             return;
         }
@@ -491,6 +449,7 @@ async function submitReview() {
     );
 
     loadReviews();
+    loadMyReview();
 }
 
 
@@ -598,8 +557,8 @@ document.addEventListener("DOMContentLoaded", () => {
     showUser();
     updateSidebar();
     loadAllNoteLists();
+    loadMyReview();
     checkSavedMaterial();
-    loadAllQuizLists();
 });
 
 function back(){
@@ -747,11 +706,11 @@ function timeAgo(date){
 
 /* ---------- Renderowanie pojedynczej karty notatki ---------- */
 function renderNoteCard(note, { editable, showAuthor }){
-console.log(note);
+
     const div = document.createElement('div');
     div.className = 'item-card';
     div.dataset.id = note.id;
-    div._note = note;
+    div._note = note; // potrzebne do trybu edycji
 
     const badge = note.is_public
         ? '<span class="badge public">Publiczna</span>'
@@ -768,7 +727,6 @@ console.log(note);
             ${note.content || ""}
         </div>
         <button type="button" class="go-btn big-btn show-note-btn">Pokaż notatkę</button>
-        ${!editable ? `<button type="button" class="go-btn big-btn save-note-btn" data-id="${note.id}">💾 Zapisz do moich materiałów</button>` : ''}
         <div class="card-footer">
             <span>${footerLeft}</span>
             ${editable ? `
@@ -976,16 +934,14 @@ async function loadMyOtherNotes(){
     }
 
     const { data, error } = await supabaseClient
+        console.log("Other Notes:", data)
+        console.log("Error:", error)
+        console.log("Current videoId:", videoId)
         .from('notes')
         .select('*')
         .eq('user_id', user.id)
         .neq('video_id', videoId)
         .order('created_at', { ascending: false });
-
-    console.log("Other Notes:", data, "Error:", error);
-    console.log("MOJE INNE NOTATKI");
-console.log(data);
-console.log(error);
 
     if(error){
         console.error(error);
@@ -1001,26 +957,6 @@ console.log(error);
     }
 
     data.forEach(note => container.appendChild(renderNoteCard(note, { editable: true, showAuthor: false })));
-console.log(
-    "videoId:",
-    videoId
-);
-
-console.log(
-    "user:",
-    user?.id
-);
-
-console.log(
-    "notes:",
-    data
-);
-
-console.log(
-    "error:",
-    error
-);
-console.log("videoId:", videoId);
 }
 
 async function loadPublicVideoNotes(){
@@ -1030,23 +966,16 @@ async function loadPublicVideoNotes(){
     if(!container) return;
 
     const { data, error } = await supabaseClient
-    
+        console.log("Public Notes:", data)
+        console.log("Error:", error)
         .from('notes')
         .select(`
             *,
-            profiles!user_id (
-                profiles,
-                avatar_url
-            )
+            profiles!user_id ( profiles, avatar_url )
         `)
-        .eq("video_id", videoId)
-        .eq("is_public", true)
-        .order("created_at", { ascending: false });
-        console.log("PUBLIC NOTES");
-console.log(data);
-console.log(error);
-
-    console.log("Public Notes:", data, "Error:", error);
+        .eq('video_id', videoId)
+        .eq('is_public', true)
+        .order('created_at', { ascending: false });
 
     if(error){
         console.error(error);
@@ -1064,15 +993,6 @@ console.log(error);
     }
 
     filtered.forEach(note => container.appendChild(renderNoteCard(note, { editable: false, showAuthor: true })));
-console.log(
-    "public notes",
-    data
-);
-
-console.log(
-    "public notes error",
-    error
-);
 }
 
 async function loadAllNoteLists(){
@@ -1193,16 +1113,6 @@ document.addEventListener("click", async (e) => {
         return;
     }
 
-    if(e.target.classList.contains("save-note-btn")){
-        saveNoteCopy(e.target.dataset.id);
-        return;
-    }
-
-    if(e.target.classList.contains("save-quiz-btn")){
-        saveQuizCopy(e.target.dataset.id);
-        return;
-    }
-
     if(e.target.classList.contains("toggle-vis")){
         togglePersonalNoteVisibility(e.target.dataset.id, e.target.dataset.public === "true");
         return;
@@ -1258,7 +1168,6 @@ function renderQuizCard(quiz, { editable, showAuthor }){
         <h3>${escapeHtml(quiz.title || "Bez tytułu")}</h3>
         <p>${count} ${count === 1 ? 'pytanie' : 'pytań'}</p>
         <button type="button" class="go-btn big-btn open-quiz-btn" data-id="${quiz.id}">Rozwiąż quiz</button>
-        ${!editable ? `<button type="button" class="go-btn big-btn save-quiz-btn" data-id="${quiz.id}">💾 Zapisz do moich materiałów</button>` : ''}
         <div class="card-footer">
             <span>${footerLeft}</span>
             ${editable ? `
@@ -1341,15 +1250,6 @@ async function loadMyOtherQuizzes(){
     }
 
     data.forEach(quiz => container.appendChild(renderQuizCard(quiz, { editable: true, showAuthor: false })));
-console.log(
-    "other quizzes",
-    data
-);
-
-console.log(
-    "other quiz error",
-    error
-);
 }
 
 /* ---------- Quizy publiczne innych użytkowników do tego filmu ---------- */
@@ -1385,18 +1285,6 @@ async function loadPublicVideoQuizzes(){
     }
 
     filtered.forEach(quiz => container.appendChild(renderQuizCard(quiz, { editable: false, showAuthor: true })));
-console.log(
-    "public quizzes",
-    data
-);
-
-console.log(
-    "public quiz error",
-    error
-);
-console.log("PUBLIC QUIZZES");
-console.log(data);
-console.log(error);
 }
 
 async function loadAllQuizLists(){
@@ -1455,112 +1343,6 @@ async function deleteUserQuiz(id){
 
 }
 
-async function saveNoteCopy(id){
-
-    const { data:{ user } } =
-        await supabaseClient.auth.getUser();
-
-    if(!user){
-        toast.show(
-            'error',
-            'Zaloguj się',
-            'Musisz być zalogowany.'
-        );
-        return;
-    }
-
-    const { data: note, error } =
-        await supabaseClient
-            .from("notes")
-            .select("*")
-            .eq("id", id)
-            .single();
-
-    if(error || !note){
-        toast.show('error','Błąd','Nie znaleziono notatki');
-        return;
-    }
-
-    const result =
-        await supabaseClient
-            .from("saved_materials")
-            .insert({
-                user_id: user.id,
-                video_id: note.video_id,
-                title: note.title,
-                thumbnail: null,
-                type: "notatka"
-            });
-
-    if(result.error){
-        toast.show(
-            'error',
-            'Błąd',
-            result.error.message
-        );
-        return;
-    }
-
-    toast.show(
-        'success',
-        'Gotowe',
-        'Notatka została zapisana'
-    );
-}
-
-async function saveQuizCopy(id){
-
-    const { data:{ user } } =
-        await supabaseClient.auth.getUser();
-
-    if(!user){
-        toast.show(
-            'error',
-            'Zaloguj się',
-            'Musisz być zalogowany.'
-        );
-        return;
-    }
-
-    const { data: quiz, error } =
-        await supabaseClient
-            .from("quizzes")
-            .select("*")
-            .eq("id", id)
-            .single();
-
-    if(error || !quiz){
-        toast.show('error','Błąd','Nie znaleziono quizu');
-        return;
-    }
-
-    const result =
-        await supabaseClient
-            .from("saved_materials")
-            .insert({
-                user_id: user.id,
-                video_id: quiz.video_id,
-                title: quiz.title,
-                thumbnail: null,
-                type: "quiz"
-            });
-
-    if(result.error){
-        toast.show(
-            'error',
-            'Błąd',
-            result.error.message
-        );
-        return;
-    }
-
-    toast.show(
-        'success',
-        'Gotowe',
-        'Quiz został zapisany'
-    );
-}
-
 let materialSaved = false;
 
 /* Sprawdzenie, czy bieżący film jest już zapisany przez użytkownika
@@ -1594,7 +1376,6 @@ async function checkSavedMaterial(){
     materialSaved = !!data;
     btn.classList.toggle("saved", materialSaved);
     btn.innerHTML = materialSaved ? "❤️ Zapisano" : "❤️ Zapisz";
-
 }
 
 async function saveMaterial() {
@@ -1603,17 +1384,7 @@ async function saveMaterial() {
         await supabaseClient.auth.getUser();
 
     if (!user) {
-        toast.show('error', 'Zaloguj się', "Zaloguj się aby zapisać materiał");
-        return;
-    }
-
-    let info;
-
-    try {
-        info = await getVideoInfo(videoId);
-    } catch (err) {
-        console.error(err);
-        toast.show('error', 'Błąd', 'Nie udało się pobrać informacji o filmie.');
+        toast.show('error','Zaloguj się',"Zaloguj się aby zapisać materiał");
         return;
     }
 
@@ -1647,10 +1418,7 @@ async function saveMaterial() {
             .from("saved_materials")
             .insert({
                 user_id: user.id,
-                video_id: videoId,
-                title: info.title,
-                thumbnail: info.thumbnail_url,
-                type: "material"
+                video_id: videoId
             });
 
     if (error) {
@@ -1665,7 +1433,7 @@ async function saveMaterial() {
         }
 
         console.error(error);
-        toast.show('error', 'Błąd', error.message);
+        toast.show('error','Błąd',error.message);
         return;
     }
 
@@ -1707,33 +1475,3 @@ if (videoId) {
     loadReviews();
 }
 
-document.addEventListener("click",(e)=>{
-
-    if(
-        e.target.classList.contains(
-            "edit-review-btn"
-        )
-    ){
-
-        const rating =
-            Number(
-                e.target.dataset.rating
-            );
-
-        const comment =
-            e.target.dataset.comment;
-
-        document.getElementById(
-            "reviewText"
-        ).value = comment;
-
-        setRating(rating);
-
-        document.querySelector(
-            ".user-review"
-        ).scrollIntoView({
-            behavior:"smooth"
-        });
-    }
-
-});
