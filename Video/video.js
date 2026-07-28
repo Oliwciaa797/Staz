@@ -386,7 +386,16 @@ async function loadReviews() {
 
                     <div class="review-user">
                         ${escapeHtml(review.profiles?.profiles || "Użytkownik")}
-                        ${myReview ? '<span class="badge">Twoja opinia</span>' : ''}
+                        ${myReview ? `
+<span class="badge">Twoja opinia</span>
+
+<button
+    class="edit-review-btn"
+    data-rating="${review.rating}"
+    data-comment="${escapeAttr(review.comment || '')}">
+    Edytuj
+</button>
+` : ''}
                     </div>
 
                     <div class="review-date">
@@ -439,11 +448,6 @@ async function submitReview() {
         .eq("video_id", videoId)
         .maybeSingle();
 
-    if (existing) {
-        toast.show('error','Błąd',"Dodałeś już opinię do tego filmu.");
-        return;
-    }
-
     let result;
 
     if(existing){
@@ -469,7 +473,7 @@ async function submitReview() {
 
         }
 
-        if (error.code === "23505") {
+        if (result.error?.code === "23505") {
             toast.show('error','Błąd',"Dodałeś już opinię do tego filmu.");
             return;
         }
@@ -979,6 +983,9 @@ async function loadMyOtherNotes(){
         .order('created_at', { ascending: false });
 
     console.log("Other Notes:", data, "Error:", error);
+    console.log("MOJE INNE NOTATKI");
+console.log(data);
+console.log(error);
 
     if(error){
         console.error(error);
@@ -994,6 +1001,25 @@ async function loadMyOtherNotes(){
     }
 
     data.forEach(note => container.appendChild(renderNoteCard(note, { editable: true, showAuthor: false })));
+console.log(
+    "videoId:",
+    videoId
+);
+
+console.log(
+    "user:",
+    user?.id
+);
+
+console.log(
+    "notes:",
+    data
+);
+
+console.log(
+    "error:",
+    error
+);
 }
 
 async function loadPublicVideoNotes(){
@@ -1003,6 +1029,7 @@ async function loadPublicVideoNotes(){
     if(!container) return;
 
     const { data, error } = await supabaseClient
+    
         .from('notes')
         .select(`
             *,
@@ -1014,6 +1041,9 @@ async function loadPublicVideoNotes(){
         .eq("video_id", videoId)
         .eq("is_public", true)
         .order("created_at", { ascending: false });
+        console.log("PUBLIC NOTES");
+console.log(data);
+console.log(error);
 
     console.log("Public Notes:", data, "Error:", error);
 
@@ -1033,6 +1063,15 @@ async function loadPublicVideoNotes(){
     }
 
     filtered.forEach(note => container.appendChild(renderNoteCard(note, { editable: false, showAuthor: true })));
+console.log(
+    "public notes",
+    data
+);
+
+console.log(
+    "public notes error",
+    error
+);
 }
 
 async function loadAllNoteLists(){
@@ -1301,6 +1340,15 @@ async function loadMyOtherQuizzes(){
     }
 
     data.forEach(quiz => container.appendChild(renderQuizCard(quiz, { editable: true, showAuthor: false })));
+console.log(
+    "other quizzes",
+    data
+);
+
+console.log(
+    "other quiz error",
+    error
+);
 }
 
 /* ---------- Quizy publiczne innych użytkowników do tego filmu ---------- */
@@ -1336,6 +1384,18 @@ async function loadPublicVideoQuizzes(){
     }
 
     filtered.forEach(quiz => container.appendChild(renderQuizCard(quiz, { editable: false, showAuthor: true })));
+console.log(
+    "public quizzes",
+    data
+);
+
+console.log(
+    "public quiz error",
+    error
+);
+console.log("PUBLIC QUIZZES");
+console.log(data);
+console.log(error);
 }
 
 async function loadAllQuizLists(){
@@ -1646,3 +1706,33 @@ if (videoId) {
     loadReviews();
 }
 
+document.addEventListener("click",(e)=>{
+
+    if(
+        e.target.classList.contains(
+            "edit-review-btn"
+        )
+    ){
+
+        const rating =
+            Number(
+                e.target.dataset.rating
+            );
+
+        const comment =
+            e.target.dataset.comment;
+
+        document.getElementById(
+            "reviewText"
+        ).value = comment;
+
+        setRating(rating);
+
+        document.querySelector(
+            ".user-review"
+        ).scrollIntoView({
+            behavior:"smooth"
+        });
+    }
+
+});
