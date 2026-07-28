@@ -747,7 +747,7 @@ function timeAgo(date){
 
 /* ---------- Renderowanie pojedynczej karty notatki ---------- */
 function renderNoteCard(note, { editable, showAuthor }){
-
+console.log(note);
     const div = document.createElement('div');
     div.className = 'item-card';
     div.dataset.id = note.id;
@@ -1020,6 +1020,7 @@ console.log(
     "error:",
     error
 );
+console.log("videoId:", videoId);
 }
 
 async function loadPublicVideoNotes(){
