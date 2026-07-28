@@ -6,25 +6,43 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 // nazwa Twojego bucketu ze zdjęciami — popraw jeśli inna
 const AVATAR_BUCKET = 'avatars';
 
-const toastInstance = new toast();
+function setStatus(message, isError = false) {
+    const statusEl = document.getElementById('status');
+    if (!statusEl) return;
+    statusEl.textContent = message;
+    statusEl.style.color = isError ? '#a40000' : '#333';
+}
+
+function extractPathFromUrl(url) {
+    // przykład: https://xxx.supabase.co/storage/v1/object/public/avatars/user-id/avatar.png
+    const parts = url.split(`/storage/v1/object/public/${AVATAR_BUCKET}/`);
+    return parts[1] || url; // jeśli avatar_url to już sama ścieżka, zwróć bez zmian
+}
+
+function back(){
+    window.location.href = '../Profil/prof.html';
+}
+
 document.addEventListener('DOMContentLoaded', async function () {
+
     const { data: { session } } = await supabaseClient.auth.getSession();
+
     if (!session) {
         window.location.href = '../logowanie/log.html';
         return;
     }
 
     document.getElementById('deleteBtn').addEventListener('click', async function () {
-        const statusEl = document.getElementById('status');
+
         const passwordInput = document.getElementById('passwordInput');
         const password = passwordInput.value;
 
         if (!password) {
-            statusEl.textContent = 'Wpisz hasło, aby potwierdzić usunięcie konta.';
+            setStatus('Wpisz hasło, aby potwierdzić usunięcie konta.', true);
             return;
         }
 
-        statusEl.textContent = 'Usuwanie konta...';
+        setStatus('Usuwanie konta...');
 
         const { data: { user } } = await supabaseClient.auth.getUser();
 
@@ -36,12 +54,13 @@ document.addEventListener('DOMContentLoaded', async function () {
             .single();
 
         if (profileError) {
-            toastInstance.show('error', 'Błąd', profileError.message);
+            setStatus(profileError.message, true);
             return;
         }
 
         // 2. Usuń zdjęcie z bucketu (jeśli istnieje)
         if (profile?.avatar_url) {
+
             const filePath = extractPathFromUrl(profile.avatar_url);
 
             const { error: storageError } = await supabaseClient
@@ -62,21 +81,13 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         if (error) {
             // np. "Nieprawidłowe hasło"
-            toastInstance.show('error', 'Błąd', error.message);
+            setStatus(error.message, true);
             return;
         }
+
+        setStatus('Konto zostało usunięte. Wylogowywanie...');
 
         await supabaseClient.auth.signOut();
         window.location.href = '../logowanie/log.html';
     });
 });
-
-function extractPathFromUrl(url) {
-    // przykład: https://xxx.supabase.co/storage/v1/object/public/avatars/user-id/avatar.png
-    const parts = url.split(`/storage/v1/object/public/${AVATAR_BUCKET}/`);
-    return parts[1] || url; // jeśli avatar_url to już sama ścieżka, zwróć bez zmian
-}
-
-function back(){
-    window.location.href='../Profil/prof.html'
-}
