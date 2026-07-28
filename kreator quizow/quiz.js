@@ -366,8 +366,8 @@ document.getElementById('saveQuizBtn').addEventListener('click', async () => {
     title,
     is_public: isPublic,
     questions,
-    tags,
-    video_id: videoId
+    tags
+    // video_id: videoId
   });
 
   btn.disabled = false;

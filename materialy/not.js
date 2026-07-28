@@ -124,6 +124,8 @@ loadMyQuizy();
 loadPublicQuizy();
 
 loadSavedMaterials();
+loadSavedNotes();
+loadSavedQuizzes();
 
 }
 
@@ -724,27 +726,24 @@ async function loadPublicQuizy(search = "") {
     });
     
 }
+async function loadSavedMaterials() {
 
-async function loadSavedMaterials(){
+    const savedMaterialsGrid = document.getElementById("savedMaterialsGrid");
 
-    const grid =
-    document.getElementById("savedGrid");
+    const { data, error } = await supabaseClient
+        .from("saved_materials")
+        .select("*")
+        .eq("user_id", currentUser.id)
+        .order("created_at", { ascending: false });
 
-    const { data, error } =
-    await supabaseClient
-    .from("saved_materials")
-    .select("*")
-    .eq("user_id", currentUser.id)
-    .order("created_at",{ascending:false});
-
-    if(error){
+    if (error) {
         console.error(error);
         return;
     }
 
-    if(!data || data.length === 0){
+    if (!data || data.length === 0) {
 
-        grid.innerHTML = `
+        savedMaterialsGrid.innerHTML = `
             <div class="empty-state">
                 <strong>Brak zapisanych materiałów</strong>
             </div>
@@ -753,22 +752,143 @@ async function loadSavedMaterials(){
         return;
     }
 
-    grid.innerHTML = data.map(item => `
+    savedMaterialsGrid.innerHTML = data.map(item => `
         <div class="saved-card">
 
             <div class="thumb">
                 <img
-                  src="https://img.youtube.com/vi/${item.video_id}/hqdefault.jpg"
-                  alt="Thumbnail">
+                    src="https://img.youtube.com/vi/${item.video_id}/hqdefault.jpg"
+                    alt="Thumbnail">
             </div>
 
             <div class="info">
                 <h3>${item.title}</h3>
-                <button class="go-btn" onclick="openVideo('${item.video_id}')"> Otwórz materiał </button>
+
+                <button
+                    class="go-btn"
+                    onclick="openVideo('${item.video_id}')">
+                    Otwórz materiał
+                </button>
             </div>
 
         </div>
     `).join("");
+}
+
+async function loadSavedNotes() {
+
+    const savedNotesGrid =
+    document.getElementById("savedNotesGrid");
+
+    savedNotesGrid.innerHTML = "";
+
+    const { data, error } =
+    await supabaseClient
+        .from("saved_notes")
+        .select(`
+            note_id,
+            notes(*)
+        `)
+        .eq("user_id", currentUser.id);
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    if (!data || data.length === 0) {
+
+        savedNotesGrid.innerHTML = `
+            <div class="empty-state">
+                <strong>Brak zapisanych notatek</strong>
+            </div>
+        `;
+
+        return;
+    }
+
+    data.forEach(item => {
+
+        savedNotesGrid.appendChild(
+            renderNoteCard(item.notes, {
+                editable: false
+            })
+        );
+
+    });
+
+}
+
+async function loadSavedQuizzes() {
+
+    const savedQuizzesGrid =
+    document.getElementById("savedQuizzesGrid");
+
+    savedQuizzesGrid.innerHTML = "";
+
+    const { data, error } =
+    await supabaseClient
+        .from("saved_quizzes")
+        .select(`
+            quiz_id,
+            quizzes(*)
+        `)
+        .eq("user_id", currentUser.id);
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    if (!data || data.length === 0) {
+
+        savedQuizzesGrid.innerHTML = `
+            <div class="empty-state">
+                <strong>Brak zapisanych quizów</strong>
+            </div>
+        `;
+
+        return;
+    }
+
+    data.forEach(item => {
+
+        const quiz = item.quizzes;
+
+        const count = Array.isArray(quiz.questions)
+            ? quiz.questions.length
+            : 0;
+
+        savedQuizzesGrid.innerHTML += `
+            <div class="item-card">
+
+                <span class="badge public">
+                    Publiczny
+                </span>
+
+                <h3>${quiz.title}</h3>
+
+                <div class="quiz-tags">
+                    ${
+                        (quiz.tags || [])
+                            .map(tag => `<span class="tag">${tag}</span>`)
+                            .join("")
+                    }
+                </div>
+
+                <p>${count} pytań</p>
+
+                <button
+                    class="go-btn big-btn"
+                    onclick="openQuiz('${quiz.id}')">
+                    Rozwiąż quiz
+                </button>
+
+            </div>
+        `;
+
+    });
+
 }
 
 function openVideo(videoId){
