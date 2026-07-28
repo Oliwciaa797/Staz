@@ -171,129 +171,11 @@ showBtn.addEventListener("click", () => {
 }
 
 /* ---------- Przełączenie karty w tryb edycji ---------- */
-function enterEditMode(card, note){
-
-  card.innerHTML = `
-    <div class="field">
-
-      <label>Tytuł</label>
-      <input 
-        type="text" 
-        class="edit-title" 
-        value="${escapeAttr(note.title)}"
-      >
-
-      <label>Treść</label>
-      <div class="edit-content"></div>
-
-    </div>
-
-    <div class="card-footer">
-      <div class="card-actions">
-        <button class="save-edit">
-          Zapisz zmiany
-        </button>
-
-        <button class="cancel-edit">
-          Anuluj
-        </button>
-      </div>
-    </div>
-  `;
-
-
-  // URUCHAMIAMY QUILL OD RAZU
-  const editEditor = card.querySelector(".edit-content");
-
-
-  const editQuill = new Quill(editEditor,{
-    theme:"snow",
-    modules:{
-        toolbar:[
-            [{ header:[1,2,3,false] }],
-            ["bold","italic","underline"],
-            [
-                { list:"ordered" },
-                { list:"bullet" }
-            ],
-            ["link"],
-            ["clean"]
-        ]
-    }
-  });
-
-
-  // WŁADUJEMY STARĄ TREŚĆ
-  editQuill.root.innerHTML = note.content;
-
-
-
-  // ANULUJ
-  card.querySelector(".cancel-edit")
-  .addEventListener("click",()=>{
-      loadMyNotes();
-  });
-
-
-
-  // ZAPIS
-  card.querySelector(".save-edit")
-  .addEventListener("click", async ()=>{
-
-
-      const newTitle =
-      card.querySelector(".edit-title")
-      .value
-      .trim();
-
-
-      const newContent =
-      editQuill.root.innerHTML;
-
-
-      const plainText =
-      editQuill.getText().trim();
-
-
-
-      if(!newTitle || !plainText){
-
-          toast.show('error','Błąd',"Tytuł i treść nie mogą być puste.");
-
-          return;
-      }
-
-
-
-      const {error}=await supabaseClient
-      .from("notes")
-      .update({
-          title:newTitle,
-          content:newContent
-      })
-      .eq("id",note.id);
-
-
-
-      if(error){
-
-          toast.show('error', 'Błąd',
-          "Nie udało się zapisać zmian: "
-          + error.message
-          );
-
-          return;
-      }
-
-
-
-      toast.show('success','Gotowe!', "Notatka zaktualizowana.");
-
-      loadMyNotes();
-
-  });
-
+function editNote(id){
+    window.location.href =
+        "../edytor notatek/noteEdit.html?id=" + id;
 }
+
 function escapeHtml(str){
   const d = document.createElement('div');
   d.textContent = str;
@@ -340,7 +222,7 @@ async function loadMyNotes(){
     btn.addEventListener('click', () => {
       const note = data.find(n => String(n.id) === String(btn.dataset.id));
       const card = grid.querySelector(`.item-card[data-id="${btn.dataset.id}"]`);
-      enterEditMode(card, note);
+      editNote(note.id);
     });
   });
 }
@@ -365,11 +247,6 @@ async function loadPublicNotes(search = "") {
         `)
         .eq("is_public", true);
 
-    if (search.trim() !== "") {
-        query = query.or(
-            `title.ilike.%${search}%,content.ilike.%${search}%`
-        );
-    }
 
     const { data, error } = await query
         .order("created_at", { ascending: false })
@@ -478,23 +355,80 @@ const { error } = await supabaseClient
   document.getElementById('noteForm').reset();
   quill.setContents([]);
   tagSelect.clear();
-  toast.show('seccess','Gotowe!','Notatka zapisana!');
+  toast.show('success','Gotowe!','Notatka została zapisana!');
   loadMyNotes();
   if(isPublic) loadPublicNotes();
 });
 
 /* ---------- Usuwanie notatki ---------- */
-async function deleteNote(id){
-  if(!confirm('Na pewno usunąć tę notatkę?')) return;
-  const { error } = await supabaseClient.from('notes').delete().eq('id', id);
-  if(error){
-    toast.show('error','Błąd','Nie udało się usunąć notatki.');
-    return;
-  }
-  showToast('Notatka usunięta.');
-  loadMyNotes();
-  loadPublicNotes();
+let noteToDelete = null;
+
+function deleteNote(id){
+
+    noteToDelete = id;
+
+    document
+        .getElementById("deleteNoteModal")
+        .classList.add("active");
 }
+
+
+document
+.getElementById("cancelNoteDelete")
+.addEventListener("click", ()=>{
+
+    noteToDelete = null;
+
+    document
+    .getElementById("deleteNoteModal")
+    .classList.remove("active");
+
+});
+
+
+document
+.getElementById("confirmNoteDelete")
+.addEventListener("click", async ()=>{
+
+    if(!noteToDelete) return;
+
+
+    const { error } = await supabaseClient
+        .from('notes')
+        .delete()
+        .eq('id', noteToDelete);
+
+
+    document
+    .getElementById("deleteNoteModal")
+    .classList.remove("active");
+
+
+    if(error){
+
+        toast.show(
+            'error',
+            'Błąd',
+            'Nie udało się usunąć notatki.'
+        );
+
+        return;
+    }
+
+
+    toast.show(
+        'success',
+        'Gotowe!',
+        'Notatka została usunięta.'
+    );
+
+
+    noteToDelete = null;
+
+    loadMyNotes();
+    loadPublicNotes();
+
+});
 
 /* ---------- Zmiana widoczności notatki ---------- */
 async function toggleVisibility(id, currentlyPublic){
@@ -908,29 +842,74 @@ function openQuiz(id){
 
 }
 
+let quizToDelete = null;
+
 async function deleteQuiz(id){
 
-    if(!confirm("Na pewno usunąć quiz?")){
-        return;
-    }
 
-    const { error } =
-    await supabaseClient
-        .from("quizzes")
+    quizToDelete = id;
+
+    document
+        .getElementById("deleteQuizModal")
+        .classList.add("active");
+}
+
+
+document
+.getElementById("cancelQuizDelete")
+.addEventListener("click", ()=>{
+
+    quizToDelete = null;
+
+    document
+    .getElementById("deleteQuizModal")
+    .classList.remove("active");
+
+});
+
+
+document
+.getElementById("confirmQuizDelete")
+.addEventListener("click", async ()=>{
+
+    if(!noteToDelete) return;
+
+
+    const { error } = await supabaseClient
+        .from('quizzes')
         .delete()
-        .eq("id", id);
+        .eq('id', quizToDelete);
+
+
+    document
+    .getElementById("deleteQuizModal")
+    .classList.remove("active");
+
 
     if(error){
-        console.error(error);
-        toast.show('error','Błąd',"Nie udało się usunąć quizu.");
+
+        toast.show(
+            'error',
+            'Błąd',
+            'Nie udało się usunąć quizu.'
+        );
+
         return;
     }
 
-    toast.show('success','Gotowe!',"Quiz został usunięty.");
+
+    toast.show(
+        'success',
+        'Gotowe!',
+        'Quiz został usuniętt.'
+    );
+
+
+    quizToDelete = null;
 
     loadMyQuizy();
     loadPublicQuizy();
-}
+});
 
 function editQuiz(id){
 
