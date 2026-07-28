@@ -9,8 +9,8 @@
     <script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
     <link rel="stylesheet" href="/Video/video.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="/Video/video.js" defer></script>
     <script src="/toast.js" defer></script>
+    <script src="/Video/video.js" defer></script>
 </head>
 <body>
     <header>
@@ -103,21 +103,13 @@
                         </div>
 
                             <div id="personalQuizy" class="sub-tab-panel">
-                                <button id="addQuizBtn" onclick="goToQuizCreator()">+ Stwórz quiz</button>
-                                <div class="section-label">Twoje quizy do tego filmu</div>
+                                <button id="addQuizBtn" onclick="goToQuizCreator()">
                                 <div id="personalQuizyContainer" class="card-grid">
                                     <p>Brak quizów.</p>
                                 </div>
-                                <div class="section-label">Twoje pozostałe quizy</div>
-                                <div id="myOtherQuizyContainer" class="card-grid">
-                                <p>Brak quizów.</p>
-                                </div>
-                                <div class="section-label">Quizy publiczne innych o tym filmie</div>
-                                <div id="publicVideoQuizyContainer" class="card-grid">
-                                    <p>Brak quizów publicznych.</p>
-                                </div>
                             </div>
-                            </div>
+
+                        </div>
 
                         <div id="quiz" class="tab">
                             <button onclick="generateQuiz()" id="genQuizBtn">Generuj quiz</button>
