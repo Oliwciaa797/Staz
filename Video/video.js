@@ -1396,83 +1396,108 @@ async function deleteUserQuiz(id){
 
 async function saveNoteCopy(id){
 
-    const { data: { user } } = await supabaseClient.auth.getUser();
+    const { data:{ user } } =
+        await supabaseClient.auth.getUser();
 
     if(!user){
-        toast.show('error', 'Zaloguj się', 'Zaloguj się aby zapisać notatkę.');
+        toast.show(
+            'error',
+            'Zaloguj się',
+            'Musisz być zalogowany.'
+        );
         return;
     }
 
-    const { data: original, error: fetchError } = await supabaseClient
-        .from('notes')
-        .select('title, content, video_id')
-        .eq('id', id)
-        .single();
+    const { data: note, error } =
+        await supabaseClient
+            .from("notes")
+            .select("*")
+            .eq("id", id)
+            .single();
 
-    if(fetchError || !original){
-        toast.show('error', 'Błąd', 'Nie udało się pobrać notatki.');
+    if(error || !note){
+        toast.show('error','Błąd','Nie znaleziono notatki');
         return;
     }
 
-    const { error } = await supabaseClient
-        .from('notes')
-        .insert({
-            user_id: user.id,
-            video_id: original.video_id,
-            title: original.title,
-            content: original.content,
-            is_public: false
-        });
+    const result =
+        await supabaseClient
+            .from("saved_materials")
+            .insert({
+                user_id: user.id,
+                video_id: note.video_id,
+                title: note.title,
+                thumbnail: null,
+                type: "notatka"
+            });
 
-    if(error){
-        console.error(error);
-        toast.show('error', 'Błąd', 'Nie udało się zapisać notatki.');
+    if(result.error){
+        toast.show(
+            'error',
+            'Błąd',
+            result.error.message
+        );
         return;
     }
 
-    toast.show('success', 'Gotowe!', 'Notatka zapisana w Twoich materiałach.');
-    loadAllNoteLists();
+    toast.show(
+        'success',
+        'Gotowe',
+        'Notatka została zapisana'
+    );
 }
 
 async function saveQuizCopy(id){
 
-    const { data: { user } } = await supabaseClient.auth.getUser();
+    const { data:{ user } } =
+        await supabaseClient.auth.getUser();
 
     if(!user){
-        toast.show('error', 'Zaloguj się', 'Zaloguj się aby zapisać quiz.');
+        toast.show(
+            'error',
+            'Zaloguj się',
+            'Musisz być zalogowany.'
+        );
         return;
     }
 
-    const { data: original, error: fetchError } = await supabaseClient
-        .from('quizzes')
-        .select('title, questions, video_id, tags')
-        .eq('id', id)
-        .single();
+    const { data: quiz, error } =
+        await supabaseClient
+            .from("quizzes")
+            .select("*")
+            .eq("id", id)
+            .single();
 
-    if(fetchError || !original){
-        toast.show('error', 'Błąd', 'Nie udało się pobrać quizu.');
+    if(error || !quiz){
+        toast.show('error','Błąd','Nie znaleziono quizu');
         return;
     }
 
-    const { error } = await supabaseClient
-        .from('quizzes')
-        .insert({
-            user_id: user.id,
-            video_id: original.video_id,
-            title: original.title,
-            questions: original.questions,
-            tags: original.tags,
-            is_public: false
-        });
+    const result =
+        await supabaseClient
+            .from("saved_materials")
+            .insert({
+                user_id: user.id,
+                video_id: quiz.video_id,
+                title: quiz.title,
+                thumbnail: null,
+                type: "quiz"
+            });
 
-    if(error){
-        console.error(error);
-        toast.show('error', 'Błąd', 'Nie udało się zapisać quizu.');
+    if(result.error){
+        toast.show(
+            'error',
+            'Błąd',
+            result.error.message
+        );
         return;
     }
 
-    toast.show('success', 'Gotowe!', 'Quiz zapisany w Twoich materiałach.');
-    loadAllQuizLists();
+    toast.show(
+        'success',
+        'Gotowe',
+        'Quiz został zapisany'
+    );
 }
 
 let materialSaved = false;
@@ -1509,29 +1534,6 @@ async function checkSavedMaterial(){
     btn.classList.toggle("saved", materialSaved);
     btn.innerHTML = materialSaved ? "❤️ Zapisano" : "❤️ Zapisz";
 
-    if(materialSaved){
-
-    console.log("Usuwam zapisany materiał");
-
-    const { error } = await supabaseClient
-        .from("saved_materials")
-        .delete()
-        .eq("user_id", user.id)
-        .eq("video_id", videoId);
-
-    console.log("Delete error:", error);
-
-    if(error){
-        console.error(error);
-        toast.show('error','Error', error.message);
-        return;
-    }
-
-    materialSaved = false;
-    btn.classList.remove("saved");
-    btn.innerHTML = "❤️ Zapisz";
-    return;
-}
 }
 
 async function saveMaterial() {
@@ -1586,7 +1588,8 @@ async function saveMaterial() {
                 user_id: user.id,
                 video_id: videoId,
                 title: info.title,
-                thumbnail: info.thumbnail_url
+                thumbnail: info.thumbnail_url,
+                type: "material"
             });
 
     if (error) {
