@@ -115,7 +115,8 @@ header {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
-	width: 700px;
+	width: 1000px;
+	max-width: 100%;
 	height: auto;
 	background-color: var(--background);
 	text-align: left;
@@ -133,35 +134,35 @@ header {
 	cursor: pointer;
 } 
 .buttons {
+	margin-top: 10px;
 	display: flex;
 	justify-content: center;
 	align-items: flex-start;
-	width: 50%;
-	margin: 10px;
+	width: 90%;
+	
 	padding: 10px;
 }
 
 .buttons button {
-	width: 50%;
+	width: 100%;
 	height: 40px;
-	border: 2px solid var(--secondary-color);
-	box-shadow: inset 0px -5px 5px var(--shadow);
-	transition: all 0.3s ease;
+	border: 2px solid var(--primary-color);
+	transition: all 0.2s ease;
 	cursor: pointer;
 }
 
 #ainotes {
-	border-top-left-radius: 20px;
-	border-bottom-left-radius: 20px;
+	border-top-left-radius: 10px;
+	border-bottom-left-radius: 10px;
 }
 
 #quiztab {
-	border-top-right-radius: 20px;
-	border-bottom-right-radius: 20px;
+	border-top-right-radius: 10px;
+	border-bottom-right-radius: 10px;
 }
 
 .buttons button:hover {
-	background-color: var(--secondary-color);
+	background-color: var(--primary-color);
 	color: white;
 	box-shadow: inset 0px -7px 5px var(--shadow);
 }
@@ -169,7 +170,6 @@ header {
 #youtubeVideo {
 	border-radius: 10px;
 	box-shadow: 5px 5px 5px var(--shadow);
-	border: 3px solid #33411C;
 }
 
 .sidepanelcontent {
@@ -177,6 +177,7 @@ header {
 	width: 90%;
 	height: 400px;
 	margin: 10px;
+	margin-top: 0;
 }
 
 .tab {
@@ -222,9 +223,10 @@ header {
 }
 
 .reviews-top {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	gap: 10px;
 }
 
 .grade-summary {
@@ -253,6 +255,7 @@ header {
 
 .user-review {
     box-shadow: 0 2px 8px var(--shadow);
+	flex-grow: 1;
 	margin: 20px 0;
 	padding: 20px;
 	border-radius: 8px;
@@ -294,9 +297,8 @@ header {
 }
 
 .review-text {
-    width: 100%;
-    max-width: 800px;
-    word-wrap: break-word;
+	width: 800px;
+	max-width: 100%;
 	color: #333;
 	line-height: 1.6;
 }
@@ -421,6 +423,7 @@ input.noteTitleInput {
 	display: flex;
 	gap: 10px;
 	margin-bottom: 18px;
+	flex-wrap: wrap;
 }
 
 .sub-tab-btn {
@@ -462,6 +465,7 @@ input.noteTitleInput {
 	border: 1px solid #ddd;
 	border-radius: 10px;
 	background: white;
+	flex-wrap: wrap;
 }
 
 .quiz-card-info h4 {
@@ -607,6 +611,7 @@ input.noteTitleInput {
 	display: flex;
 	gap: 10px;
 	margin-top: 8px;
+	flex-wrap: wrap;
 }
 .card-actions button{
 	padding: 0;
@@ -672,7 +677,6 @@ input.noteTitleInput {
 
 .note-form-card,
 .item-card{
-	width: 800px;
     overflow:hidden;
 }
 
@@ -743,197 +747,143 @@ input.noteTitleInput {
 	margin-left: 10px;
 } */
 
-/* =======================
-   WYSUWANE WŁASNE MATERIAŁY
-   ======================= */
-
-.materials-drawer{
-
-    position: fixed;
-
-    top: 50%;
-
-    right: -850px;
-
-    transform: translateY(-50%);
-
-    width: 650px;
-
-    height: 80vh;
-
-    background: white;
-
-    z-index: 5000;
-
-    border: 3px solid #33411C;
-
-	border-radius: 10px 0 0 10px;
-
-    box-shadow: -5px 0 25px rgba(0,0,0,.15);
-
-    transition: right .35s ease;
+.char-counter{
+    margin-top:8px;
+    text-align:right;
+    font-size:13px;
+    color:#666;
+    transition:0.2s;
 }
 
-.materials-drawer.open{
-    right: 0;
+.char-counter.limit{
+    color:#e53935;
+    font-weight:700;
 }
 
-.drawer-toggle{
-
-    position: absolute;
-
-    left: -45px;
-
-    top: 50%;
-
-    transform: translateY(-50%);
-
-    width: 45px;
-
-    height: 100px;
-
-    background: #33411C;
-
-    color: white;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    border-radius: 15px 0 0 15px;
-
-    cursor: pointer;
-
-    font-size: 28px;
-
-    font-weight: bold;
+.badge {
+	font-weight: normal;
+	font-size: 12px;
+	color: #666;
+	background-color: #ddd;
+	border-radius: 10px;
+	margin: 5px;
+	padding: 2px 7px;
 }
 
-.drawer-content{
+/* ============================================
+   RESPONSYWNOŚĆ (telefon / tablet / komputer)
+   ============================================ */
 
-    height: 100%;
+/* Tablety i mniejsze laptopy */
+@media (max-width: 1024px) {
+	header {
+		padding: 16px 24px;
+	}
 
-    overflow-y: auto;
+	.logo {
+		font-size: 1.6rem;
+	}
 
-    padding: 20px;
+	.grade-summary {
+		flex-wrap: wrap;
+	}
+
+	.reviews-top {
+		flex-wrap: wrap;
+	}
 }
 
-.drawer-tabs{
+/* Telefony */
+@media (max-width: 768px) {
+	header {
+		padding: 14px 16px;
+	}
 
-    display: flex;
+	.top {
+		flex-wrap: wrap;
+		gap: 10px;
+	}
 
-    gap: 10px;
+	.logo {
+		position: static;
+		transform: none;
+		font-size: 1.4rem;
+		margin: 0 auto;
+	}
 
-    margin-bottom: 20px;
+	.login-btn {
+		padding: 10px 18px;
+		font-size: 14px;
+	}
+
+	.sidepanelcontent {
+		width: 100%;
+		height: 320px;
+	}
+
+	.buttons {
+		width: 100%;
+	}
+
+	.reviews-top {
+		flex-direction: column;
+	}
+
+	.grade-summary {
+		gap: 12px;
+	}
+
+	.grade-box {
+		padding: 14px;
+		flex: 1 1 45%;
+	}
+
+	.quiz-card {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.sub-tabs {
+		gap: 6px;
+	}
+
+	.sub-tab-btn {
+		padding: 7px 16px;
+		font-size: 13px;
+	}
+
+	#gennotes, #genQuizBtn, .user-review button,
+	#addNoteBtn, #addQuizBtn, .saveNoteBtn,
+	#quiz button {
+		width: 100%;
+		margin: 8px 0;
+	}
+
+	.submit-btn {
+		width: 100%;
+	}
 }
 
-.drawer-tab{
+/* Małe telefony */
+@media (max-width: 480px) {
+	#title, .logo {
+		font-size: 1.2rem;
+	}
 
-    flex: 1;
+	.avatar {
+		width: 36px;
+		height: 36px;
+	}
 
-    border: none;
+	.grade-box {
+		flex: 1 1 100%;
+	}
 
-    padding: 12px;
+	.item-card {
+		padding: 12px;
+	}
 
-    border-radius: 10px;
-
-    background: #ddd;
-
-    cursor: pointer;
-
-    font-weight: bold;
-}
-
-.drawer-tab.active{
-
-    background: var(--primary-color);
-
-    color: white;
-}
-
-.drawer-panel{
-    display:none;
-}
-
-.drawer-panel.active{
-    display:block;
-}
-
-.materials-drawer{
-    position: fixed;
-    top: 50%;
-    right: -620px; /* było -550 */
-    transform: translateY(-50%);
-
-    width: 650px;
-    height: 80vh;
-
-    background: white;
-    z-index: 5000;
-
-    transition: right .35s ease;
-}
-
-.materials-drawer.open{
-    right: 0;
-}
-
-.note-form-card,
-.item-card{
-    width:100%;
-}
-
-#personalNotesContainer,
-#myOtherNotesContainer,
-#publicVideoNotesContainer,
-#personalQuizyContainer{
-    display:flex;
-    flex-direction:column;
-    gap:15px;
-}
-
-/* Licznik znaków pod edytorem notatki */
-.char-counter {
-    font-size: 0.85em;
-    color: #888;
-    text-align: right;
-    margin-top: 4px;
-}
- 
-.char-counter.limit-reached {
-    color: #e53935;
-    font-weight: bold;
-}
- 
-/* Przyciski pod formularzem opinii */
-.review-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 8px;
-}
- 
-#deleteReviewBtn {
-    background-color: transparent;
-    border: 1px solid #e53935;
-    color: #e53935;
-}
-
-.review-item.my-review{
-    border-left:4px solid #4CAF50;
-    background:#f4fff4;
-}
-
-.review-item .badge{
-    background:#4CAF50;
-    color:white;
-
-    padding:2px 8px;
-
-    border-radius:5px;
-
-    font-size:11px;
-
-    margin-left:10px;
+	.note-card, .quiz-card, .review-item {
+		padding: 12px;
+	}
 }

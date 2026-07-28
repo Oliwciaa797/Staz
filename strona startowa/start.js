@@ -103,9 +103,6 @@ async function search() {
         return;
     }
 
-    document.querySelector(".searchAlert").textContent = "";
-
-
     const value = query + " tutorial";
 
     document.getElementById("mainContent").classList.add("search-mode");
@@ -352,7 +349,9 @@ reviewCount > 0
 
     catch(error) {
         console.error(error);
-        alert(
+        toast.show(
+            'error',
+            'Błąd',
             "Nie można połączyć się z YouTube."
         );
     }
@@ -377,7 +376,7 @@ function goToLogin() {
 // tutaj sie zaczyna show us
 
 async function showUser() {
-
+    
     const userArea = document.getElementById("userArea");
 
     const { data: { user } } = await supabaseClient.auth.getUser();
@@ -575,3 +574,58 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
+
+
+// async function loadHistory() {
+
+//     const dropdown = document.getElementById("history-dropdown");
+
+//     const {
+//         data: { user }
+//     } = await supabaseClient.auth.getUser();
+
+//     if (!user) return;
+
+//     const { data } = await supabaseClient
+//         .from("watch_history")
+//         .select("video_id")
+//         .eq("user_id", user.id)
+//         .order("watched_at", { ascending:false })
+//         .limit(10);
+
+//     dropdown.innerHTML = "";
+
+//     data.forEach(video => {
+
+//         dropdown.innerHTML += `
+//             <a class="history-video"
+//                href="../Video/video.html?video=${video.video_id}">
+
+//                 <img src="https://img.youtube.com/vi/${video.video_id}/default.jpg">
+
+//                 <span>${video.title}</span>
+
+//             </a>
+//         `;
+//     });
+
+
+//     const { info, error } = await supabaseClient
+//     .from("watch_history")
+//     .select("video_id")
+//     .eq("user_id", user.id)
+//     .order("watched_at", { ascending: false })
+//     .limit(10);
+
+//     console.log(error);
+//     console.log(info);
+//     // dropdown.innerHTML += `
+//     //     <hr>
+
+//     //     <a class="history-video" href="../History/history.html">
+//     //         View Full History
+//     //     </a>
+//     // `;
+// }
+

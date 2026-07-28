@@ -9,9 +9,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="not.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css">
 <!-- Klient Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <!-- Logika strony -->
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+<script src="/toast.js" defer></script>
 <script src="not.js" defer></script>
 </head>
 <body>
@@ -75,6 +78,12 @@
       <div class="card-grid" id="myQuizyGrid"></div>
 
       <div class="section-label">Quizy publiczne innych użytkowników</div>
+      <div class="search-quiz">
+      <input
+          type="text"
+          id="searchQuiz"
+          placeholder="Szukaj quizów..."
+      ></div>
       <div id="publicQuizyLoading" class="loading-msg">Wczytywanie…</div>
       <div class="card-grid" id="publicQuizyGrid"></div>
     </section>
@@ -94,7 +103,10 @@
           <div id="charCounter" class="char-counter">
             0 / 100000 znaków
           </div>
-
+          <label for="noteTags">Tagi</label>
+          <select
+              id="noteTags"
+              placeholder="np. matematyka, algebra, egzamin"></select>
         </div>
         <div class="visibility-toggle">
           <input type="checkbox" id="notePublic">
@@ -108,20 +120,40 @@
       <div class="card-grid" id="myNotesGrid"></div>
 
       <div class="section-label">Notatki publiczne innych użytkowników</div>
+      <div class="search-notes">
+      <input
+        type="text"
+        id="searchNotes"
+        placeholder="Szukaj po tytule, treści lub tagach..."></div>
       <div id="publicNotesLoading" class="loading-msg">Wczytywanie…</div>
       <div class="card-grid" id="publicNotesGrid"></div>
     </section>
 
     <!-- ===== ZAPISANE ===== -->
     <section class="tab-panel" id="tab-zapisane">
-      <div class="section-label">Zapisane materiały</div>
-      <div class="card-grid" id="savedGrid">
-        <div class="empty-state" style="grid-column:1/-1;">
-          <strong>Nic tu jeszcze nie ma</strong>
-          Miejsce na filmy / poradniki oznaczone przez użytkownika jako „Zapisz". Podłącz własną tabelę np. <code>saved_items</code>.
-        </div>
+
+    <div class="section-label">Zapisane filmy i materiały</div>
+    <div class="card-grid" id="savedMaterialsGrid">
+      <div class="empty-state" style="grid-column:1/-1;">
+        <strong>Brak zapisanych materiałów.</strong>
       </div>
-    </section>
+    </div>
+
+    <div class="section-label" style="margin-top:32px;">Zapisane notatki</div>
+    <div class="card-grid" id="savedNotesGrid">
+      <div class="empty-state" style="grid-column:1/-1;">
+        <strong>Brak zapisanych notatek.</strong>
+      </div>
+    </div>
+
+    <div class="section-label" style="margin-top:32px;">Zapisane quizy</div>
+    <div class="card-grid" id="savedQuizzesGrid">
+      <div class="empty-state" style="grid-column:1/-1;">
+        <strong>Brak zapisanych quizów.</strong>
+      </div>
+    </div>
+
+  </section>
 
   </div>
 </main>
@@ -157,7 +189,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 </script>
-<div id="toast"></div>
 
 </body>
 </html>

@@ -12,9 +12,47 @@ const params =
 new URLSearchParams(
     window.location.search
 );
-
+let currentUser = null;
 const quizId =
 params.get("id");
+
+async function init() {
+
+    const {
+        data: { user }
+    } = await supabaseClient.auth.getUser();
+
+    currentUser = user || null;
+
+    if (!loadedQuiz) return;
+
+    const tags =
+        document.getElementById("tags");
+
+    tags.innerHTML =
+        (loadedQuiz.tags || [])
+        .map(tag => `<span class="tag">${tag}</span>`)
+        .join("");
+
+    const { data: profile } =
+    await supabaseClient
+    .from("profiles")
+    .select("profiles")
+    .eq("id", loadedQuiz.user_id)
+    .single();
+
+    document.getElementById("author").textContent =
+    profile?.profiles || "Nieznany użytkownik";
+
+    await checkIfSaved();
+
+    document
+        .getElementById("likeBtn")
+        .addEventListener(
+            "click",
+            () => saveQuiz(loadedQuiz.id)
+        );
+}
 
 let loadedQuiz = null;
 
@@ -22,6 +60,8 @@ document.addEventListener(
     "DOMContentLoaded",
     loadQuiz
 );
+
+const toast = new Toast();
 
 async function loadQuiz(){
 
@@ -50,9 +90,9 @@ async function loadQuiz(){
     ).textContent =
     data.title;
 
-    renderQuestions(
-        data.questions
-    );
+    await init();
+
+    renderQuestions(data.questions);
 }
 
 function renderQuestions(questions){
@@ -126,7 +166,9 @@ function checkQuiz(){
         if(question.type === "multi"){
 
             if(checked.length === 0){
-                alert(
+                toast.show(
+                    'error',
+                    'Błąd',
                     `Zaznacz odpowiedź w pytaniu ${i + 1}`
                 );
                 return;
@@ -134,7 +176,9 @@ function checkQuiz(){
 
         } else {
             if(checked.length === 0){
-                alert(
+                toast.show(
+                    'error',
+                    'Błąd',
                     `Zaznacz odpowiedź w pytaniu ${i + 1}`
                 );
                 return;
@@ -292,3 +336,84 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 ``
+
+
+async function checkIfSaved() {
+    if (!currentUser) return;
+
+    const { data } = await supabaseClient
+        .from("saved_quizzes")
+        .select("id")
+        .eq("user_id", currentUser.id)
+        .eq("quiz_id", loadedQuiz.id)
+        .maybeSingle();
+
+    if (data) {
+        document.getElementById("likeBtn").classList.add("active");
+    }
+}
+
+
+async function saveQuiz(quizId) {
+
+    if (!currentUser) {
+        toast.show(
+            "error",
+            "Musisz być zalogowany",
+            "Zaloguj się, aby zapisać quiz."
+        );
+        return;
+    }
+
+    const likeBtn = document.getElementById("likeBtn");
+
+    const { data } = await supabaseClient
+        .from("saved_quizzes")
+        .select("id")
+        .eq("user_id", currentUser.id)
+        .eq("quiz_id", quizId)
+        .maybeSingle();
+
+    if (data) {
+        // Usuń zapis
+        const { error } = await supabaseClient
+            .from("saved_quizzes")
+            .delete()
+            .eq("id", data.id);
+
+        if (error) {
+            console.error(error);
+            return;
+        }
+
+        likeBtn.classList.remove("active");
+
+        toast.show(
+            "success",
+            "Gotowe!",
+            "Quiz został usunięty z zapisanych."
+        );
+
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from("saved_quizzes")
+        .insert({
+            user_id: currentUser.id,
+            quiz_id: quizId
+        });
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    likeBtn.classList.add("active");
+
+    toast.show(
+        "success",
+        "Gotowe!",
+        "Quiz został zapisany."
+    );
+}

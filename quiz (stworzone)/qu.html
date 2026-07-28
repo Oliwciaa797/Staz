@@ -7,6 +7,7 @@
 
 <link rel="stylesheet" href="qu.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/toast.js" defer></script>
     <script src="qu.js" defer></script>
 </head>
 <body>
@@ -14,7 +15,16 @@
 <div class="quiz-container">
 
     <img src="arrow.png" height="25px" width="25px" onclick="back()" class="back" alt="">
-    <h1 id="quizTitle">Ładowanie quizu...</h1>
+    <div class="title">
+            <p style="color: #666; font-size: 15px;">Tytuł</p>
+            <h1 id="quizTitle"></h1>
+        </div>
+        <div id="tags"></div>
+        <div class="author">
+            <!-- <img src="" id="profilePicture"> -->
+            <p style="color: #666; font-size: 15px;">Autor</p>
+            <p id="author"></p>
+        </div>
     <div id="quizContent"></div>
 
     <button id="finishBtn">
@@ -23,6 +33,10 @@
 
     <div id="quizResult"></div>
 
+    <div id="content"></div>
+        <div class="like-btn">
+            <img src="heart.png" height="40px" width="40px" alt="zapisz"  id="likeBtn">
+        </div>
 </div>
 <div id="materialsDrawer" class="materials-drawer">
 
