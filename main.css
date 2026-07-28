@@ -10,6 +10,13 @@
     --hover-dark: #4b5e28;
     --danger: #B23B2E;
     --shadow : #23281a1b;
+
+    /* responsywne zmienne pomocnicze */
+    --sidebar-width: 16.66vw;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
 }
 
 body{
@@ -30,8 +37,8 @@ body, header, button{
 #sidebar {
     position: fixed;
     top: 0;
-    left: -16.66vw;
-    width: 16.66vw;
+    left: calc(-1 * var(--sidebar-width));
+    width: var(--sidebar-width);
     height: 100vh;
 
     background-color: var(--secondary-color);
@@ -44,6 +51,8 @@ body, header, button{
     flex-direction:column;
 
     padding-top:70px;
+
+    overflow-y: auto;
 }
 
 #sidebar.active {
@@ -219,3 +228,104 @@ body, header, button{
 @keyframes slideOutDown { to { transform: translateY(100%); opacity: 0; } }
 @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
 @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* ============================================
+   RESPONSYWNOŚĆ (telefon / tablet / komputer)
+   ============================================ */
+
+/* Tablety i mniejsze laptopy */
+@media (max-width: 1024px) {
+    :root {
+        --sidebar-width: 30vw;
+    }
+
+    .history-dropdown {
+        width: 220px;
+    }
+}
+
+/* Telefony (poziomo i mniejsze tablety) */
+@media (max-width: 768px) {
+    :root {
+        --sidebar-width: 75vw;
+    }
+
+    #sidebar {
+        max-width: 320px;
+        padding-top: 60px;
+        box-shadow: 4px 0 12px rgba(0,0,0,0.25);
+    }
+
+    #sidebar a {
+        font-size: 16px;
+        padding: 12px 16px;
+    }
+
+    /* Menu z historią rozwija się w dół zamiast w bok, bo brakuje miejsca po prawej */
+    .history-dropdown {
+        position: fixed;
+        left: 10px;
+        right: 10px;
+        top: auto;
+        width: auto;
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+
+    .toast-container {
+        padding: 12px;
+        max-width: 100%;
+    }
+
+    .toast {
+        min-width: unset;
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    [data-position="tr"],
+    [data-position="tl"],
+    [data-position="tc"] {
+        left: 0;
+        right: 0;
+        transform: none;
+        align-items: stretch;
+        padding: 12px;
+    }
+
+    [data-position="br"],
+    [data-position="bl"],
+    [data-position="bc"] {
+        left: 0;
+        right: 0;
+        transform: none;
+        align-items: stretch;
+        padding: 12px;
+    }
+}
+
+/* Małe telefony */
+@media (max-width: 480px) {
+    :root {
+        --sidebar-width: 85vw;
+    }
+
+    #sidebar a {
+        font-size: 15px;
+        padding: 10px 14px;
+    }
+
+    .history-video img {
+        width: 40px;
+        height: 24px;
+    }
+
+    .history-video span {
+        font-size: 12px;
+    }
+
+    .toast-close {
+        font-size: 1.2rem;
+    }
+}
