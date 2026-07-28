@@ -41,6 +41,8 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
    }
    ============================================================ */
 
+const params = new URLSearchParams(window.location.search);
+const videoId = params.get("video");
 let currentUser = null;
 let questions = [];
 
@@ -364,7 +366,8 @@ document.getElementById('saveQuizBtn').addEventListener('click', async () => {
     title,
     is_public: isPublic,
     questions,
-    tags
+    tags,
+    video_id: videoId
   });
 
   btn.disabled = false;

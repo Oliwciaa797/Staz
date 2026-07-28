@@ -32,6 +32,18 @@ const params = new URLSearchParams(window.location.search);
 const videoId = params.get("video");
 const player = document.getElementById("youtubeVideo");
 
+async function getVideoInfo(videoId) {
+    const response = await fetch(
+        `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`
+    );
+
+    if (!response.ok) {
+        throw new Error("Couldn't get video information.");
+    }
+
+    return await response.json();
+}
+
 if (videoId) {
     console.log("Video ID:", videoId);
     if (player && videoId) {
@@ -205,6 +217,34 @@ function showTab(tabId) {
 // Domyślnie pokaż pierwszą zakładkę
 showTab("generated");
 
+/* ---------- Przełączanie pod-zakładek ---------- */
+function showSubTab(subTabId){
+
+    document.querySelectorAll(".sub-tab-btn").forEach(btn =>
+        btn.classList.remove("active")
+    );
+
+    document.querySelectorAll(".sub-tab-panel").forEach(panel =>
+        panel.classList.remove("active")
+    );
+
+    const btn = document.querySelector(
+        `.sub-tab-btn[data-subtab="${subTabId}"]`
+    );
+
+    if(btn) btn.classList.add("active");
+
+    const panel = document.getElementById(subTabId);
+
+    if(panel) panel.classList.add("active");
+
+    if(subTabId.includes("Quiz")){
+        loadAllQuizLists();
+    } else {
+        loadAllNoteLists();
+    }
+}
+
 let userRating = 0;
 
 // Ustawienie oceny gwiazdkowej
@@ -370,7 +410,7 @@ async function loadReviews() {
 const toast = new Toast();
 // Wczytaj recenzje po załadowaniu strony
 document.addEventListener('DOMContentLoaded', loadReviews);
-let errorMsg = document.getElementById('errorMsg');
+// let errorMsg = document.getElementById('errorMsg');
 
 async function submitReview() {
 
@@ -387,11 +427,9 @@ async function submitReview() {
         document.getElementById("reviewText").value;
 
     if (userRating === 0) {
-        errorMsg.textContent = "Wybierz ocenę.";
+        toast.show('error','Błąd','Wybierz ocenę.');
         return;
     }
-
-    errorMsg.textContent = "";
 
     const { data: existing, error: checkError } =
     await supabaseClient
@@ -401,7 +439,7 @@ async function submitReview() {
         .eq("video_id", videoId)
         .maybeSingle();
 
-    if (existingReview) {
+    if (existing) {
         toast.show('error','Błąd',"Dodałeś już opinię do tego filmu.");
         return;
     }
@@ -449,7 +487,6 @@ async function submitReview() {
     );
 
     loadReviews();
-    loadMyReview();
 }
 
 
@@ -557,8 +594,8 @@ document.addEventListener("DOMContentLoaded", () => {
     showUser();
     updateSidebar();
     loadAllNoteLists();
-    loadMyReview();
     checkSavedMaterial();
+    loadAllQuizLists();
 });
 
 function back(){
@@ -971,11 +1008,17 @@ async function loadPublicVideoNotes(){
         .from('notes')
         .select(`
             *,
-            profiles!user_id ( profiles, avatar_url )
+            profiles!user_id (
+                profiles,
+                avatar_url
+            )
         `)
-        .eq('video_id', videoId)
-        .eq('is_public', true)
-        .order('created_at', { ascending: false });
+        .eq("video_id", videoId)
+        .eq("is_public", true)
+        .order("created_at", { ascending: false });
+
+    console.log("Public Notes:", data);
+    console.log("Error:", error);
 
     if(error){
         console.error(error);
@@ -1376,6 +1419,30 @@ async function checkSavedMaterial(){
     materialSaved = !!data;
     btn.classList.toggle("saved", materialSaved);
     btn.innerHTML = materialSaved ? "❤️ Zapisano" : "❤️ Zapisz";
+
+    if(materialSaved){
+
+    console.log("Usuwam zapisany materiał");
+
+    const { error } = await supabaseClient
+        .from("saved_materials")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("video_id", videoId);
+
+    console.log("Delete error:", error);
+
+    if(error){
+        console.error(error);
+        toast.show('error','Error', error.message);
+        return;
+    }
+
+    materialSaved = false;
+    btn.classList.remove("saved");
+    btn.innerHTML = "❤️ Zapisz";
+    return;
+}
 }
 
 async function saveMaterial() {
@@ -1384,7 +1451,17 @@ async function saveMaterial() {
         await supabaseClient.auth.getUser();
 
     if (!user) {
-        toast.show('error','Zaloguj się',"Zaloguj się aby zapisać materiał");
+        toast.show('error', 'Zaloguj się', "Zaloguj się aby zapisać materiał");
+        return;
+    }
+
+    let info;
+
+    try {
+        info = await getVideoInfo(videoId);
+    } catch (err) {
+        console.error(err);
+        toast.show('error', 'Błąd', 'Nie udało się pobrać informacji o filmie.');
         return;
     }
 
@@ -1418,7 +1495,9 @@ async function saveMaterial() {
             .from("saved_materials")
             .insert({
                 user_id: user.id,
-                video_id: videoId
+                video_id: videoId,
+                title: info.title,
+                thumbnail: info.thumbnail_url
             });
 
     if (error) {
@@ -1433,7 +1512,7 @@ async function saveMaterial() {
         }
 
         console.error(error);
-        toast.show('error','Błąd',error.message);
+        toast.show('error', 'Błąd', error.message);
         return;
     }
 
