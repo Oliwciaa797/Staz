@@ -115,7 +115,7 @@ header {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
-	width: 700px;
+	width: 1000px;
 	height: auto;
 	background-color: var(--background);
 	text-align: left;
@@ -133,35 +133,35 @@ header {
 	cursor: pointer;
 } 
 .buttons {
+	margin-top: 10px;
 	display: flex;
 	justify-content: center;
 	align-items: flex-start;
-	width: 50%;
-	margin: 10px;
+	width: 90%;
+	
 	padding: 10px;
 }
 
 .buttons button {
-	width: 50%;
+	width: 100%;
 	height: 40px;
-	border: 2px solid var(--secondary-color);
-	box-shadow: inset 0px -5px 5px var(--shadow);
-	transition: all 0.3s ease;
+	border: 2px solid var(--primary-color);
+	transition: all 0.2s ease;
 	cursor: pointer;
 }
 
 #ainotes {
-	border-top-left-radius: 20px;
-	border-bottom-left-radius: 20px;
+	border-top-left-radius: 10px;
+	border-bottom-left-radius: 10px;
 }
 
 #quiztab {
-	border-top-right-radius: 20px;
-	border-bottom-right-radius: 20px;
+	border-top-right-radius: 10px;
+	border-bottom-right-radius: 10px;
 }
 
 .buttons button:hover {
-	background-color: var(--secondary-color);
+	background-color: var(--primary-color);
 	color: white;
 	box-shadow: inset 0px -7px 5px var(--shadow);
 }
@@ -169,7 +169,6 @@ header {
 #youtubeVideo {
 	border-radius: 10px;
 	box-shadow: 5px 5px 5px var(--shadow);
-	border: 3px solid #33411C;
 }
 
 .sidepanelcontent {
@@ -177,6 +176,7 @@ header {
 	width: 90%;
 	height: 400px;
 	margin: 10px;
+	margin-top: 0;
 }
 
 .tab {
@@ -222,9 +222,10 @@ header {
 }
 
 .reviews-top {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	gap: 10px;
 }
 
 .grade-summary {
@@ -253,6 +254,7 @@ header {
 
 .user-review {
     box-shadow: 0 2px 8px var(--shadow);
+	flex-grow: 1;
 	margin: 20px 0;
 	padding: 20px;
 	border-radius: 8px;
@@ -294,9 +296,7 @@ header {
 }
 
 .review-text {
-    width: 100%;
-    max-width: 800px;
-    word-wrap: break-word;
+	width: 800px;
 	color: #333;
 	line-height: 1.6;
 }
@@ -380,8 +380,6 @@ textarea {
 	color: white;
 	cursor: pointer;
     transition: all 0.2s ease;
-    display: inline-block;
-    text-decoration: none;
 }
 
 #addNoteBtn:hover, #addQuizBtn:hover, .saveNoteBtn:hover {
@@ -526,18 +524,6 @@ input.noteTitleInput {
     transform: scale(0.95);
 }
 
-#saveMaterialBtn.saved{
-    background: #1a2238;
-    color: white;
-    border-color: #1a2238;
-}
-
-#saveMaterialBtn.saved:hover{
-    background: #0f1526;
-    border-color: #0f1526;
-    color: white;
-}
-
 #reportErrorBtn{
     margin-top:12px;
 
@@ -600,15 +586,12 @@ input.noteTitleInput {
 }
 
 .note-content-view{
-	max-height: 0;
+	max-height: 60px;
 	overflow: hidden;
-	opacity: 0;
-	transition: all 0.3s ease;
-	margin-top: 10px;
+	transition: .3s;
 }
 .note-content-view.expanded{
 	max-height: 1000px;
-	opacity: 1;
 }
 
 .item-card .card-footer{
@@ -689,7 +672,6 @@ input.noteTitleInput {
 
 .note-form-card,
 .item-card{
-	width: 800px;
     overflow:hidden;
 }
 
@@ -720,6 +702,28 @@ input.noteTitleInput {
 	
 }
 
+.note-content-view{
+
+    max-height: 0;
+
+    overflow: hidden;
+
+    opacity: 0;
+
+    transition: all 0.3s ease;
+
+    margin-top: 10px;
+
+}
+
+.note-content-view.expanded{
+
+    max-height: 1000px;
+
+    opacity: 1;
+
+}
+
 #notesContent {
 	/* overflow-y: auto; */
 	padding: 10px;
@@ -734,145 +738,29 @@ input.noteTitleInput {
 	box-shadow: 5px 5px 5px var(--shadow);
 }
 
-/* =======================
-   WYSUWANE WŁASNE MATERIAŁY
-   ======================= */
+/* .review-item div {
+	margin-left: 10px;
+} */
 
-.materials-drawer{
-    position: fixed;
-    top: 50%;
-    right: -620px;
-    transform: translateY(-50%);
-
-    width: 650px;
-    height: 80vh;
-
-    background: white;
-    z-index: 5000;
-
-    border: 3px solid #33411C;
-	border-radius: 10px 0 0 10px;
-
-    box-shadow: -5px 0 25px rgba(0,0,0,.15);
-
-    transition: right .35s ease;
+.char-counter{
+    margin-top:8px;
+    text-align:right;
+    font-size:13px;
+    color:#666;
+    transition:0.2s;
 }
 
-.materials-drawer.open{
-    right: 0;
+.char-counter.limit{
+    color:#e53935;
+    font-weight:700;
 }
 
-.drawer-toggle{
-    position: absolute;
-    left: -45px;
-    top: 50%;
-    transform: translateY(-50%);
-
-    width: 45px;
-    height: 100px;
-
-    background: #33411C;
-    color: white;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 15px 0 0 15px;
-
-    cursor: pointer;
-
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.drawer-content{
-    height: 100%;
-    overflow-y: auto;
-    padding: 20px;
-}
-
-.drawer-tabs{
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.drawer-tab{
-    flex: 1;
-    border: none;
-    padding: 12px;
-    border-radius: 10px;
-    background: #ddd;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.drawer-tab.active{
-    background: var(--primary-color);
-    color: white;
-}
-
-.drawer-panel{
-    display:none;
-}
-
-.drawer-panel.active{
-    display:block;
-}
-
-.note-form-card,
-.item-card{
-    width:100%;
-}
-
-#personalNotesContainer,
-#myOtherNotesContainer,
-#publicVideoNotesContainer,
-#personalQuizyContainer,
-#myOtherQuizyContainer,
-#publicVideoQuizyContainer{
-    display:flex;
-    flex-direction:column;
-    gap:15px;
-}
-
-/* Licznik znaków pod edytorem notatki */
-.char-counter {
-    font-size: 0.85em;
-    color: #888;
-    text-align: right;
-    margin-top: 4px;
-}
- 
-.char-counter.limit-reached {
-    color: #e53935;
-    font-weight: bold;
-}
- 
-/* Przyciski pod formularzem opinii */
-.review-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 8px;
-}
- 
-#deleteReviewBtn {
-    background-color: transparent;
-    border: 1px solid #e53935;
-    color: #e53935;
-}
-
-.review-item.my-review{
-    border-left:4px solid #4CAF50;
-    background:#f4fff4;
-}
-
-.review-item .badge{
-    background:#4CAF50;
-    color:white;
-    padding:2px 8px;
-    border-radius:5px;
-    font-size:11px;
-    margin-left:10px;
+.badge {
+	font-weight: normal;
+	font-size: 12px;
+	color: #666;
+	background-color: #ddd;
+	border-radius: 10px;
+	margin: 5px;
+	padding: 2px 7px;
 }

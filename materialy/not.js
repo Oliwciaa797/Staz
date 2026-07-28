@@ -763,7 +763,7 @@ async function loadSavedMaterials(){
             </div>
 
             <div class="info">
-                <h3>${item.video_title}</h3>
+                <h3>${item.title}</h3>
                 <button class="go-btn" onclick="openVideo('${item.video_id}')"> Otwórz materiał </button>
             </div>
 

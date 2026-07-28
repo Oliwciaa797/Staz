@@ -470,10 +470,6 @@ async function updateSidebar() {
             <a href="../Profil/prof.html">Profil</a>
             <a href="../wylogowywanie/logout.html">Wyloguj się</a>
             <a href="../zglaszanie bledow/blad.html">⚠️Zgłoś błąd⚠️</a>
-            <li class="history-menu">
-                <span>History</span>
-                <div class="history-dropdown" id="history-dropdown"></div>
-            </li>
         `;
     } else {
         sidebar.innerHTML = `
@@ -581,56 +577,55 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-async function loadHistory() {
+// async function loadHistory() {
 
-    const dropdown = document.getElementById("history-dropdown");
+//     const dropdown = document.getElementById("history-dropdown");
 
-    const {
-        data: { user }
-    } = await supabaseClient.auth.getUser();
+//     const {
+//         data: { user }
+//     } = await supabaseClient.auth.getUser();
 
-    if (!user) return;
+//     if (!user) return;
 
-    const { data } = await supabaseClient
-        .from("watch_history")
-        .select("video_id")
-        .eq("user_id", user.id)
-        .order("watched_at", { ascending:false })
-        .limit(10);
+//     const { data } = await supabaseClient
+//         .from("watch_history")
+//         .select("video_id")
+//         .eq("user_id", user.id)
+//         .order("watched_at", { ascending:false })
+//         .limit(10);
 
-    dropdown.innerHTML = "";
+//     dropdown.innerHTML = "";
 
-    data.forEach(video => {
+//     data.forEach(video => {
 
-        dropdown.innerHTML += `
-            <a class="history-video"
-               href="../Video/video.html?video=${video.video_id}">
+//         dropdown.innerHTML += `
+//             <a class="history-video"
+//                href="../Video/video.html?video=${video.video_id}">
 
-                <img src="https://img.youtube.com/vi/${video.video_id}/default.jpg">
+//                 <img src="https://img.youtube.com/vi/${video.video_id}/default.jpg">
 
-                <span>${video.title}</span>
+//                 <span>${video.title}</span>
 
-            </a>
-        `;
-    });
+//             </a>
+//         `;
+//     });
 
 
-    const { info, error } = await supabaseClient
-    .from("watch_history")
-    .select("video_id")
-    .eq("user_id", user.id)
-    .order("watched_at", { ascending: false })
-    .limit(10);
+//     const { info, error } = await supabaseClient
+//     .from("watch_history")
+//     .select("video_id")
+//     .eq("user_id", user.id)
+//     .order("watched_at", { ascending: false })
+//     .limit(10);
 
-    console.log(error);
-    console.log(info);
-    // dropdown.innerHTML += `
-    //     <hr>
+//     console.log(error);
+//     console.log(info);
+//     // dropdown.innerHTML += `
+//     //     <hr>
 
-    //     <a class="history-video" href="../History/history.html">
-    //         View Full History
-    //     </a>
-    // `;
-}
+//     //     <a class="history-video" href="../History/history.html">
+//     //         View Full History
+//     //     </a>
+//     // `;
+// }
 
-loadHistory();
