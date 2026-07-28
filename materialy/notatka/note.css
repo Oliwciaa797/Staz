@@ -1,5 +1,9 @@
 @import url(../../main.css);
 
+* {
+    box-sizing: border-box;
+}
+
 body {
     display: flex;
     justify-self: center;
@@ -8,12 +12,13 @@ body {
 
 .note-container {
     width: 1200px;
-    margin:40px auto;
-    background:white;
-    padding:30px;
-    border-radius:20px;
+    max-width: 100%;
+    margin: 40px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
     border: 4px var(--primary-color) solid;
-    box-shadow:0 5px 20px rgba(0,0,0,.1);
+    box-shadow: 0 5px 20px rgba(0,0,0,.1);
 }
 
 
@@ -106,3 +111,81 @@ header{
     flex-direction: row-reverse;
 }
 
+/* ============================================
+   RESPONSYWNOŚĆ (telefon / tablet / komputer)
+   ============================================ */
+
+/* Laptopy / mniejsze ekrany desktopowe */
+@media (max-width: 1280px) {
+    .note-container {
+        width: 92%;
+    }
+}
+
+/* Tablety */
+@media (max-width: 768px) {
+    .note-container {
+        width: 100%;
+        margin: 20px auto;
+        padding: 20px;
+        border-radius: 14px;
+        border-width: 3px;
+    }
+
+    header {
+        padding: 16px 20px;
+    }
+
+    #title {
+        font-size: 30px;
+    }
+
+    #content {
+        max-height: 500px;
+        padding: 12px;
+        margin: 25px 0;
+    }
+}
+
+/* Telefony */
+@media (max-width: 480px) {
+    .note-container {
+        margin: 12px auto;
+        padding: 15px;
+        border-radius: 10px;
+        border-width: 2px;
+    }
+
+    header {
+        padding: 14px 16px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .menu-btn {
+        font-size: 26px;
+    }
+
+    #title {
+        font-size: 24px;
+    }
+
+    .author {
+        line-height: normal;
+        margin: 14px 5px;
+        font-size: 14px;
+    }
+
+    #content {
+        max-height: 400px;
+        padding: 10px;
+        margin: 18px 0;
+        font-size: 14px;
+    }
+
+    .tag {
+        font-size: 11px;
+        padding: 3px 8px;
+        margin: 3px;
+    }
+}
