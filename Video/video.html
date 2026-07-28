@@ -103,13 +103,21 @@
                         </div>
 
                             <div id="personalQuizy" class="sub-tab-panel">
-                                <<button id="addQuizBtn" onclick="goToQuizCreator()">
+                                <button id="addQuizBtn" onclick="goToQuizCreator()">+ Stwórz quiz</button>
+                                <div class="section-label">Twoje quizy do tego filmu</div>
                                 <div id="personalQuizyContainer" class="card-grid">
                                     <p>Brak quizów.</p>
                                 </div>
+                                <div class="section-label">Twoje pozostałe quizy</div>
+                                <div id="myOtherQuizyContainer" class="card-grid">
+                                <p>Brak quizów.</p>
+                                </div>
+                                <div class="section-label">Quizy publiczne innych o tym filmie</div>
+                                <div id="publicVideoQuizyContainer" class="card-grid">
+                                    <p>Brak quizów publicznych.</p>
+                                </div>
                             </div>
-
-                        </div>
+                            </div>
 
                         <div id="quiz" class="tab">
                             <button onclick="generateQuiz()" id="genQuizBtn">Generuj quiz</button>

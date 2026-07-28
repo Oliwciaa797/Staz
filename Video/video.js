@@ -747,7 +747,7 @@ function renderNoteCard(note, { editable, showAuthor }){
     const div = document.createElement('div');
     div.className = 'item-card';
     div.dataset.id = note.id;
-    div._note = note; // potrzebne do trybu edycji
+    div._note = note;
 
     const badge = note.is_public
         ? '<span class="badge public">Publiczna</span>'
@@ -764,6 +764,7 @@ function renderNoteCard(note, { editable, showAuthor }){
             ${note.content || ""}
         </div>
         <button type="button" class="go-btn big-btn show-note-btn">Pokaż notatkę</button>
+        ${!editable ? `<button type="button" class="go-btn big-btn save-note-btn" data-id="${note.id}">💾 Zapisz do moich materiałów</button>` : ''}
         <div class="card-footer">
             <span>${footerLeft}</span>
             ${editable ? `
@@ -971,14 +972,13 @@ async function loadMyOtherNotes(){
     }
 
     const { data, error } = await supabaseClient
-        console.log("Other Notes:", data)
-        console.log("Error:", error)
-        console.log("Current videoId:", videoId)
         .from('notes')
         .select('*')
         .eq('user_id', user.id)
         .neq('video_id', videoId)
         .order('created_at', { ascending: false });
+
+    console.log("Other Notes:", data, "Error:", error);
 
     if(error){
         console.error(error);
@@ -1003,8 +1003,6 @@ async function loadPublicVideoNotes(){
     if(!container) return;
 
     const { data, error } = await supabaseClient
-        console.log("Public Notes:", data)
-        console.log("Error:", error)
         .from('notes')
         .select(`
             *,
@@ -1017,8 +1015,7 @@ async function loadPublicVideoNotes(){
         .eq("is_public", true)
         .order("created_at", { ascending: false });
 
-    console.log("Public Notes:", data);
-    console.log("Error:", error);
+    console.log("Public Notes:", data, "Error:", error);
 
     if(error){
         console.error(error);
@@ -1156,6 +1153,16 @@ document.addEventListener("click", async (e) => {
         return;
     }
 
+    if(e.target.classList.contains("save-note-btn")){
+        saveNoteCopy(e.target.dataset.id);
+        return;
+    }
+
+    if(e.target.classList.contains("save-quiz-btn")){
+        saveQuizCopy(e.target.dataset.id);
+        return;
+    }
+
     if(e.target.classList.contains("toggle-vis")){
         togglePersonalNoteVisibility(e.target.dataset.id, e.target.dataset.public === "true");
         return;
@@ -1211,6 +1218,7 @@ function renderQuizCard(quiz, { editable, showAuthor }){
         <h3>${escapeHtml(quiz.title || "Bez tytułu")}</h3>
         <p>${count} ${count === 1 ? 'pytanie' : 'pytań'}</p>
         <button type="button" class="go-btn big-btn open-quiz-btn" data-id="${quiz.id}">Rozwiąż quiz</button>
+        ${!editable ? `<button type="button" class="go-btn big-btn save-quiz-btn" data-id="${quiz.id}">💾 Zapisz do moich materiałów</button>` : ''}
         <div class="card-footer">
             <span>${footerLeft}</span>
             ${editable ? `
@@ -1384,6 +1392,87 @@ async function deleteUserQuiz(id){
 
     loadAllQuizLists();
 
+}
+
+async function saveNoteCopy(id){
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    if(!user){
+        toast.show('error', 'Zaloguj się', 'Zaloguj się aby zapisać notatkę.');
+        return;
+    }
+
+    const { data: original, error: fetchError } = await supabaseClient
+        .from('notes')
+        .select('title, content, video_id')
+        .eq('id', id)
+        .single();
+
+    if(fetchError || !original){
+        toast.show('error', 'Błąd', 'Nie udało się pobrać notatki.');
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from('notes')
+        .insert({
+            user_id: user.id,
+            video_id: original.video_id,
+            title: original.title,
+            content: original.content,
+            is_public: false
+        });
+
+    if(error){
+        console.error(error);
+        toast.show('error', 'Błąd', 'Nie udało się zapisać notatki.');
+        return;
+    }
+
+    toast.show('success', 'Gotowe!', 'Notatka zapisana w Twoich materiałach.');
+    loadAllNoteLists();
+}
+
+async function saveQuizCopy(id){
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    if(!user){
+        toast.show('error', 'Zaloguj się', 'Zaloguj się aby zapisać quiz.');
+        return;
+    }
+
+    const { data: original, error: fetchError } = await supabaseClient
+        .from('quizzes')
+        .select('title, questions, video_id, tags')
+        .eq('id', id)
+        .single();
+
+    if(fetchError || !original){
+        toast.show('error', 'Błąd', 'Nie udało się pobrać quizu.');
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from('quizzes')
+        .insert({
+            user_id: user.id,
+            video_id: original.video_id,
+            title: original.title,
+            questions: original.questions,
+            tags: original.tags,
+            is_public: false
+        });
+
+    if(error){
+        console.error(error);
+        toast.show('error', 'Błąd', 'Nie udało się zapisać quizu.');
+        return;
+    }
+
+    toast.show('success', 'Gotowe!', 'Quiz zapisany w Twoich materiałach.');
+    loadAllQuizLists();
 }
 
 let materialSaved = false;
