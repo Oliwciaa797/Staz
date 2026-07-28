@@ -466,7 +466,14 @@ async function submitReview() {
                 rating: userRating,
                 comment: reviewText
             });
-    }
+
+        }
+
+        if (error.code === "23505") {
+            toast.show('error','Błąd',"Dodałeś już opinię do tego filmu.");
+            return;
+        }
+
     if(result.error){
         console.error(result.error);
         toast.show('error', 'Error', result.error.message);
@@ -964,14 +971,14 @@ async function loadMyOtherNotes(){
     }
 
     const { data, error } = await supabaseClient
-    .from("notes")
-    .select("*")
-    .eq("user_id", user.id)
-    .neq("video_id", videoId)
-    .order("created_at", { ascending: false });
-
-    console.log(data);
-    console.log(error);
+        console.log("Other Notes:", data)
+        console.log("Error:", error)
+        console.log("Current videoId:", videoId)
+        .from('notes')
+        .select('*')
+        .eq('user_id', user.id)
+        .neq('video_id', videoId)
+        .order('created_at', { ascending: false });
 
     if(error){
         console.error(error);
@@ -996,8 +1003,10 @@ async function loadPublicVideoNotes(){
     if(!container) return;
 
     const { data, error } = await supabaseClient
-    .from("notes")
-    .select(`
+        console.log("Public Notes:", data)
+        console.log("Error:", error)
+        .from('notes')
+        .select(`
             *,
             profiles!user_id (
                 profiles,
