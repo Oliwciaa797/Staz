@@ -1,18 +1,7 @@
 from urllib.parse import urlparse, parse_qs
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api.proxies import WebshareProxyConfig
-import requests
 
-r = requests.get(
-    "https://api.ipify.org",
-    proxies={
-        "http": "http://hwolfcgd:7ijb3ggn1t6z@p.webshare.io:80",
-        "https": "http://hwolfcgd:7ijb3ggn1t6z@p.webshare.io:80",
-    },
-    timeout=10,
-)
-
-print(r.text)
 api = YouTubeTranscriptApi(
     proxy_config=WebshareProxyConfig(
         proxy_username="hwolfcgd",
