@@ -401,7 +401,7 @@ async function submitReview() {
         .eq("video_id", videoId)
         .maybeSingle();
 
-    if (existingReview) {
+    if (existing) {
         toast.show('error','Błąd',"Dodałeś już opinię do tego filmu.");
         return;
     }
@@ -431,7 +431,7 @@ async function submitReview() {
 
         }
 
-        if (error.code === "23505") {
+        if (result.error && result.error.code === "23505") {
             toast.show('error','Błąd',"Dodałeś już opinię do tego filmu.");
             return;
         }
@@ -449,7 +449,7 @@ async function submitReview() {
     );
 
     loadReviews();
-    loadMyReview();
+    // loadMyReview();
 }
 
 
@@ -557,7 +557,7 @@ document.addEventListener("DOMContentLoaded", () => {
     showUser();
     updateSidebar();
     loadAllNoteLists();
-    loadMyReview();
+    // loadMyReview();
     checkSavedMaterial();
 });
 
@@ -934,14 +934,14 @@ async function loadMyOtherNotes(){
     }
 
     const { data, error } = await supabaseClient
-        console.log("Other Notes:", data)
-        console.log("Error:", error)
-        console.log("Current videoId:", videoId)
         .from('notes')
         .select('*')
         .eq('user_id', user.id)
         .neq('video_id', videoId)
         .order('created_at', { ascending: false });
+        console.log("Other Notes:", data)
+        console.log("Error:", error)
+        console.log("Current videoId:", videoId)
 
     if(error){
         console.error(error);
