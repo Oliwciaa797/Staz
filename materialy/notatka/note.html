@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../toast.js"></script>
+    <script defer src="note.js"></script>
+    <link rel="stylesheet" href="note.css">
+</head>
+<body>
+    <div class="note-container">
+        <img src="../arrow.png" height="25px" width="25px" onclick="window.location.href='../not.html'" class="back" alt="back-arrow" style="cursor: pointer;">
+        <div class="title">
+            <p style="color: #666; font-size: 15px;">Tytuł</p>
+            <h1 id="title"></h1>
+        </div>
+        <div id="tags"></div>
+        <div class="author">
+            <p style="color: #666; font-size: 15px;">Autor</p>
+            <div class="author-info">
+            <img src="../Profil/avatar.png" alt="Profie picture" id="authorAvatar">
+            <p id="author"></p>
+            </div>
+        </div>
+        
+        <div id="content"></div>
+        <div class="like-btn">
+            <img src="heart.png" height="40px" width="40px" alt="zapisz"  id="likeBtn">
+            <!-- onclick="saveNote()" -->
+        </div>
+    </div>
+</body>
+</html>

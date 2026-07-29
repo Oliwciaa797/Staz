@@ -6,17 +6,6 @@
     box-sizing: border-box;
 }
 
-body{
-    background:var(--background);
-    min-height: 100vh;
-    overflow:auto; /* allow page scrolling when search mode is active */
-    position:relative;
-    background-image: url('background.png');
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: cover;
-}
-
 /* Header */
 
 header {
@@ -134,7 +123,8 @@ main.search-mode{
 }
 
 .search-box{
-    transition: all 0.5s ease;
+    margin: 5px;
+    /* transition: all 0.5s; */
     display:flex;
     align-items:center;
     width:1000px;
@@ -338,6 +328,9 @@ main.search-mode{
 }
 
 .video{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     background: white;
     border-radius: 15px;
     overflow: hidden;
@@ -356,7 +349,7 @@ main.search-mode{
 }
 
 .video div{
-    padding:15px;
+    padding:10px;
     text-align:left;
 }
 
@@ -429,19 +422,212 @@ main.search-mode{
 }
 
 .grade-box {
-	padding: 2px;
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px;
 	border-radius: 8px;
 	background: white;
 	text-align: center;
-	box-shadow: 0 2px 8px var(--shadow);
+	/* box-shadow: 0 2px 8px var(--shadow); */
 }
 
 .grade-avg {
-	margin: 2px 0;
-	font-size: 14px;
+	margin-top: 10px;
+	font-size: 18px;
 }
-
+/* 
 .review-count {
 	color: #666;
 	font-size: 10px;
+}
+/* Mobile version popup */
+
+.mobile-popup{
+    position: fixed;
+    top: 90px; /* pod headerem */
+    left: 15px;
+    z-index: 1500;
+    cursor: pointer;
+    background: white;
+    color: var(--primary-color);
+    padding: 12px 35px 12px 15px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px var(--shadow);
+    font-weight: 600;
+    font-size: 0.9rem;
+
+    display: flex;
+    align-items: center;
+
+    opacity: 0;
+    transform: translateX(-120%);
+    transition: transform .5s ease, opacity .5s ease;
+    pointer-events: none;
+}
+
+.mobile-popup.show{
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+.mobile-popup.hide{
+    opacity: 0;
+    transform: translateX(-120%);
+}
+
+.mobile-popup p{
+    margin: 0;
+}
+
+.mobile-popup-close{
+    position: absolute;
+    top: 4px;
+    right: 10px;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    color: #999;
+    font-weight: 700;
+}
+
+.mobile-popup-close:hover{
+    color: var(--primary-color);
+}
+
+.mobile-popup {
+    display: flex;
+}
+
+.mobile-popup.show {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+.mobile-popup.hide {
+    opacity: 0;
+    transform: translateX(-120%);
+    pointer-events: none;
+}
+/* ============================================
+   RESPONSYWNOŚĆ - strona główna
+   ============================================ */
+
+@media (max-width: 900px){
+
+    header{
+        padding: 15px 20px;
+    }
+
+    .logo{
+        font-size: 1.5rem;
+    }
+
+    .user-info .avatar,
+    .avatar{
+        width: 36px;
+        height: 36px;
+    }
+
+    main{
+        width: 100%;
+        margin: 4vh auto;
+    }
+
+    #welcomeText{
+        font-size: 2rem;
+        padding: 0 10px;
+    }
+
+    .search-box{
+        width: 100%;
+    }
+
+    .buttons{
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .buttons button{
+        padding: 12px 24px;
+        font-size: 14px;
+    }
+
+    .dropdown-content{
+        min-width: 90vw;
+        max-width: 90vw;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .duration{
+        margin: auto 10px;
+    }
+
+    #slider{
+        width: 90%;
+    }
+
+    #results{
+        grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
+        gap: 15px;
+        margin-top: 25px;
+    }
+}
+
+@media (max-width: 480px){
+
+    .logo{
+        font-size: 1.2rem;
+    }
+
+    #welcomeText{
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+
+    .search-box input{
+        padding: 10px 12px;
+        font-size: 1rem;
+    }
+
+    .search-box button{
+        padding: 0 14px;
+        font-size: 1.2rem;
+    }
+
+    .buttons{
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .buttons button{
+        width: 100%;
+    }
+
+    #results{
+        grid-template-columns: 1fr;
+    }
+
+    .user-menu{
+        width: 160px;
+    }
+
+    .dropdown-content{
+        padding: 15px;
+    }
+
+    .language{
+        line-height: 1.8;
+    }
+
+    .mobile-popup{
+        left: 10px;
+        right: 10px;
+        padding: 10px 30px 10px 12px;
+        font-size: 0.8rem;
+    }
 }

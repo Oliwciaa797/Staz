@@ -6,14 +6,6 @@
     box-sizing:border-box;
 }
 
-body{
-    background:var(--background);
-    min-height:100vh;
-    background-image:url('../strona startowa/background.png');
-    background-repeat:no-repeat;
-    background-attachment:fixed;
-    background-size:cover;
-}
 header{
     background-color: var(--background);
     padding:20px 40px;
@@ -33,8 +25,9 @@ header{
     align-items:center;
 }
 .profile-container{
-    width:1000px;
-    height:700px;
+    width: 100%;
+    max-width: 1000px;
+    min-height: 700px;
     background:#fff;
     border:4px solid var(--primary-color);
     border-radius:32px;
@@ -302,4 +295,169 @@ header{
   49.99%{transform:scaleY(1)  rotate(135deg)}
   50%   {transform:scaleY(-1) rotate(0deg)}
   100%  {transform:scaleY(-1) rotate(-135deg)}
+}
+
+.invite-friend-box {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 16px;
+}
+
+.invite-friend-box input {
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.invite-friend-box button {
+    padding: 8px;
+    border: none;
+    border-radius: 6px;
+    background: var(--primary-color);
+    color: #fff;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.invite-friend-box button:hover {
+    opacity: 0.85;
+}
+.char-counter {
+    font-size: 12px;
+    color: #888;
+    display: block;
+    text-align: right;
+    margin-top: 2px;
+}
+.char-counter.limit-reached {
+    color: #e53935;
+}
+
+@media (max-width: 900px){
+  header{
+    padding: 12px 16px;
+  }
+
+  .page{
+    padding-top: 90px; /* kompensacja fixed headera */
+    align-items: flex-start;
+  }
+
+  .profile-container{
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+    min-height: auto;
+    padding: 70px 24px 30px; /* miejsce na strzałkę + tytuł na górze */
+    border-width: 3px;
+    border-radius: 24px;
+    gap: 30px;
+  }
+
+  #arrow{
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    z-index: 2;
+  }
+
+  .left-section{
+    width: 100%;
+    order: 2;
+  }
+
+  .left-section h1{
+    position: absolute;
+    top: 20px;
+    left: 60px;
+    right: 24px;
+    margin: 0;
+    font-size: 24px;
+    text-align: left;
+  }
+
+  .right-section{
+    order: 1;
+  }
+
+  .field label{
+    font-size: 15px;
+  }
+
+  .field input{
+    font-size: 16px;
+    border-bottom-width: 2px;
+  }
+
+  .avatar{
+    width: 140px;
+    height: 140px;
+    font-size: 14px;
+  }
+
+  #logoutBtn{
+    margin: 0 auto;
+  }
+
+  .bottom-btns{
+    align-items: center;
+    text-align: center;
+  }
+
+  #saveBtn{
+    width: 100%;
+    max-width: 270px;
+    font-size: 20px;
+  }
+
+  #arrowToProjects{
+    display: none;
+  }
+}
+@media (max-width: 480px){
+  .field{
+    margin-bottom: 22px;
+  }
+
+  .page{
+    padding-top: 80px;
+  }
+
+  .profile-container{
+    padding: 60px 16px 22px;
+    border-radius: 18px;
+  }
+
+  #arrow{
+    top: 18px;
+    left: 16px;
+  }
+
+  .left-section h1{
+    top: 16px;
+    left: 50px;
+    right: 16px;
+    font-size: 19px;
+  }
+
+  .avatar{
+    width: 110px;
+    height: 110px;
+  }
+
+  .field input{
+    font-size: 15px;
+  }
+
+  #saveBtn{
+    font-size: 17px;
+    height: 48px;
+  }
+
+  .invite-friend-box input,
+  .invite-friend-box button{
+    font-size: 13px;
+  }
 }

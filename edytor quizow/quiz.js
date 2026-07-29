@@ -26,13 +26,34 @@ const TYPE_LABELS = {
   boolean: 'Prawda / Fałsz'
 };
 
-/* ---------- Toast ---------- */
-function showToast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(()=> t.classList.remove('show'), 2600);
+let quizTagSelect;
+
+
+async function loadQuizTags() {
+
+    const { data, error } = await supabaseClient
+        .from("tags")
+        .select("name")
+        .order("name");
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    quizTagSelect = new TomSelect("#quizTags", {
+        plugins: ["remove_button"],
+        valueField: "name",
+        labelField: "name",
+        searchField: "name",
+        options: data,
+        create: true,
+        persist: false
+    });
+
 }
+
+const toast = new Toast();
 
 function escapeHtml(str){
   const d = document.createElement('div');
@@ -55,22 +76,23 @@ async function init(){
       document.getElementById('quizBuilder').style.display = 'none';
       document.getElementById('profileName').textContent = 'Zaloguj się';
       return;
-    }
-    currentUser = user;
-    const displayName = user.user_metadata?.username || user.email;
-    const profileName = document.getElementById('profileName');
+    }currentUser = user;
 
-    if(profileName){
-      profileName.textContent = displayName;
-    }if(editQuizId){
-    await loadQuizToEdit();
-}
+    await showUser();
+
     document.getElementById('authNotice').style.display = 'none';
     document.getElementById('quizBuilder').style.display = 'block';
+
+    await loadQuizTags();
+
+    if(editQuizId){
+        await loadQuizToEdit();
+    }
+
     renderQuestionsList();
   } catch (e) {
     console.error(e);
-    showToast('Nie udało się połączyć z Supabase.');
+    toast.show('error', 'Błąd', 'Nie udało się połączyć z Supabase.');
   }
 }
 
@@ -125,7 +147,7 @@ function renderQuestionForm(type){
     document.getElementById('qfCancelBtn').addEventListener('click', resetAddQuestionUI);
     document.getElementById('qfAddBtn').addEventListener('click', () => {
       const text = document.getElementById('qfText').value.trim();
-      if(!text){ showToast('Podaj treść pytania.'); return; }
+      if(!text){ toast.show('error', 'Błąd', 'Podaj treść pytania.'); return; }
       const correctVal = document.querySelector('input[name="qfBoolCorrect"]:checked').value;
 
       questions.push({
@@ -168,7 +190,7 @@ function renderQuestionForm(type){
 
   function addOptionRow(){
     const rows = optionsList.querySelectorAll('.option-row').length;
-    if(rows >= 6){ showToast('Maksymalnie 6 opcji.'); return; }
+    if(rows >= 6){ toast.show('error','Błąd','Maksymalnie 6 opcji.'); return; }
     const row = document.createElement('div');
     row.className = 'option-row';
     row.innerHTML = `
@@ -178,7 +200,7 @@ function renderQuestionForm(type){
     `;
     row.querySelector('.remove-option').addEventListener('click', () => {
       if(optionsList.querySelectorAll('.option-row').length <= 2){
-        showToast('Pytanie musi mieć co najmniej 2 opcje.');
+        toast.show('error','Błąd','Pytanie musi mieć co najmniej 2 opcje.');
         return;
       }
       row.remove();
@@ -195,7 +217,7 @@ function renderQuestionForm(type){
 
   document.getElementById('qfAddBtn').addEventListener('click', () => {
     const text = document.getElementById('qfText').value.trim();
-    if(!text){ showToast('Podaj treść pytania.'); return; }
+    if(!text){ toast.show('error','Błąd','Podaj treść pytania.'); return; }
 
     const rows = Array.from(optionsList.querySelectorAll('.option-row'));
     const options = [];
@@ -210,8 +232,8 @@ function renderQuestionForm(type){
       }
     });
 
-    if(options.length < 2){ showToast('Podaj co najmniej 2 wypełnione opcje.'); return; }
-    if(correct.length === 0){ showToast('Zaznacz co najmniej jedną poprawną odpowiedź.'); return; }
+    if(options.length < 2){ toast.show('error','Błąd','Podaj co najmniej 2 wypełnione opcje.'); return; }
+    if(correct.length === 0){ toast.show('error','Błąd','Zaznacz co najmniej jedną poprawną odpowiedź.'); return; }
 
     questions.push({
       id: genId(),
@@ -278,7 +300,7 @@ function renderQuestionsList(){
 document.getElementById('saveQuizBtn').addEventListener('click', async () => {
 
     if(!currentUser){
-        showToast('Zaloguj się, aby zapisać quiz.');
+        toast.show('error','Zaloguj się','Zaloguj się, aby zapisać quiz.');
         return;
     }
 
@@ -289,15 +311,30 @@ document.getElementById('saveQuizBtn').addEventListener('click', async () => {
     document.getElementById('quizPublic').checked;
 
     if(!title){
-        showToast('Podaj nazwę quizu.');
+        toast.show('error','Błąd','Podaj nazwę quizu.');
         return;
     }
 
     if(questions.length === 0){
-        showToast('Dodaj co najmniej jedno pytanie.');
+        toast.show('error','Błąd','Dodaj co najmniej jedno pytanie.');
         return;
     }
 
+    const tags = quizTagSelect.items;
+
+    for (const tag of tags) {
+
+        const { data } = await supabaseClient
+            .from("tags")
+            .select("id")
+            .eq("name", tag);
+
+        if (!data || data.length === 0) {
+            await supabaseClient
+                .from("tags")
+                .insert({ name: tag });
+        }
+    }
     const btn =
     document.getElementById('saveQuizBtn');
 
@@ -314,7 +351,8 @@ document.getElementById('saveQuizBtn').addEventListener('click', async () => {
         .update({
             title,
             is_public: isPublic,
-            questions
+            questions,
+            tags
         })
         .eq("id", editQuizId);
 
@@ -341,11 +379,13 @@ document.getElementById('saveQuizBtn').addEventListener('click', async () => {
         : 'ZAPISZ QUIZ';
 
     if(error){
-        showToast('Błąd zapisu: ' + error.message);
+        toast.show('error', 'Błąd zapisu: ', error.message);
         return;
     }
 
-    showToast(
+    toast.show(
+        'success',
+        'Gotowe!',
         editQuizId
         ? 'Quiz zaktualizowany!'
         : 'Quiz zapisany!'
@@ -358,92 +398,42 @@ document.getElementById('saveQuizBtn').addEventListener('click', async () => {
 
 });
 /* ----------profilowe i nazwa uzytkownika----------*/
-
-async function showUser(){
-
-    const userArea =
-    document.getElementById("userArea");
-
+async function showUser() {
 
     const {
-        data:{user}
+        data: { user }
     } = await supabaseClient.auth.getUser();
 
+    const profileName = document.getElementById("profileName");
+    const profileAvatar = document.getElementById("profileAvatar");
+    const userMenu = document.querySelector(".user-menu");
 
-    if(!user){
-
-        userArea.innerHTML = `
-            <button onclick="window.location.href='../logowanie/log.html'">
-                Zaloguj
-            </button>
-        `;
-
+    if (!user) {
+        profileName.textContent = "Zaloguj";
+        profileAvatar.src = "../Profil/avatar.png";
         return;
     }
 
+    const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("profiles, avatar_url")
+        .eq("id", user.id)
+        .single();
 
-    const {data: profile, error} =
-    await supabaseClient
-    .from("profiles")
-    .select("profiles, avatar_url")
-    .eq("id", user.id)
-    .single();
-
-
-    if(error){
+    if (error) {
         console.log(error);
         return;
     }
 
+    profileName.textContent = profile.profiles;
+    profileAvatar.src = profile.avatar_url || "../Profil/avatar.png";
 
-    const avatar =
-    profile.avatar_url ||
-    "../Profil/avatar.png";
-
-
-    userArea.innerHTML = `
-
-        <div class="user-info" id="userInfo">
-
-            <img 
-            src="${avatar}" 
-            class="avatar">
-
-            <span>
-                ${profile.profiles}
-            </span>
-
-        </div>
-
-
-        <div class="user-menu" id="userMenu">
-
-            <a href="../Profil/prof.html">
-                Profil
-            </a>
-
-
-            <a href="../wylogowywanie/logout.html">
-                Wyloguj się
-            </a>
-
-        </div>
-
-    `;
-
-    const info = document.getElementById("userInfo");
-const menu = document.getElementById("userMenu");
-
-
-info.addEventListener("click",(e)=>{
-
-    e.stopPropagation();
-
-    menu.classList.toggle("active");
-
-});
-
+    document.querySelector(".profile-chip").onclick = (e) => {
+        e.stopPropagation();
+        userMenu.classList.toggle("active");
+    };
 }
+
 
 function toProfile(){
     window.location.href = "../Profil/prof.html";
@@ -495,12 +485,12 @@ document.addEventListener("click", (e) => {
     }
 });
 
-document.addEventListener("click", (e)=>{
+document.addEventListener("click", (e) => {
 
-    const menu = document.getElementById("userMenu");
-    const info = document.getElementById("userInfo");
+    const menu = document.querySelector(".user-menu");
+    const area = document.getElementById("userArea");
 
-    if(menu && info && !menu.contains(e.target) && !info.contains(e.target)){
+    if (menu && area && !area.contains(e.target)) {
         menu.classList.remove("active");
     }
 
@@ -513,10 +503,6 @@ function toggleMenu() {
     }
 }
 
-document.addEventListener(
-"DOMContentLoaded",
-showUser
-);
 
 async function loadQuizToEdit(){
 
@@ -540,6 +526,17 @@ async function loadQuizToEdit(){
 
     questions = data.questions || [];
 
+    if (quizTagSelect) {
+      quizTagSelect.clear(true);
+
+      (data.tags || []).forEach(tag => {
+          quizTagSelect.addOption({
+              name: tag
+          });
+          quizTagSelect.addItem(tag, true);
+      });
+    }
+    
     renderQuestionsList();
 
     document.querySelector("h1").textContent =

@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil użytkownika</title>
+    <title>Profil użytkownika - WiseUp</title>
     <link rel="stylesheet" href="prof.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/toast.js" defer></script>
     <script src="prof.js" defer></script>
+    <link rel="icon" type="image/x-icon" href="/W (1).png">
 </head>
 <body>
 <header>
@@ -21,10 +23,11 @@
             <a href="../logowanie/log.html">Logowanie</a>
             <a href="../materialy/not.html">Zapisane materiały</a>
             <a href="../Profil/prof.html">Profil</a>
+            <a href="#" id="inviteFriendBtn">Dołącz znajomego</a>
             <a href="../wylogowywanie/logout.html">Wyloguj się</a>
         </div>
 
-        <h1 onclick="back()" class="logo">Nazwa strony</h1>
+        <h1 onclick="back()" class="logo">WiseUp</h1>
     </div>
 
 </header>
@@ -38,6 +41,7 @@
             <div class="field">
                 <label>Nazwa użytkownika</label>
                 <input type="text" id="username" placeholder="Wpisz nazwę użytkownika" maxlength="20">
+                <span id="usernameCounter" class="char-counter">0/20</span>
             </div>
 
             <div class="field">
@@ -65,7 +69,7 @@
             <img id="avatarImg" alt="Zdjęcie profilowe" style="display:none;">
             <span id="avatarPlaceholder">Kliknij, aby dodać zdjęcie</span>
         </div>
-        <input type="file" id="avatarInput" accept="image/*" style="display:none;">
+        <input type="file" id="avatarInput" accept=".png,.jpg,.jpeg,.webp" style="display:none;">
         <div class="saveSection">
             <button id="saveBtn">
                 <span id="btnText">ZATWIERDŹ</span>

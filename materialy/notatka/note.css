@@ -1,0 +1,233 @@
+@import url(../../main.css);
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-self: center;
+    align-items: center;
+}
+
+.note-container {
+    width: 1200px;
+    max-width: 100%;
+    margin: 40px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    border: 4px var(--primary-color) solid;
+    box-shadow: 0 5px 20px rgba(0,0,0,.1);
+}
+
+
+.title p {
+    margin: 0 6px;
+}
+#title {
+    border-bottom: 2px var(--hover-light) solid;
+    /* padding: 0 15px; */
+    /* border-radius: 15px; */
+    color: var(--primary-color);
+    font-size: 40px;
+    margin: 0 5px;
+    text-transform: capitalize;
+    
+}
+
+.author {
+    line-height: 3px;
+    margin: 20px 5px;
+}
+
+#authorAvatar {
+    height: 30px;
+    width: 30px;
+    border-radius: 100%;
+    object-fit: cover;
+}
+
+.author-info {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+#content {
+    border-radius: 15px;
+    border: 2px #ddd solid;
+    padding: 15px;
+    margin: 40px 0;
+    max-height: 700px;
+    overflow-y: scroll;
+}
+.note-tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin:10px 0;
+}
+
+.tag{
+    background:var(--hover-light);
+    color: var(--primary-color);
+    padding:4px 10px;
+    margin: 5px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:600;
+}
+
+#tags {
+    margin: 10px 0;
+}
+
+header{
+  position:relative;
+  z-index:2;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: 22px 36px;
+}
+
+.menu-btn{
+  color: var(--primary-color);
+  top: 15px;
+  left: 15px;
+  font-size: 32px;
+  cursor: pointer;
+  z-index: 1001;
+  user-select: none;
+}
+
+#likeBtn {
+    filter: invert(50%)  drop-shadow(0px 0px 5px rgba(0,0,0,0.5));
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#likeBtn:hover {
+    transform: scale(1.2);
+}
+
+#likeBtn:active {
+    transform: scale(0.9);
+}
+
+#likeBtn.active {
+    filter: brightness(0) saturate(100%) invert(29%) sepia(27%) saturate(3457%) hue-rotate(341deg) brightness(93%) contrast(92%) drop-shadow(0px 0px 5px #b23b2e7a);
+}
+.like-btn {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+/* ============================================
+   RESPONSYWNOŚĆ (telefon / tablet / komputer)
+   ============================================ */
+
+/* Laptopy / mniejsze ekrany desktopowe */
+@media (max-width: 1280px) {
+    .note-container {
+        width: 92%;
+    }
+}
+
+/* Tablety */
+@media (max-width: 768px) {
+    .note-container {
+        width: 92%;
+        margin: 20px auto;
+        padding: 22px;
+        border-radius: 18px;
+        border-width: 3px;
+    }
+
+    header {
+        padding: 16px 20px;
+    }
+
+    #title {
+        font-size: 28px;
+    }
+
+    #content {
+        max-height: 500px;
+        padding: 14px;
+        margin: 25px 0;
+        line-height: 1.6;
+    }
+}
+
+@media (max-width: 480px) {
+    .note-container {
+        width: 90%;
+        margin: 18px auto;
+        padding: 20px 16px;
+        border-radius: 16px;
+        border-width: 3px;
+    }
+
+    header {
+        padding: 14px 16px;
+    }
+
+    .title p {
+        font-size: 13px;
+        color: #999;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        margin: 0 0 2px 5px;
+    }
+
+    #title {
+        font-size: 26px;
+        padding-bottom: 8px;
+        margin-bottom: 15px;
+    }
+
+    .author {
+        margin: 18px 5px;
+    }
+
+    .author-info {
+        gap: 8px;
+    }
+
+    #authorAvatar {
+        height: 32px;
+        width: 32px;
+        border: 2px solid var(--primary-color);
+    }
+
+    #content {
+        max-height: 420px;
+        padding: 14px;
+        margin: 20px 0;
+        font-size: 15px;
+        line-height: 1.6;
+        border-radius: 12px;
+    }
+
+    .note-tags {
+        gap: 6px;
+        margin: 12px 0;
+    }
+
+    .tag {
+        font-size: 11px;
+        padding: 4px 10px;
+        margin: 3px;
+    }
+
+    .like-btn {
+        margin-top: 10px;
+    }
+
+    #likeBtn {
+        height: 38px;
+        width: 38px;
+    }
+}

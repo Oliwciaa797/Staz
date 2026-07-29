@@ -3,15 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nazwa strony</title>   
+    <title>WiseUp</title>   
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.8.1/dist/nouislider.min.css">
-    <link rel="stylesheet" href="start.css">
+    <link rel="stylesheet" href="/strona startowa/start.css">
     <script defer src="https://cdn.jsdelivr.net/npm/nouislider@15.8.1/dist/nouislider.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script defer src="start.js"></script> 
+    <!-- <script src="../history.js"></script> -->
+    <script src="/toast.js" defer></script>
+    <link rel="icon" type="image/x-icon" href="/W (1).png">
+    <script defer src="/strona startowa/start.js"></script> 
 </head>
 <body>
-
+    <div class="background-svg"></div>
 <header>
 
     <div class="top">
@@ -22,7 +25,7 @@
   
         <div id="sidebar"></div>
 
-        <h1 class="logo" onclick="back()">Nazwa strony</h1>
+        <h1 class="logo" onclick="back()">WiseUp</h1>
 
         <div id="userArea" class="user-area">
 
@@ -43,6 +46,11 @@
     </div>
 
 </header>
+
+<!-- <div id="mobilePopup" class="mobile-popup">
+    <span id="closeMobilePopup" class="mobile-popup-close">&times;</span>
+    <p>Zmień na wersję na telefon</p> -->
+</div>
 
 
     

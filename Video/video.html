@@ -4,12 +4,14 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nazwa strony</title>
-    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+    <title>WiseUp</title>
+    <link href="quill.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
-    <link rel="stylesheet" href="video.css">
+    <link rel="stylesheet" href="/Video/video.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="video.js" defer></script>
+    <script src="/toast.js" defer></script>
+    <script src="/Video/video.js" defer></script>
+    <link rel="icon" type="image/x-icon" href="/W (1).png">
 </head>
 <body>
     <header>
@@ -26,7 +28,7 @@
                 <a href="../Profil/prof.html">Profil</a>
             </div>
 
-            <h1 class="logo" onclick="back()">Nazwa strony</h1>
+            <h1 class="logo" onclick="back()">WiseUp</h1>
 
             <div id="userArea" class="user-area">
 
@@ -57,15 +59,16 @@
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowfullscreen>
                     </iframe>
+                    <div id="videoDescription"></div>
+
 
                 </div>
 
                 <div class="sidepanel">
-
                     <div class="buttons">
                         <button id="ainotes" onclick="showTab('generated')">Notatki AI</button>
                         <button id="personalnotes" onclick="showTab('personal')">Własne materiały</button>
-                        <button id="quiztab" onclick="showTab('quiz')">Quiz</button>
+                        <button id="quiztab" onclick="showTab('quiz')">Quiz AI</button>
                     </div>
                     <div class="sidepanelcontent">
                         <div id="generated" class="tab">
@@ -101,17 +104,15 @@
                         </div>
 
                             <div id="personalQuizy" class="sub-tab-panel">
-                                <button id="addQuizBtn" onclick="window.location.href='../kreator quizow/quiz.html'">+ Nowy quiz</button>
+                                <button id="addQuizBtn" onclick="goToQuizCreator()">
                                 <div id="personalQuizyContainer" class="card-grid">
                                     <p>Brak quizów.</p>
                                 </div>
                             </div>
-
                         </div>
 
                         <div id="quiz" class="tab">
-                            <h3>Quiz</h3>
-                            <p>Tutaj będzie quiz generowany automatycznie.</p>
+                            <button onclick="generateQuiz()" id="genQuizBtn">Generuj quiz</button>
                         </div>
                     </div>
                 </div>

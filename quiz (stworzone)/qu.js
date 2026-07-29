@@ -12,9 +12,101 @@ const params =
 new URLSearchParams(
     window.location.search
 );
-
+let currentUser = null;
 const quizId =
 params.get("id");
+
+async function init() {
+
+    const {
+        data: { user }
+    } = await supabaseClient.auth.getUser();
+
+    currentUser = user || null;
+
+    if (!loadedQuiz) return;
+
+    const tags = document.getElementById("tags");
+    tags.innerHTML = (loadedQuiz.tags || [])
+        .map(tag => `<span class="tag">${tag}</span>`)
+        .join("");
+
+    const { data: profile } =
+await supabaseClient
+.from("profiles")
+.select("profiles, avatar_url")
+.eq("id", loadedQuiz.user_id)
+.single();
+
+document.getElementById("author").textContent =
+profile?.profiles || "Nieznany użytkownik";
+
+const profilePicture = document.getElementById("profilePicture");
+if (profile?.avatar_url) {
+    profilePicture.src = profile.avatar_url;
+    profilePicture.style.display = "inline-block";
+} else {
+    profilePicture.style.display = "none";
+}
+
+    await checkIfSaved();
+    await loadNotes();
+
+    document
+        .getElementById("likeBtn")
+        .addEventListener("click", () => saveQuiz(loadedQuiz.id));
+}
+
+async function loadNotes() {
+
+    if (!currentUser) return;
+
+    const { data, error } = await supabaseClient
+        .from("notes")
+        .select("*")
+        .eq("user_id", currentUser.id)
+        .order("created_at", { ascending: false });
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    renderNotesList(data || []);
+}
+
+function renderNotesList(notes) {
+
+    const list = document.getElementById("notesList");
+    list.innerHTML = "";
+
+    if (notes.length === 0) {
+        list.innerHTML = "<p>Brak zapisanych notatek.</p>";
+        return;
+    }
+
+    notes.forEach(note => {
+        const item = document.createElement("div");
+        item.className = "note-item";
+        item.textContent = note.title;
+        item.addEventListener("click", () => showNoteDetail(note));
+        list.appendChild(item);
+    });
+}
+
+function showNoteDetail(note) {
+    document.getElementById("notesListView").style.display = "none";
+    document.getElementById("noteDetailView").style.display = "block";
+    document.getElementById("noteDetailTitle").textContent = note.title;
+    document.getElementById("noteDetailContent").textContent = note.content;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("noteBackBtn").addEventListener("click", () => {
+        document.getElementById("noteDetailView").style.display = "none";
+        document.getElementById("notesListView").style.display = "block";
+    });
+});
 
 let loadedQuiz = null;
 
@@ -22,6 +114,8 @@ document.addEventListener(
     "DOMContentLoaded",
     loadQuiz
 );
+
+const toast = new Toast();
 
 async function loadQuiz(){
 
@@ -50,9 +144,9 @@ async function loadQuiz(){
     ).textContent =
     data.title;
 
-    renderQuestions(
-        data.questions
-    );
+    await init();
+
+    renderQuestions(data.questions);
 }
 
 function renderQuestions(questions){
@@ -87,30 +181,21 @@ function renderQuestions(questions){
 
             ${question.options.map(
                 (option,optIndex)=>`
-
                     <label class="answer">
-
                         <input
                             type="${inputType}"
                             name="q${index}"
                             value="${optIndex}"
                         >
-
                         ${option}
-
                     </label>
-
                 `
             ).join("")}
-
         `;
-
         container.appendChild(
             questionDiv
         );
-
     });
-
 }
 
 document
@@ -135,27 +220,25 @@ function checkQuiz(){
         if(question.type === "multi"){
 
             if(checked.length === 0){
-
-                alert(
+                toast.show(
+                    'error',
+                    'Błąd',
                     `Zaznacz odpowiedź w pytaniu ${i + 1}`
                 );
-
                 return;
             }
 
         } else {
-
             if(checked.length === 0){
-
-                alert(
+                toast.show(
+                    'error',
+                    'Błąd',
                     `Zaznacz odpowiedź w pytaniu ${i + 1}`
                 );
-
                 return;
             }
-
         }
-
+        
     }
 
     let score = 0;
@@ -210,9 +293,7 @@ function checkQuiz(){
             ){
                 score++;
             }
-
         }
-
     });
 
     document.getElementById(
@@ -272,8 +353,121 @@ loadedQuiz.questions.forEach(
     });
 
 });
+
+const finishBtn = document.getElementById("finishBtn");
+
+finishBtn.textContent = "Powrót do panelu materiałów";
+
+finishBtn.onclick = () => {
+    window.location.href = "../materialy/not.html";
+};
+
 }
 
 function back() {
     history.back();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const drawer =
+        document.getElementById("materialsDrawer");
+
+    const drawerToggle =
+        document.getElementById("drawerToggle");
+
+    drawerToggle.addEventListener("click", () => {
+
+        drawer.classList.toggle("open");
+
+        if(drawer.classList.contains("open")){
+            drawerToggle.innerHTML = ">";
+        }else{
+            drawerToggle.innerHTML = "<";
+        }
+
+    });
+
+});
+``
+
+
+async function checkIfSaved() {
+    if (!currentUser) return;
+
+    const { data } = await supabaseClient
+        .from("saved_quizzes")
+        .select("id")
+        .eq("user_id", currentUser.id)
+        .eq("quiz_id", loadedQuiz.id)
+        .maybeSingle();
+
+    if (data) {
+        document.getElementById("likeBtn").classList.add("active");
+    }
+}
+
+
+async function saveQuiz(quizId) {
+
+    if (!currentUser) {
+        toast.show(
+            "error",
+            "Musisz być zalogowany",
+            "Zaloguj się, aby zapisać quiz."
+        );
+        return;
+    }
+
+    const likeBtn = document.getElementById("likeBtn");
+
+    const { data } = await supabaseClient
+        .from("saved_quizzes")
+        .select("id")
+        .eq("user_id", currentUser.id)
+        .eq("quiz_id", quizId)
+        .maybeSingle();
+
+    if (data) {
+        // Usuń zapis
+        const { error } = await supabaseClient
+            .from("saved_quizzes")
+            .delete()
+            .eq("id", data.id);
+
+        if (error) {
+            console.error(error);
+            return;
+        }
+
+        likeBtn.classList.remove("active");
+
+        toast.show(
+            "success",
+            "Gotowe!",
+            "Quiz został usunięty z zapisanych."
+        );
+
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from("saved_quizzes")
+        .insert({
+            user_id: currentUser.id,
+            quiz_id: quizId
+        });
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    likeBtn.classList.add("active");
+
+    toast.show(
+        "success",
+        "Gotowe!",
+        "Quiz został zapisany."
+    );
 }

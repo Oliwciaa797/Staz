@@ -1,5 +1,6 @@
 console.log("JS is working");
 
+const toast = new Toast();
 const SUPABASE_URL = 'https://yewyjfcrwwmftovbobwl.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlld3lqZmNyd3dtZnRvdmJvYndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2NTk0MDYsImV4cCI6MjA5OTIzNTQwNn0.-IEcT_EfGqxjS4AAIKIbmTOonaXtF0MorQ74hEXzVrQ';
 
@@ -97,14 +98,10 @@ async function search() {
 
 
     if (query === "") {
-        document.querySelector(".searchAlert").textContent =
-        "Wpisz co chcesz wyszukać!";
+        toast.show('error', 'Error', 'wpisz co chcesz wyszukać')
 
         return;
     }
-
-    document.querySelector(".searchAlert").textContent = "";
-
 
     const value = query + " tutorial";
 
@@ -120,13 +117,14 @@ async function search() {
     document.getElementById("english").checked;
 
 
-    let language = "";
+    let languages = [];
 
-    if (polish && !english) {
-        language = "pl";
+    if (polish) {
+        languages.push("pl");
     }
-    if (!polish && english) {
-        language = "en";
+
+    if (english) {
+        languages.push("en");
     }
 
 
@@ -149,7 +147,7 @@ async function search() {
     // ===== CACHE =====
 
     const cacheKey =
-    value + language + minDuration + maxDuration + ignoreDuration;
+    value + languages + minDuration + maxDuration + ignoreDuration;
 
     if (cache[cacheKey]) {
         results.innerHTML =
@@ -161,9 +159,8 @@ async function search() {
     let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=5&q=${encodeURIComponent(value)}&key=${API_KEY}`;
 
 
-    if (language !== "") {
-        url +=
-        `&relevanceLanguage=${language}`;
+    if (languages.length === 1) {
+        url += `&relevanceLanguage=${languages[0]}`;
     }
 
     try {
@@ -174,10 +171,7 @@ async function search() {
         await response.json();
 
         if (!response.ok) {
-            alert(
-                data.error?.message ||
-                "Błąd API"
-            );
+            toast.show('error', 'error', 'błąd API')
 
             return;
         }
@@ -218,7 +212,7 @@ async function search() {
             languages[item.id] =
             item.snippet.defaultAudioLanguage ||
             item.snippet.defaultLanguage ||
-            " ";
+            "";
         });
         
             const { data: ratings } =
@@ -260,21 +254,27 @@ reviewCount > 0
                 durations[id]
             );
 
+            // Filtr długości
             if (!ignoreDuration) {
-                if (
-                    minutes < minDuration ||
-                    minutes > maxDuration
-                ) {
+                if (minutes < minDuration || minutes > maxDuration) {
                     return;
                 }
             }
 
-            if(language !== " " && videoLanguage !== "") {
-                if(!videoLanguage.startsWith(language)) {
+            // Filtr języka
+            if (languages.length > 0) {
+
+                const lang = (videoLanguage || "").toLowerCase();
+
+                const match = languages.some(l =>
+                    lang.startsWith(l)
+                );
+
+                if (!match) {
                     return;
                 }
             }
-
+            if (Math.round(minutes) > 1) {
             html += `
             
             <div class="video">
@@ -291,18 +291,49 @@ reviewCount > 0
                     ${Math.round(minutes)} min
                     </p>
                         <div class="grade-box">
-                        <p class="grade-avg">Średnia ocena:${averageRating}/5 ⭐</p>
-                        <p class="review-count">${reviewCount} opinii</p>
-                        </div><br>
-                    <a target="_blank"
+                        <p class="grade-avg">${averageRating}/5 ⭐</p>
+                        
+                        <a
                         href="../Video/video.html?video=${id}">
                         Otwórz film
-                    </a>
+                        </a>
+                        </div><br>
+                    
                 </div>
             </div>
             `;
+            } else {
+                html += `
+            
+            <div class="video">
+                <img src="${video.snippet.thumbnails.medium.url}">
+
+                <div>
+                    <h3>
+                    ${video.snippet.title}
+                    </h3>
+                    <p>
+                    ${video.snippet.channelTitle}
+                    </p>
+                    <p>
+                    < 1 min
+                    </p>
+                        <div class="grade-box">
+                        <p class="grade-avg">${averageRating}/5 ⭐</p>
+                        
+                        <a 
+                        href="../Video/video.html?video=${id}">
+                        Otwórz film
+                        </a>
+                        </div><br>
+                    
+                </div>
+            </div>
+            `;
+            }
         });
 
+// <p class="review-count">${reviewCount} opinii</p>
         if (html === "") {
             document.querySelector(".searchAlert").textContent =
             "Brak filmów spełniających filtry.";
@@ -318,54 +349,14 @@ reviewCount > 0
 
     catch(error) {
         console.error(error);
-        alert(
+        toast.show(
+            'error',
+            'Błąd',
             "Nie można połączyć się z YouTube."
         );
     }
 }
-const averageRating = (
-        reviews.reduce((sum, r) => sum + r.rating, 0) /
-        reviews.length
-    ).toFixed(1);
 
-    document.querySelector(".grade-avg").textContent =
-        `Średnia ocena: ${averageRating}/5 ⭐`;
-
-    document.querySelector(".review-count").textContent =
-        `${reviews.length} opinii`;
-
-    container.innerHTML =
-    reviews.map(review => {
-
-        const date =
-        new Date(review.created_at)
-        .toLocaleString("pl-PL");
-
-        return `
-            <div class="review-item">
-
-                <div class="review-header">
-
-                    <div class="review-user">
-                        ${escapeHtml(review.profiles?.profiles || "Użytkownik")}
-                    </div>
-
-                    <div class="review-date">
-                        ${date}
-                    </div>
-                </div>
-
-                <div class="review-rating">
-                    ${"⭐".repeat(review.rating)}
-                </div>
-
-                <div class="review-text">
-                    ${escapeHtml(review.comment || "")}
-                </div>
-
-            </div>
-        `;
-    }).join("");
 
 function categoryDropdown() {
     const dropdown =
@@ -385,7 +376,7 @@ function goToLogin() {
 // tutaj sie zaczyna show us
 
 async function showUser() {
-
+    
     const userArea = document.getElementById("userArea");
 
     const { data: { user } } = await supabaseClient.auth.getUser();
@@ -539,3 +530,102 @@ document.addEventListener("click", () => {
     }
 
 });
+
+// Mobile version popup
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    console.log("Popup script started");
+
+    const popup = document.getElementById("mobilePopup");
+    const closeBtn = document.getElementById("closeMobilePopup");
+
+    console.log("Popup:", popup);
+
+    if (!popup) return;
+
+    // TEST
+    popup.classList.add("show");
+
+    const dismissed = localStorage.getItem("mobilePopupDismissed");
+
+    if (window.innerWidth <= 768 && dismissed !== "true") {
+        setTimeout(() => {
+            popup.classList.add("show");
+        }, 500);
+    }
+
+    popup.addEventListener("click", () => {
+        window.location.href =
+            "../Staz-telefon/strona%20startowa/start.html";
+    });
+
+    if (closeBtn) {
+        closeBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+
+            popup.classList.remove("show");
+            popup.classList.add("hide");
+
+            localStorage.setItem(
+                "mobilePopupDismissed",
+                "true"
+            );
+        });
+    }
+});
+
+
+
+// async function loadHistory() {
+
+//     const dropdown = document.getElementById("history-dropdown");
+
+//     const {
+//         data: { user }
+//     } = await supabaseClient.auth.getUser();
+
+//     if (!user) return;
+
+//     const { data } = await supabaseClient
+//         .from("watch_history")
+//         .select("video_id")
+//         .eq("user_id", user.id)
+//         .order("watched_at", { ascending:false })
+//         .limit(10);
+
+//     dropdown.innerHTML = "";
+
+//     data.forEach(video => {
+
+//         dropdown.innerHTML += `
+//             <a class="history-video"
+//                href="../Video/video.html?video=${video.video_id}">
+
+//                 <img src="https://img.youtube.com/vi/${video.video_id}/default.jpg">
+
+//                 <span>${video.title}</span>
+
+//             </a>
+//         `;
+//     });
+
+
+//     const { info, error } = await supabaseClient
+//     .from("watch_history")
+//     .select("video_id")
+//     .eq("user_id", user.id)
+//     .order("watched_at", { ascending: false })
+//     .limit(10);
+
+//     console.log(error);
+//     console.log(info);
+//     // dropdown.innerHTML += `
+//     //     <hr>
+
+//     //     <a class="history-video" href="../History/history.html">
+//     //         View Full History
+//     //     </a>
+//     // `;
+// }
+

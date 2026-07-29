@@ -1,0 +1,165 @@
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap');
+
+:root {
+    --hover-white: #f3f3f3;
+    --background: #FFFAF2;
+    --primary-color: #33411C;
+    --secondary-color: #6B7259;
+    --hover-light: #CBD6AE;
+    --hover-sidebar: #565b48;
+    --hover-dark: #4b5e28;
+    --danger: #B23B2E;
+    --shadow: #23281a1b;
+}
+
+/* Reset */
+
+* {
+    box-sizing: border-box;
+}
+
+body,
+header,
+button {
+    font-family: 'Baloo 2', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* SIDEBAR */
+
+#sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 85%;
+    max-width: 320px;
+    height: 100vh;
+
+    background: var(--secondary-color);
+
+    display: flex;
+    flex-direction: column;
+
+    padding-top: 70px;
+
+    transition: left 0.3s ease;
+    z-index: 1000;
+
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.15);
+}
+
+#sidebar.active {
+    left: 0;
+}
+
+#sidebar a {
+    color: white;
+    text-decoration: none;
+
+    padding: 18px 24px;
+
+    font-size: 1.1rem;
+    font-weight: 600;
+
+    transition: background 0.2s ease;
+}
+
+#sidebar a:hover {
+    background-color: var(--hover-sidebar);
+}
+
+/* TABLETY */
+
+@media (min-width: 768px) {
+    #sidebar {
+        width: 280px;
+        left: -280px;
+    }
+
+    #sidebar.active {
+        left: 0;
+    }
+}
+
+/* DESKTOP */
+
+@media (min-width: 1200px) {
+    #sidebar {
+        width: 320px;
+        left: -320px;
+    }
+}
+
+/* SCROLLBAR */
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #81926a #f4f2ec;
+}
+
+*::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+    background: #f4f2ec;
+    border-radius: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: #81926a;
+    border-radius: 8px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: #787f5c;
+}
+
+*::-webkit-scrollbar-thumb:active {
+    background: #676d4f;
+}
+
+*::-webkit-scrollbar-button {
+    display: none;
+}
+
+.menu-btn {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+
+    width: 48px;
+    height: 48px;
+
+    border-radius: 12px;
+    border: none;
+
+
+    color: var(--primary-color);
+
+    font-size: 24px;
+
+
+    z-index: 1100;
+}
+
+.sidebar-overlay {
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0,0,0,0.4);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition: 0.3s;
+
+    z-index: 999;
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
