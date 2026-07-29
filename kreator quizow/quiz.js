@@ -41,6 +41,8 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
    }
    ============================================================ */
 
+const params = new URLSearchParams(window.location.search);
+const videoId = params.get("video");
 let currentUser = null;
 let questions = [];
 
@@ -50,13 +52,33 @@ const TYPE_LABELS = {
   boolean: 'Prawda / Fałsz'
 };
 
-/* ---------- Toast ---------- */
-function showToast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(()=> t.classList.remove('show'), 2600);
+let quizTagSelect;
+
+async function loadQuizTags() {
+
+    const { data, error } = await supabaseClient
+        .from("tags")
+        .select("name")
+        .order("name");
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    quizTagSelect = new TomSelect("#quizTags", {
+        plugins: ["remove_button"],
+        valueField: "name",
+        labelField: "name",
+        searchField: "name",
+        options: data,
+        create: true,
+        persist: false
+    });
+
 }
+
+const toast = new Toast();
 
 function escapeHtml(str){
   const d = document.createElement('div');
@@ -89,11 +111,15 @@ async function init(){
     }
     document.getElementById('authNotice').style.display = 'none';
     document.getElementById('quizBuilder').style.display = 'block';
+
+    await loadQuizTags();
     renderQuestionsList();
   } catch (e) {
     console.error(e);
-    showToast('Nie udało się połączyć z Supabase.');
+    toast.show('error','Błąd','Nie udało się połączyć z Supabase.');
   }
+
+  updateSidebar()
 }
 
 /* ============================================================
@@ -147,7 +173,7 @@ function renderQuestionForm(type){
     document.getElementById('qfCancelBtn').addEventListener('click', resetAddQuestionUI);
     document.getElementById('qfAddBtn').addEventListener('click', () => {
       const text = document.getElementById('qfText').value.trim();
-      if(!text){ showToast('Podaj treść pytania.'); return; }
+      if(!text){ toast.show('error','Błąd','Podaj treść pytania.'); return; }
       const correctVal = document.querySelector('input[name="qfBoolCorrect"]:checked').value;
 
       questions.push({
@@ -190,7 +216,7 @@ function renderQuestionForm(type){
 
   function addOptionRow(){
     const rows = optionsList.querySelectorAll('.option-row').length;
-    if(rows >= 6){ showToast('Maksymalnie 6 opcji.'); return; }
+    if(rows >= 6){ toast.show('error','Błąd','Maksymalnie 6 opcji.'); return; }
     const row = document.createElement('div');
     row.className = 'option-row';
     row.innerHTML = `
@@ -200,7 +226,7 @@ function renderQuestionForm(type){
     `;
     row.querySelector('.remove-option').addEventListener('click', () => {
       if(optionsList.querySelectorAll('.option-row').length <= 2){
-        showToast('Pytanie musi mieć co najmniej 2 opcje.');
+        toast.show('error','Błąd','Pytanie musi mieć co najmniej 2 opcje.');
         return;
       }
       row.remove();
@@ -217,7 +243,7 @@ function renderQuestionForm(type){
 
   document.getElementById('qfAddBtn').addEventListener('click', () => {
     const text = document.getElementById('qfText').value.trim();
-    if(!text){ showToast('Podaj treść pytania.'); return; }
+    if(!text){ toast.show('error','Błąd','Podaj treść pytania.'); return; }
 
     const rows = Array.from(optionsList.querySelectorAll('.option-row'));
     const options = [];
@@ -232,8 +258,8 @@ function renderQuestionForm(type){
       }
     });
 
-    if(options.length < 2){ showToast('Podaj co najmniej 2 wypełnione opcje.'); return; }
-    if(correct.length === 0){ showToast('Zaznacz co najmniej jedną poprawną odpowiedź.'); return; }
+    if(options.length < 2){toast.show('error','Błąd','Podaj co najmniej 2 wypełnione opcje.'); return; }
+    if(correct.length === 0){ toast.show('error','Błąd','Zaznacz co najmniej jedną poprawną odpowiedź.'); return; }
 
     questions.push({
       id: genId(),
@@ -299,7 +325,7 @@ function renderQuestionsList(){
    ============================================================ */
 document.getElementById('saveQuizBtn').addEventListener('click', async () => {
   if(!currentUser){
-    showToast('Zaloguj się, aby zapisać quiz.');
+    toast.show('error','Zaloguj się','Zaloguj się, aby zapisać quiz.');
     return;
   }
 
@@ -307,12 +333,28 @@ document.getElementById('saveQuizBtn').addEventListener('click', async () => {
   const isPublic = document.getElementById('quizPublic').checked;
 
   if(!title){
-    showToast('Podaj nazwę quizu.');
+    toast.show('error','Błąd','Podaj nazwę quizu.');
     return;
   }
   if(questions.length === 0){
-    showToast('Dodaj co najmniej jedno pytanie.');
+    toast.show('error', 'Błąd','Dodaj co najmniej jedno pytanie.');
     return;
+  }
+
+  const tags = quizTagSelect.items;
+
+  for (const tag of tags) {
+
+      const { data } = await supabaseClient
+          .from("tags")
+          .select("id")
+          .eq("name", tag);
+
+      if (!data || data.length === 0) {
+          await supabaseClient
+              .from("tags")
+              .insert({ name: tag });
+      }
   }
 
   const btn = document.getElementById('saveQuizBtn');
@@ -323,18 +365,20 @@ document.getElementById('saveQuizBtn').addEventListener('click', async () => {
     user_id: currentUser.id,
     title,
     is_public: isPublic,
-    questions
+    questions,
+    tags
+    // video_id: videoId
   });
 
   btn.disabled = false;
   btn.textContent = 'ZAPISZ QUIZ';
 
   if(error){
-    showToast('Błąd zapisu: ' + error.message);
+    toast.show('error','Błąd zapisu: ', error.message);
     return;
   }
 
-  showToast('Quiz zapisany!');
+  toast.show('success','Gotowe!','Quiz zapisany!');
   setTimeout(() => { window.location.href = "../materialy/not.html"; }, 900);
 });
 
@@ -374,11 +418,11 @@ async function showUser() {
         userMenu.classList.toggle("active");
     };
 
-    document.addEventListener("click", (e) => {
-        if (!document.getElementById("userArea").contains(e.target)) {
-            userMenu.classList.remove("active");
-        }
-    });
+    // document.addEventListener("click", (e) => {
+    //     if (!document.getElementById("userArea").contains(e.target)) {
+    //         userMenu.classList.remove("active");
+    //     }
+    // });
 }
 
 /* ----------sidebar----------*/
@@ -417,26 +461,42 @@ document.getElementById("menuBtn").addEventListener("click", (e) => {
 });
 
 document.addEventListener("click", (e) => {
-    const sidebar = document.getElementById("sidebar");
 
+    // Sidebar
+    const sidebar = document.getElementById("sidebar");
     if (
+        sidebar &&
         sidebar.classList.contains("active") &&
-        !sidebar.contains(e.target)
+        !sidebar.contains(e.target) &&
+        e.target.id !== "menuBtn"
     ) {
         sidebar.classList.remove("active");
     }
-});
 
-document.addEventListener("click", (e)=>{
+    // Menu użytkownika
+    const userArea = document.getElementById("userArea");
+    const userMenu = document.getElementById("userMenu");
 
-    const menu = document.getElementById("userMenu");
-    const info = document.getElementById("userInfo");
-
-    if(menu && info && !menu.contains(e.target) && !info.contains(e.target)){
-        menu.classList.remove("active");
+    if (
+        userArea &&
+        userMenu &&
+        !userArea.contains(e.target)
+    ) {
+        userMenu.classList.remove("active");
     }
 
 });
+
+// document.addEventListener("click", (e)=>{
+
+//     const menu = document.getElementById("userMenu");
+//     const info = document.getElementById("userInfo");
+
+//     if(menu && info && !menu.contains(e.target) && !info.contains(e.target)){
+//         menu.classList.remove("active");
+//     }
+
+// });
 
 function toggleMenu() {
     const sidebar = document.getElementById("sidebar");
@@ -445,10 +505,10 @@ function toggleMenu() {
     }
 }
 
-document.addEventListener(
-"DOMContentLoaded",
-showUser
-);
+// document.addEventListener(
+// "DOMContentLoaded",
+// showUser
+// );
 
 supabaseClient.auth.onAuthStateChange(async () => {
     await showUser();

@@ -408,7 +408,7 @@
   border: none;
   cursor: pointer;
   display: inline-block;
-  float: left;
+  
   height: 24px;
   padding: 3px 5px;
   width: 28px;
@@ -645,7 +645,6 @@
 .ql-snow .ql-picker {
   color: #444;
   display: inline-block;
-  float: left;
   font-size: 14px;
   font-weight: 500;
   height: 24px;
@@ -943,4 +942,67 @@
 }
 .ql-container.ql-snow {
   border: 1px solid #ccc;
+}
+
+/* ============================================
+   RESPONSYWNOŚĆ (telefon / tablet / komputer)
+   dopisane niestandardowo, poza oryginalnym Quill
+   ============================================ */
+
+@media (max-width: 768px) {
+  .ql-toolbar.ql-snow {
+    padding: 6px;
+  }
+
+  .ql-toolbar.ql-snow .ql-formats {
+    margin-right: 8px;
+    margin-bottom: 4px;
+  }
+
+  .ql-snow .ql-picker.ql-header,
+  .ql-snow .ql-picker.ql-font {
+    width: 80px;
+  }
+
+  .ql-snow .ql-picker.ql-size {
+    width: 70px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ql-container {
+    height: auto;
+    min-height: 200px;
+  }
+
+  .ql-toolbar.ql-snow {
+    padding: 4px;
+  }
+
+  .ql-toolbar.ql-snow .ql-formats {
+    margin-right: 6px;
+  }
+
+  .ql-snow.ql-toolbar button,
+  .ql-snow .ql-toolbar button {
+    height: 22px;
+    width: 24px;
+    padding: 2px 3px;
+  }
+
+  .ql-snow .ql-picker.ql-header,
+  .ql-snow .ql-picker.ql-font {
+    width: 64px;
+    font-size: 12px;
+  }
+
+  .ql-snow .ql-picker.ql-size {
+    width: 56px;
+    font-size: 12px;
+  }
+
+  .ql-editor {
+    padding: 8px 10px;
+    font-size: 14px;
+  }
 }

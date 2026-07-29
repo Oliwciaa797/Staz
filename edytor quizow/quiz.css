@@ -379,3 +379,71 @@ main{
 }
 .btn-primary:hover{ background: var(--hover-dark); }
 .btn-primary:disabled{ opacity:.5; cursor:not-allowed; }
+@media (max-width: 768px) {
+  header{
+    padding: 14px 18px;
+  }
+
+  main{
+    padding: 0 12px;
+    margin: 10px auto 40px;
+  }
+
+  .panel{
+    padding: 24px 20px 28px;
+    border-width: 3px;
+    border-radius: 16px;
+  }
+
+  .panel h1{
+    font-size: 26px;
+  }
+
+  .type-options{
+    grid-template-columns: 1fr;
+  }
+
+  .question-form{
+    padding: 16px 14px;
+  }
+
+  .question-item{
+    padding: 14px 16px;
+  }
+
+  .question-item-top{
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .question-form-actions{
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-primary, .btn-secondary{
+    width: 100%;
+    text-align: center;
+  }
+}
+
+#quizTitle {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 25px;
+    font-weight: bold;
+    border-bottom: 2px var(--hover-light) solid;
+    padding: 0;
+    max-width: 930px;
+}
+
+.title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.title > label {
+    margin: 0 7px;
+    align-self: flex-start;
+}

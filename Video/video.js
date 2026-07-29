@@ -11,6 +11,7 @@ supabase.createClient(
 
 console.log("video.js loaded");
 
+const MAX_NOTE_CHARS = 100000;
 
 
 /* ---------- Pomocnicze: bezpieczne wstawianie tekstu do HTML ---------- */
@@ -23,13 +24,6 @@ function escapeAttr(str){
     return escapeHtml(str).replace(/"/g, '&quot;');
 }
 
-function toggleMenu() {
-    const sidebar = document.getElementById("sidebar");
-    if (sidebar) {
-        sidebar.classList.toggle("active");
-    }
-}
-
 function goToLogin() {
     window.location.href = "../logowanie/log.html";
 }
@@ -40,7 +34,10 @@ const player = document.getElementById("youtubeVideo");
 
 if (videoId) {
     console.log("Video ID:", videoId);
-    player.src = `https://www.youtube.com/embed/${videoId}?rel=0`;
+    if (player && videoId) {
+        player.src = `https://www.youtube.com/embed/${videoId}?rel=0`;
+    }
+
 } else {
     console.error("Brak video ID");
     document.getElementById("notesContent").innerHTML = "Nie znaleziono filmu.";
@@ -91,34 +88,56 @@ let currentQuiz = [];
 
 async function generateQuiz() {
 
-    const response = await fetch("http://127.0.0.1:5000/quiz", {
-        method:"POST",
-        headers:{
-            "Content-Type":"application/json"
-        },
-        body:JSON.stringify({
-            url:`https://www.youtube.com/watch?v=${videoId}`
-        })
-    });
+    const quizContainer = document.getElementById("quiz");
 
-    const data = await response.json();
+    try {
 
-    currentQuiz = data.quiz.questions;
-    console.log(Array.isArray(data.quiz.questions));
-    displayQuiz(currentQuiz);
+        const response = await fetch("http://127.0.0.1:5000/quiz", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                url: `https://www.youtube.com/watch?v=${videoId}`
+            })
+        });
+
+        if (!response.ok) {
+            toast.show('error', 'Error', "Nie udało się wygenerować quizu.");
+            return;
+        }
+
+        const data = await response.json();
+
+        // Backend może zwrócić pytania pod różnymi kluczami - obsłuż oba warianty
+        currentQuiz = data.questions || data.quiz || [];
+
+        if (!currentQuiz.length) {
+            toast.show('error', 'Error', "Backend nie zwrócił żadnych pytań.");
+            return;
+        }
+
+        displayQuiz(currentQuiz);
+
+    } catch (error) {
+        console.error(error);
+        toast.show('error', 'Error', "Nie udało się połączyć z backendem.");
+    }
 }
-function displayQuiz(quiz) {
+
+
+function displayQuiz(questions) {
 
     const container = document.getElementById("quiz");
 
     container.innerHTML = "";
 
-    quiz.forEach((q, index) => {
+    questions.forEach((q, index) => {
 
         const div = document.createElement("div");
 
         div.innerHTML = `
-            <h3>${index + 1}. ${q.question}</h3>
+            <h3>${index + 1}. ${escapeHtml(q.question)}</h3>
 
             ${q.answers.map((a, i) => `
                 <label>
@@ -126,7 +145,7 @@ function displayQuiz(quiz) {
                         type="radio"
                         name="q${index}"
                         value="${i}">
-                    ${a}
+                    ${escapeHtml(a)}
                 </label><br>
             `).join("")}
 
@@ -136,9 +155,9 @@ function displayQuiz(quiz) {
         container.appendChild(div);
     });
 
-    // Add the submit button AFTER all questions
     const button = document.createElement("button");
-    button.textContent = "Submit Quiz";
+    button.id = "submitQuiz";
+    button.textContent = "Sprawdź Quiz";
     button.onclick = checkQuiz;
 
     container.appendChild(button);
@@ -159,10 +178,17 @@ function checkQuiz() {
         }
     });
 
-    alert(`Your score: ${score}/${currentQuiz.length}`);
+    const button = document.getElementById("submitQuiz");
+
+    const result = document.createElement("h2");
+    result.style.textAlign = 'center';
+    result.style.color = '#33411C';
+    result.textContent = `Twój wynik: ${score}/${currentQuiz.length}`;
+
+    button.replaceWith(result);
 }
 
-/* ---------- Przełączanie głównych zakładek (Notatki AI / Własne materiały / Quiz) ---------- */
+/* ---------- Przełączanie głównych zakładek (Notatki AI / Quiz) ---------- */
 function showTab(tabId) {
 
     console.log("Przełączam na:", tabId);
@@ -179,26 +205,9 @@ function showTab(tabId) {
 // Domyślnie pokaż pierwszą zakładkę
 showTab("generated");
 
-/* ---------- Przełączanie pod-zakładek w "Własne materiały" (Notatki / Quizy) ---------- */
-function showSubTab(subTabId){
-
-    document.querySelectorAll(".sub-tab-btn").forEach(btn => btn.classList.remove("active"));
-    document.querySelectorAll(".sub-tab-panel").forEach(panel => panel.classList.remove("active"));
-
-    const btn = document.querySelector(`.sub-tab-btn[data-subtab="${subTabId}"]`);
-    if(btn) btn.classList.add("active");
-
-    const panel = document.getElementById(subTabId);
-    if(panel) panel.classList.add("active");
-
-    if(subTabId === "personalQuizy"){
-        loadUserQuizy();
-    }
-}
-
 let userRating = 0;
 
-// Set star rating
+// Ustawienie oceny gwiazdkowej
 async function setRating(stars) {
 
     userRating = stars;
@@ -229,11 +238,11 @@ async function setRating(stars) {
 
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    loadVideoDescription();
-});
 /* ---------- Wczytanie i wyświetlenie recenzji ---------- */
 async function loadReviews() {
+
+    // Potrzebne, żeby oznaczyć własną recenzję (badge "Twoja opinia")
+    const { data: { user } } = await supabaseClient.auth.getUser();
 
     const sort =
         document.getElementById("sortReviews")?.value || "newest";
@@ -310,18 +319,6 @@ async function loadReviews() {
         return;
     }
 
-    const formatDate = (date) => {
-
-    return new Date(date).toLocaleDateString("pl-PL", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-    });
-
-};
-
     const averageRating = (
         reviews.reduce((sum, r) => sum + r.rating, 0) /
         reviews.length
@@ -340,13 +337,16 @@ async function loadReviews() {
         new Date(review.created_at)
         .toLocaleString("pl-PL");
 
+        const myReview = !!(user && review.user_id === user.id);
+
         return `
-            <div class="review-item">
+                <div class="review-item ${myReview ? 'my-review' : ''}">
 
                 <div class="review-header">
 
                     <div class="review-user">
                         ${escapeHtml(review.profiles?.profiles || "Użytkownik")}
+                        ${myReview ? '<span class="badge">Twoja opinia</span>' : ''}
                     </div>
 
                     <div class="review-date">
@@ -367,9 +367,11 @@ async function loadReviews() {
     }).join("");
 }
 
-// Load reviews when page loads
+const toast = new Toast();
+// Wczytaj recenzje po załadowaniu strony
 document.addEventListener('DOMContentLoaded', loadReviews);
 let errorMsg = document.getElementById('errorMsg');
+
 async function submitReview() {
 
     const {
@@ -377,21 +379,48 @@ async function submitReview() {
     } = await supabaseClient.auth.getUser();
 
     if (!user) {
-        alert("Zaloguj się");
+        toast.show('error', 'Zaloguj się', 'Zaloguj się aby wstawić opinie')
         return;
     }
-
 
     const reviewText =
         document.getElementById("reviewText").value;
 
     if (userRating === 0) {
-        errorMsg.textContent = "Wybierz ocenę."
+        errorMsg.textContent = "Wybierz ocenę.";
         return;
     }
 
-    const { error } =
-        await supabaseClient
+    errorMsg.textContent = "";
+
+    const { data: existing, error: checkError } =
+    await supabaseClient
+        .from("video_reviews")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("video_id", videoId)
+        .maybeSingle();
+
+    if (existingReview) {
+        toast.show('error','Błąd',"Dodałeś już opinię do tego filmu.");
+        return;
+    }
+
+    let result;
+
+    if(existing){
+
+        result = await supabaseClient
+            .from("video_reviews")
+            .update({
+                rating: userRating,
+                comment: reviewText
+            })
+            .eq("id", existing.id);
+
+    }else{
+
+        result = await supabaseClient
             .from("video_reviews")
             .insert({
                 video_id: videoId,
@@ -400,24 +429,29 @@ async function submitReview() {
                 comment: reviewText
             });
 
-    if (error) {
-        console.error(error);
-        alert(error.message);
+        }
+
+        if (error.code === "23505") {
+            toast.show('error','Błąd',"Dodałeś już opinię do tego filmu.");
+            return;
+        }
+
+    if(result.error){
+        console.error(result.error);
+        toast.show('error', 'Error', result.error.message);
         return;
     }
 
-    alert("Opinia dodana!");
-
-    document.getElementById("reviewText").value = "";
-
-    userRating = 0;
-
-    document
-        .querySelectorAll(".rating-stars .star")
-        .forEach(star => star.classList.remove("active"));
+    toast.show(
+        'success',
+        'Gotowe!',
+        existing ? "Opinia zaktualizowana!" : "Opinia dodana!"
+    );
 
     loadReviews();
+    loadMyReview();
 }
+
 
 async function showUser() {
 
@@ -495,7 +529,6 @@ info.addEventListener("click", (e) => {
 function toProfile(){
     window.location.href = "../Profil/prof.html";
 }
-document.addEventListener("DOMContentLoaded", showUser);
 
 async function updateSidebar() {
 
@@ -519,10 +552,13 @@ async function updateSidebar() {
         `;
     }
 }
+
 document.addEventListener("DOMContentLoaded", () => {
     showUser();
     updateSidebar();
     loadAllNoteLists();
+    loadMyReview();
+    checkSavedMaterial();
 });
 
 function back(){
@@ -581,6 +617,11 @@ function createPersonalNote() {
 
         <div class="quill-container"></div>
 
+        <div class="char-counter">
+            <span class="currentChars">0</span> / 100000 znaków
+        </div>
+
+
         <div class="visibility-toggle">
             <input 
                 type="checkbox" 
@@ -626,6 +667,26 @@ function createPersonalNote() {
 
     });
 
+    const counter = div.querySelector(".char-counter");
+    const current = div.querySelector(".currentChars");
+
+    function updateCounter() {
+
+        const length = Math.max(0, noteQuill.getLength() - 1);
+
+        current.textContent = length;
+
+        counter.classList.toggle(
+            "limit-reached",
+            length >= MAX_NOTE_CHARS
+        );
+    }
+
+noteQuill.on("text-change", updateCounter);
+
+updateCounter();
+
+
 }
 function timeAgo(date){
 
@@ -645,7 +706,7 @@ function timeAgo(date){
 
 /* ---------- Renderowanie pojedynczej karty notatki ---------- */
 function renderNoteCard(note, { editable, showAuthor }){
-
+console.log(note);
     const div = document.createElement('div');
     div.className = 'item-card';
     div.dataset.id = note.id;
@@ -698,6 +759,10 @@ function enterNoteEditMode(card, note){
         <div class="field">
             <label>Treść</label>
             <div class="edit-quill"></div>
+            <div class="char-counter">
+                <span class="currentChars">0</span> / 100000 znaków
+            </div>
+
         </div>
 
         <div class="card-footer">
@@ -737,6 +802,26 @@ function enterNoteEditMode(card, note){
     // wczytanie starej treści
     editQuill.root.innerHTML = note.content || "";
 
+    const counter = card.querySelector(".char-counter");
+    const current = card.querySelector(".currentChars");
+
+    function updateCounter(){
+
+        const length = Math.max(0, editQuill.getLength() - 1);
+
+        current.textContent = length;
+
+        counter.classList.toggle(
+            "limit-reached",
+            length >= MAX_NOTE_CHARS
+        );
+    }
+
+editQuill.on("text-change", updateCounter);
+
+updateCounter();
+
+
 
     card.querySelector(".cancel-edit")
     .addEventListener("click",()=>{
@@ -759,11 +844,18 @@ function enterNoteEditMode(card, note){
 
         const plainText =
         editQuill.getText().trim();
+        const length = Math.max(0, editQuill.getLength() - 1);
+
+        if (length > MAX_NOTE_CHARS) {
+            toast.show('error','Błąd',"Notatka może mieć maksymalnie 100000 znaków.");
+            return;
+        }
+
 
 
 
         if(!plainText){
-            alert("Treść notatki nie może być pusta.");
+            toast.show('error', 'Błąd', 'Treść notatki nie może być pusta!');
             return;
         }
 
@@ -780,8 +872,10 @@ function enterNoteEditMode(card, note){
 
 
         if(error){
-            alert(
-                "Nie udało się zapisać zmian: "
+            toast.show(
+                'error',
+                'Error',
+                'Nie udało się zapisać zmian: '
                 + error.message
             );
             return;
@@ -795,6 +889,7 @@ function enterNoteEditMode(card, note){
 }
 /* ---------- Wczytywanie 3 list ---------- */
 async function loadPersonalNotes(){
+
 
     const { data: { user } } = await supabaseClient.auth.getUser();
     const container = document.getElementById("personalNotesContainer");
@@ -839,6 +934,9 @@ async function loadMyOtherNotes(){
     }
 
     const { data, error } = await supabaseClient
+        console.log("Other Notes:", data)
+        console.log("Error:", error)
+        console.log("Current videoId:", videoId)
         .from('notes')
         .select('*')
         .eq('user_id', user.id)
@@ -868,6 +966,8 @@ async function loadPublicVideoNotes(){
     if(!container) return;
 
     const { data, error } = await supabaseClient
+        console.log("Public Notes:", data)
+        console.log("Error:", error)
         .from('notes')
         .select(`
             *,
@@ -909,7 +1009,7 @@ async function deletePersonalNote(id){
 
     if(error){
         console.error(error);
-        alert("Nie udało się usunąć notatki.");
+        toast.show('error', 'Błąd', "Nie udało się usunąć notatki.");
         return;
     }
 
@@ -925,7 +1025,7 @@ async function togglePersonalNoteVisibility(id, currentlyPublic){
 
     if(error){
         console.error(error);
-        alert("Nie udało się zmienić widoczności.");
+        toast.show('error','Błąd',"Nie udało się zmienić widoczności.");
         return;
     }
 
@@ -952,18 +1052,25 @@ document.addEventListener("click", async (e) => {
 
         const plainText =
         noteQuill.getText().trim();
+        const length = Math.max(0, noteQuill.getLength() - 1);
+
+        if (length > MAX_NOTE_CHARS) {
+            toast.show('error','Błąd',"Notatka może mieć maksymalnie 100000 znaków.");
+            return;
+        }
+
         const publicInput = card.querySelector(".notePublicInput");
         const isPublic = publicInput ? publicInput.checked : false;
 
         if(!plainText){
-            alert("Wpisz treść notatki");
+            toast.show('error', 'Błąd',"Wpisz treść notatki");
             return;
         }
 
         const { data: { user } } = await supabaseClient.auth.getUser();
 
         if(!user){
-            alert("Zaloguj się");
+            toast.show('error', 'Zaloguj się', "Zaloguj się aby stworzyć notatkę");
             return;
         }
 
@@ -977,7 +1084,7 @@ document.addEventListener("click", async (e) => {
 
         if(error){
             console.error(error);
-            alert(error.message);
+            toast.show('error','Błąd', error.message);
             return;
         }
 
@@ -1016,6 +1123,21 @@ document.addEventListener("click", async (e) => {
         return;
     }
 
+    if(e.target.classList.contains("open-quiz-btn")){
+        openQuiz(e.target.dataset.id);
+        return;
+    }
+
+    if(e.target.classList.contains("toggle-quiz-vis")){
+        toggleQuizVisibility(e.target.dataset.id, e.target.dataset.public === "true");
+        return;
+    }
+
+    if(e.target.classList.contains("deleteQuizBtn")){
+        deleteUserQuiz(e.target.dataset.id);
+        return;
+    }
+
 });
 
 /* ============================================================
@@ -1024,26 +1146,60 @@ document.addEventListener("click", async (e) => {
    tutaj tylko wyświetlamy i usuwamy)
    ============================================================ */
 
-async function loadUserQuizy(){
+/* ---------- Renderowanie pojedynczej karty quizu (analogicznie do notatek) ---------- */
+function renderQuizCard(quiz, { editable, showAuthor }){
 
-    const container =
-    document.getElementById("personalQuizyContainer");
+    const div = document.createElement('div');
+    div.className = 'item-card';
+    div.dataset.id = quiz.id;
 
-    const {
-        data:{user}
-    } = await supabaseClient.auth.getUser();
+    const count = Array.isArray(quiz.questions) ? quiz.questions.length : 0;
+
+    const badge = quiz.is_public
+        ? '<span class="badge public">Publiczny</span>'
+        : '<span class="badge private">Prywatny</span>';
+
+    const footerLeft = showAuthor
+        ? escapeHtml(quiz.profiles?.profiles || "Użytkownik")
+        : timeAgo(quiz.created_at);
+
+    div.innerHTML = `
+        ${badge}
+        <h3>${escapeHtml(quiz.title || "Bez tytułu")}</h3>
+        <p>${count} ${count === 1 ? 'pytanie' : 'pytań'}</p>
+        <button type="button" class="go-btn big-btn open-quiz-btn" data-id="${quiz.id}">Rozwiąż quiz</button>
+        <div class="card-footer">
+            <span>${footerLeft}</span>
+            ${editable ? `
+            <div class="card-actions">
+                <button type="button" class="toggle-quiz-vis" data-id="${quiz.id}" data-public="${quiz.is_public}">
+                    ${quiz.is_public ? 'Ukryj' : 'Upublicznij'}
+                </button>
+                <button type="button" class="deleteQuizBtn" data-id="${quiz.id}">Usuń</button>
+            </div>` : ''}
+        </div>
+    `;
+
+    return div;
+}
+
+/* ---------- Twoje quizy do tego filmu ---------- */
+async function loadPersonalQuizzes(){
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const container = document.getElementById("personalQuizyContainer");
 
     if(!user){
         container.innerHTML = "<p>Zaloguj się, aby zobaczyć swoje quizy.</p>";
         return;
     }
 
-    const { data, error } =
-    await supabaseClient
-    .from('quizzes')
-    .select('*')
-    .eq('user_id', user.id)
-    .order('created_at', { ascending:false });
+    const { data, error } = await supabaseClient
+        .from('quizzes')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('video_id', videoId)
+        .order('created_at', { ascending: false });
 
     if(error){
         console.error(error);
@@ -1051,45 +1207,102 @@ async function loadUserQuizy(){
         return;
     }
 
+    container.innerHTML = "";
+
     if(!data || data.length === 0){
-        container.innerHTML = "<p>Brak quizów.</p>";
+        container.innerHTML = "<p>Brak quizów do tego filmu.</p>";
         return;
     }
 
-    container.innerHTML =
-    data.map(quiz => {
+    data.forEach(quiz => container.appendChild(renderQuizCard(quiz, { editable: true, showAuthor: false })));
+}
 
-        const count =
-        Array.isArray(quiz.questions) ? quiz.questions.length : 0;
+/* ---------- Twoje pozostałe quizy (inne filmy) ---------- */
+async function loadMyOtherQuizzes(){
 
-        const badge =
-        quiz.is_public ? "Publiczny" : "Prywatny";
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const container = document.getElementById("myOtherQuizyContainer");
+    if(!container) return;
 
-        return `
-            <div class="item-card" data-id="${quiz.id}">
-                <span class="badge ${quiz.is_public ? 'public' : 'private'}">${badge}</span>
-                <h3>${escapeHtml(quiz.title)}</h3>
-                <p>${count} ${count === 1 ? 'pytanie' : 'pytań'}</p>
-                <button class="go-btn big-btn" onclick="openQuiz('${quiz.id}')">Rozwiąż quiz</button>
-                <div class="card-footer">
-                    <div class="card-actions">
-                        <button class="toggle-quiz-vis" data-id="${quiz.id}" data-public="${quiz.is_public}">
-                            ${quiz.is_public ? 'Ukryj' : 'Upublicznij'}
-                        </button>
-                        <button class="deleteQuizBtn" data-id="${quiz.id}">Usuń</button>
-                    </div>
-                </div>
-            </div>
-        `;
-    }).join("");
+    if(!user){
+        container.innerHTML = "<p>Zaloguj się, aby zobaczyć swoje quizy.</p>";
+        return;
+    }
 
-    container.querySelectorAll(".deleteQuizBtn").forEach(btn => {
-        btn.addEventListener("click", () => deleteUserQuiz(btn.dataset.id));
-    });
+    const { data, error } = await supabaseClient
+        .from('quizzes')
+        .select('*')
+        .eq('user_id', user.id)
+        .neq('video_id', videoId)
+        .order('created_at', { ascending: false });
 
-    container.querySelectorAll(".toggle-quiz-vis").forEach(btn => {
-        btn.addEventListener("click", () => toggleQuizVisibility(btn.dataset.id, btn.dataset.public === "true"));
-    });
+    if(error){
+        console.error(error);
+        container.innerHTML = "<p>Nie udało się wczytać quizów.</p>";
+        return;
+    }
+
+    container.innerHTML = "";
+
+    if(!data || data.length === 0){
+        container.innerHTML = "<p>Brak innych quizów.</p>";
+        return;
+    }
+
+    data.forEach(quiz => container.appendChild(renderQuizCard(quiz, { editable: true, showAuthor: false })));
+}
+
+/* ---------- Quizy publiczne innych użytkowników do tego filmu ---------- */
+async function loadPublicVideoQuizzes(){
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const container = document.getElementById("publicVideoQuizyContainer");
+    if(!container) return;
+
+    const { data, error } = await supabaseClient
+        .from('quizzes')
+        .select(`
+            *,
+            profiles!user_id ( profiles, avatar_url )
+        `)
+        .eq('video_id', videoId)
+        .eq('is_public', true)
+        .order('created_at', { ascending: false });
+
+    if(error){
+        console.error(error);
+        container.innerHTML = "<p>Nie udało się wczytać quizów publicznych.</p>";
+        return;
+    }
+
+    const filtered = user ? (data || []).filter(q => q.user_id !== user.id) : (data || []);
+
+    container.innerHTML = "";
+
+    if(filtered.length === 0){
+        container.innerHTML = "<p>Brak quizów publicznych do tego filmu.</p>";
+        return;
+    }
+
+    filtered.forEach(quiz => container.appendChild(renderQuizCard(quiz, { editable: false, showAuthor: true })));
+}
+
+async function loadAllQuizLists(){
+    await loadPersonalQuizzes();
+    await loadMyOtherQuizzes();
+    await loadPublicVideoQuizzes();
+}
+
+// Przejście do tworzenia nowego quizu, z przekazaniem ID bieżącego filmu,
+// żeby kreator zapisał quiz z poprawnym video_id
+function goToQuizCreator(){
+    window.location.href = `../kreator quizow/quiz.html?video=${videoId}`;
+}
+
+// Przejście do rozwiązywania konkretnego quizu (kreator quizow/quiz.html musi
+// odczytać ?quiz=ID z URL i wczytać pytania z tabeli "quizzes")
+function openQuiz(id){
+    window.location.href = `../kreator quizow/quiz.html?quiz=${id}`;
 }
 
 async function toggleQuizVisibility(id, currentlyPublic){
@@ -1104,11 +1317,11 @@ async function toggleQuizVisibility(id, currentlyPublic){
 
     if(error){
         console.error(error);
-        alert("Nie udało się zmienić widoczności quizu.");
+        toast.show('error','Błąd', "Nie udało się zmienić widoczności quizu.");
         return;
     }
 
-    loadUserQuizy();
+    loadAllQuizLists();
 }
 
 async function deleteUserQuiz(id){
@@ -1122,12 +1335,47 @@ async function deleteUserQuiz(id){
     .eq("id", id);
 
     if(error){
-        alert("Nie udało się usunąć quizu.");
+        toast.show('error', 'Błąd', "Nie udało się usunąć quizu.");
         return;
     }
 
-    loadUserQuizy();
-    
+    loadAllQuizLists();
+
+}
+
+let materialSaved = false;
+
+/* Sprawdzenie, czy bieżący film jest już zapisany przez użytkownika
+   (ustawia stan przycisku przy wczytaniu strony) */
+async function checkSavedMaterial(){
+
+    const btn = document.getElementById("saveMaterialBtn");
+    if(!btn) return;
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    if(!user){
+        materialSaved = false;
+        btn.classList.remove("saved");
+        btn.innerHTML = "❤️ Zapisz";
+        return;
+    }
+
+    const { data, error } = await supabaseClient
+        .from("saved_materials")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("video_id", videoId)
+        .maybeSingle();
+
+    if(error){
+        console.error(error);
+        return;
+    }
+
+    materialSaved = !!data;
+    btn.classList.toggle("saved", materialSaved);
+    btn.innerHTML = materialSaved ? "❤️ Zapisano" : "❤️ Zapisz";
 }
 
 async function saveMaterial() {
@@ -1136,10 +1384,35 @@ async function saveMaterial() {
         await supabaseClient.auth.getUser();
 
     if (!user) {
-        alert("Zaloguj się");
+        toast.show('error','Zaloguj się',"Zaloguj się aby zapisać materiał");
         return;
     }
 
+    const btn = document.getElementById("saveMaterialBtn");
+
+    // Materiał już zapisany -> usuwamy zapis i wracamy do normalnego koloru
+    if(materialSaved){
+
+        const { error } = await supabaseClient
+            .from("saved_materials")
+            .delete()
+            .eq("user_id", user.id)
+            .eq("video_id", videoId);
+
+        if(error){
+            console.error(error);
+            toast.show('error','Błąd', error.message);
+            return;
+        }
+
+        materialSaved = false;
+        btn.classList.remove("saved");
+        btn.innerHTML = "❤️ Zapisz";
+        toast.show('success','Gotowe!', "Materiał usunięty z zapisanych.");
+        return;
+    }
+
+    // Materiał jeszcze niezapisany -> zapisujemy i zmieniamy kolor przycisku
     const { error } =
         await supabaseClient
             .from("saved_materials")
@@ -1148,19 +1421,26 @@ async function saveMaterial() {
                 video_id: videoId
             });
 
-if (error) {
+    if (error) {
 
-    if (error.code === "23505") {
-        alert("Ten materiał jest już zapisany.");
+        if (error.code === "23505") {
+            // Już zapisane w bazie (np. z innej karty) - dostosuj wygląd przycisku
+            materialSaved = true;
+            btn.classList.add("saved");
+            btn.innerHTML = "❤️ Zapisano";
+            toast.show('error','Błąd',"Ten materiał jest już zapisany.");
+            return;
+        }
+
+        console.error(error);
+        toast.show('error','Błąd',error.message);
         return;
     }
 
-    console.error(error);
-    alert(error.message);
-    return;
-}
-
-    alert("Materiał zapisany!");
+    materialSaved = true;
+    btn.classList.add("saved");
+    btn.innerHTML = "❤️ Zapisano";
+    toast.show('success','Gotowe!', "Materiał został zapisany!");
 }
 
 function reportError(){
@@ -1169,3 +1449,29 @@ function reportError(){
     "../zglaszanie bledow/blad.html";
 
 }
+
+async function saveWatchHistory(videoId) {
+    const {
+        data: { user }
+    } = await supabaseClient.auth.getUser();
+
+    if (!user) return;
+
+    const { error } = await supabaseClient
+        .from("watch_history")
+        .insert({
+            user_id: user.id,
+            video_id: videoId
+        });
+
+    if (error) {
+        console.error("Couldn't save history:", error);
+    }
+}
+
+if (videoId) {
+    player.src = `https://www.youtube.com/embed/${videoId}?rel=0`;
+
+    loadReviews();
+}
+

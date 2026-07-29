@@ -8,9 +8,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <!-- <link rel="stylesheet" href="../materialy/not.css"> -->
 <link rel="stylesheet" href="quiz.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css">
 <!-- Klient Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <!-- Logika strony -->
+ <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+<script src="/toast.js"defer></script>
 <script src="quiz.js" defer></script>
 </head>
 <body>
@@ -33,7 +36,7 @@
         <span id="profileName"></span>
     </div>
 
-    <div class="user-menu">
+    <div class="user-menu" id="userMenu">
         <a href="../Profil/prof.html">Profil</a>
         <a href="../wylogowywanie/logout.html">Wyloguj się</a>
     </div>
@@ -64,6 +67,15 @@
         <div class="visibility-toggle">
           <input type="checkbox" id="quizPublic">
           <label for="quizPublic">Quiz publiczny (widoczny dla innych)</label>
+        </div>
+        <div class="field">
+            <label for="quizTags">Tagi</label>
+
+            <select
+                id="quizTags"
+                multiple
+                placeholder="np. matematyka, algebra, egzamin">
+            </select>
         </div>
       </div>
 

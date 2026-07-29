@@ -1,5 +1,6 @@
 console.log("JS is working");
 
+const toast = new Toast();
 const SUPABASE_URL = 'https://yewyjfcrwwmftovbobwl.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlld3lqZmNyd3dtZnRvdmJvYndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2NTk0MDYsImV4cCI6MjA5OTIzNTQwNn0.-IEcT_EfGqxjS4AAIKIbmTOonaXtF0MorQ74hEXzVrQ';
 
@@ -97,14 +98,10 @@ async function search() {
 
 
     if (query === "") {
-        document.querySelector(".searchAlert").textContent =
-        "Wpisz co chcesz wyszukać!";
+        toast.show('error', 'Error', 'wpisz co chcesz wyszukać')
 
         return;
     }
-
-    document.querySelector(".searchAlert").textContent = "";
-
 
     const value = query + " tutorial";
 
@@ -174,10 +171,7 @@ async function search() {
         await response.json();
 
         if (!response.ok) {
-            alert(
-                data.error?.message ||
-                "Błąd API"
-            );
+            toast.show('error', 'error', 'błąd API')
 
             return;
         }
@@ -280,7 +274,7 @@ reviewCount > 0
                     return;
                 }
             }
-
+            if (Math.round(minutes) > 1) {
             html += `
             
             <div class="video">
@@ -299,7 +293,7 @@ reviewCount > 0
                         <div class="grade-box">
                         <p class="grade-avg">${averageRating}/5 ⭐</p>
                         
-                        <a target="_blank"
+                        <a
                         href="../Video/video.html?video=${id}">
                         Otwórz film
                         </a>
@@ -308,7 +302,37 @@ reviewCount > 0
                 </div>
             </div>
             `;
+            } else {
+                html += `
+            
+            <div class="video">
+                <img src="${video.snippet.thumbnails.medium.url}">
+
+                <div>
+                    <h3>
+                    ${video.snippet.title}
+                    </h3>
+                    <p>
+                    ${video.snippet.channelTitle}
+                    </p>
+                    <p>
+                    < 1 min
+                    </p>
+                        <div class="grade-box">
+                        <p class="grade-avg">${averageRating}/5 ⭐</p>
+                        
+                        <a 
+                        href="../Video/video.html?video=${id}">
+                        Otwórz film
+                        </a>
+                        </div><br>
+                    
+                </div>
+            </div>
+            `;
+            }
         });
+
 // <p class="review-count">${reviewCount} opinii</p>
         if (html === "") {
             document.querySelector(".searchAlert").textContent =
@@ -325,7 +349,9 @@ reviewCount > 0
 
     catch(error) {
         console.error(error);
-        alert(
+        toast.show(
+            'error',
+            'Błąd',
             "Nie można połączyć się z YouTube."
         );
     }
@@ -350,7 +376,7 @@ function goToLogin() {
 // tutaj sie zaczyna show us
 
 async function showUser() {
-
+    
     const userArea = document.getElementById("userArea");
 
     const { data: { user } } = await supabaseClient.auth.getUser();
@@ -548,3 +574,58 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
+
+
+// async function loadHistory() {
+
+//     const dropdown = document.getElementById("history-dropdown");
+
+//     const {
+//         data: { user }
+//     } = await supabaseClient.auth.getUser();
+
+//     if (!user) return;
+
+//     const { data } = await supabaseClient
+//         .from("watch_history")
+//         .select("video_id")
+//         .eq("user_id", user.id)
+//         .order("watched_at", { ascending:false })
+//         .limit(10);
+
+//     dropdown.innerHTML = "";
+
+//     data.forEach(video => {
+
+//         dropdown.innerHTML += `
+//             <a class="history-video"
+//                href="../Video/video.html?video=${video.video_id}">
+
+//                 <img src="https://img.youtube.com/vi/${video.video_id}/default.jpg">
+
+//                 <span>${video.title}</span>
+
+//             </a>
+//         `;
+//     });
+
+
+//     const { info, error } = await supabaseClient
+//     .from("watch_history")
+//     .select("video_id")
+//     .eq("user_id", user.id)
+//     .order("watched_at", { ascending: false })
+//     .limit(10);
+
+//     console.log(error);
+//     console.log(info);
+//     // dropdown.innerHTML += `
+//     //     <hr>
+
+//     //     <a class="history-video" href="../History/history.html">
+//     //         View Full History
+//     //     </a>
+//     // `;
+// }
+
