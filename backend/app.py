@@ -12,10 +12,6 @@ CORS(app)
 app.register_blueprint(youtube)
 app.register_blueprint(quiz)
 
-@app.route("/")
-def home():
-    return {"status": "ok"}
-
 if __name__ == "__main__":
     app.run(
         host="0.0.0.0",
