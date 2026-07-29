@@ -26,36 +26,78 @@ async function init() {
 
     if (!loadedQuiz) return;
 
-    const tags =
-        document.getElementById("tags");
-
-    tags.innerHTML =
-        (loadedQuiz.tags || [])
+    const tags = document.getElementById("tags");
+    tags.innerHTML = (loadedQuiz.tags || [])
         .map(tag => `<span class="tag">${tag}</span>`)
         .join("");
 
-    const { data: profile } =
-    await supabaseClient
-    .from("profiles")
-    .select("profiles, avatar_url")
-    .eq("id", loadedQuiz.user_id)
-    .single();
+    const { data: profile } = await supabaseClient
+        .from("profiles")
+        .select("profiles")
+        .eq("id", loadedQuiz.user_id)
+        .single();
 
     document.getElementById("author").textContent =
         profile?.profiles || "Nieznany użytkownik";
 
-    document.getElementById("authorAvatar").src =
-        profile?.avatar_url || "../Profil/avatar.png";
-
     await checkIfSaved();
+    await loadNotes();
 
     document
         .getElementById("likeBtn")
-        .addEventListener(
-            "click",
-            () => saveQuiz(loadedQuiz.id)
-        );
+        .addEventListener("click", () => saveQuiz(loadedQuiz.id));
 }
+
+async function loadNotes() {
+
+    if (!currentUser) return;
+
+    const { data, error } = await supabaseClient
+        .from("notes")
+        .select("*")
+        .eq("user_id", currentUser.id)
+        .order("created_at", { ascending: false });
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    renderNotesList(data || []);
+}
+
+function renderNotesList(notes) {
+
+    const list = document.getElementById("notesList");
+    list.innerHTML = "";
+
+    if (notes.length === 0) {
+        list.innerHTML = "<p>Brak zapisanych notatek.</p>";
+        return;
+    }
+
+    notes.forEach(note => {
+        const item = document.createElement("div");
+        item.className = "note-item";
+        item.textContent = note.title;
+        item.addEventListener("click", () => showNoteDetail(note));
+        list.appendChild(item);
+    });
+}
+
+function showNoteDetail(note) {
+    document.getElementById("notesListView").style.display = "none";
+    document.getElementById("noteDetailView").style.display = "block";
+    document.getElementById("noteDetailTitle").textContent = note.title;
+    document.getElementById("noteDetailContent").textContent = note.content;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("noteBackBtn").addEventListener("click", () => {
+        document.getElementById("noteDetailView").style.display = "none";
+        document.getElementById("notesListView").style.display = "block";
+    });
+});
 
 let loadedQuiz = null;
 
