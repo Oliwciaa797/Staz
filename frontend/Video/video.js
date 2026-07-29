@@ -346,7 +346,7 @@ async function loadReviews() {
 
                     <div class="review-user">
                         ${escapeHtml(review.profiles?.profiles || "Użytkownik")}
-                        ${myReview ? '<span class="badge">Twoja opinia</span>' : ''}
+                        ${myReview ? '<span class="badge">Twoja opinia</span> <button type="button" class="edit-review-link" onclick="editMyReview()">Edytuj</button>' : ''}
                     </div>
 
                     <div class="review-date">
@@ -934,14 +934,11 @@ async function loadMyOtherNotes(){
     }
 
     const { data, error } = await supabaseClient
-        .from('notes')
-        .select('*')
-        .eq('user_id', user.id)
-        .neq('video_id', videoId)
-        .order('created_at', { ascending: false });
-        console.log("Other Notes:", data)
-        console.log("Error:", error)
-        console.log("Current videoId:", videoId)
+    .from('notes')
+    .select('*')
+    .eq('user_id', user.id)
+    .neq('video_id', videoId)
+    .order('created_at', { ascending: false });
 
     if(error){
         console.error(error);
@@ -966,8 +963,6 @@ async function loadPublicVideoNotes(){
     if(!container) return;
 
     const { data, error } = await supabaseClient
-        console.log("Public Notes:", data)
-        console.log("Error:", error)
         .from('notes')
         .select(`
             *,
@@ -1475,3 +1470,122 @@ if (videoId) {
     loadReviews();
 }
 
+function showSubTab(subTabId) {
+
+    document.querySelectorAll(".sub-tab-panel")
+        .forEach(panel => panel.classList.remove("active"));
+
+    document.querySelectorAll(".sub-tab-btn")
+        .forEach(btn => btn.classList.remove("active"));
+
+    document.getElementById(subTabId).classList.add("active");
+
+    document
+        .querySelector(`.sub-tab-btn[data-subtab="${subTabId}"]`)
+        .classList.add("active");
+
+    if (subTabId === "personalQuizy") {
+        loadAllQuizLists();
+    }
+}
+
+let editingReviewId = null;
+
+async function loadMyReview(){
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if(!user) return;
+
+    const { data, error } = await supabaseClient
+        .from("video_reviews")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("video_id", videoId)
+        .maybeSingle();
+
+    if(error){
+        console.error(error);
+        return;
+    }
+
+    const submitBtn = document.querySelector(".user-review button");
+
+    if(data){
+        editingReviewId = data.id;
+        setRating(data.rating);
+        document.getElementById("reviewText").value = data.comment || "";
+        if(submitBtn) submitBtn.textContent = "Zapisz zmiany";
+    } else {
+        editingReviewId = null;
+        if(submitBtn) submitBtn.textContent = "Prześlij opinię";
+    }
+}
+
+async function submitReview() {
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    if (!user) {
+        toast.show('error', 'Zaloguj się', 'Zaloguj się aby wstawić opinie');
+        return;
+    }
+
+    const reviewText = document.getElementById("reviewText").value;
+
+    if (userRating === 0) {
+        errorMsg.textContent = "Wybierz ocenę.";
+        return;
+    }
+
+    errorMsg.textContent = "";
+
+    let result;
+
+    if (editingReviewId) {
+
+        result = await supabaseClient
+            .from("video_reviews")
+            .update({
+                rating: userRating,
+                comment: reviewText
+            })
+            .eq("id", editingReviewId);
+
+    } else {
+
+        result = await supabaseClient
+            .from("video_reviews")
+            .insert({
+                video_id: videoId,
+                user_id: user.id,
+                rating: userRating,
+                comment: reviewText
+            });
+    }
+
+    if (result.error) {
+
+        if (result.error.code === "23505") {
+            toast.show('error', 'Błąd', "Dodałeś już opinię do tego filmu.");
+            return;
+        }
+
+        console.error(result.error);
+        toast.show('error', 'Error', result.error.message);
+        return;
+    }
+
+    toast.show(
+        'success',
+        'Gotowe!',
+        editingReviewId ? "Opinia zaktualizowana!" : "Opinia dodana!"
+    );
+
+    loadReviews();
+    loadMyReview();
+}
+
+function editMyReview(){
+    loadMyReview();
+    document.querySelector(".user-review").scrollIntoView({ behavior: "smooth", block: "center" });
+}

@@ -340,14 +340,27 @@ header{
     padding: 12px 16px;
   }
 
+  .page{
+    padding-top: 90px; /* kompensacja fixed headera */
+    align-items: flex-start;
+  }
+
   .profile-container{
+    position: relative;
     flex-direction: column;
     align-items: center;
     min-height: auto;
-    padding: 30px 24px;
+    padding: 70px 24px 30px; /* miejsce na strzałkę + tytuł na górze */
     border-width: 3px;
     border-radius: 24px;
     gap: 30px;
+  }
+
+  #arrow{
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    z-index: 2;
   }
 
   .left-section{
@@ -355,14 +368,18 @@ header{
     order: 2;
   }
 
-  .right-section{
-    order: 1;
+  .left-section h1{
+    position: absolute;
+    top: 20px;
+    left: 60px;
+    right: 24px;
+    margin: 0;
+    font-size: 24px;
+    text-align: left;
   }
 
-  .left-section h1{
-    font-size: 34px;
-    margin-bottom: 20px;
-    text-align: center;
+  .right-section{
+    order: 1;
   }
 
   .field label{
@@ -370,7 +387,7 @@ header{
   }
 
   .field input{
-    font-size: 16px; /* zapobiega auto-zoomowi na iOS */
+    font-size: 16px;
     border-bottom-width: 2px;
   }
 
@@ -394,13 +411,53 @@ header{
     max-width: 270px;
     font-size: 20px;
   }
-}
 
-@media (max-width: 480px){
-  .left-section h1{
-    font-size: 26px;
+  #arrowToProjects{
+    display: none;
   }
+}
+@media (max-width: 480px){
   .field{
     margin-bottom: 22px;
+  }
+
+  .page{
+    padding-top: 80px;
+  }
+
+  .profile-container{
+    padding: 60px 16px 22px;
+    border-radius: 18px;
+  }
+
+  #arrow{
+    top: 18px;
+    left: 16px;
+  }
+
+  .left-section h1{
+    top: 16px;
+    left: 50px;
+    right: 16px;
+    font-size: 19px;
+  }
+
+  .avatar{
+    width: 110px;
+    height: 110px;
+  }
+
+  .field input{
+    font-size: 15px;
+  }
+
+  #saveBtn{
+    font-size: 17px;
+    height: 48px;
+  }
+
+  .invite-friend-box input,
+  .invite-friend-box button{
+    font-size: 13px;
   }
 }

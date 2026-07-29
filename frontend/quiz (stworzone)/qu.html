@@ -21,9 +21,8 @@
         </div>
         <div id="tags"></div>
         <div class="author">
-            <p style="color: #666; font-size: 15px;">Autor</p>
+            <img src="" id="profilePicture" alt="">
             <div class="author-info">
-            <img src="../Profil/avatar.png" alt="Profie picture" id="authorAvatar">
             <p id="author"></p>
             </div>
         </div>
@@ -42,21 +41,20 @@
 </div>
 <div id="materialsDrawer" class="materials-drawer">
 
-    <div id="drawerToggle" class="drawer-toggle">
-        
-    </div>
+    <div id="drawerToggle" class="drawer-toggle"></div>
 
     <div class="drawer-content">
 
-        <h2>Informacje o quizie</h2>
+        <div id="notesListView">
+            <h2>Twoje notatki</h2>
+            <div id="notesList"></div>
+        </div>
 
-        <p id="drawerQuizTitle"></p>
-
-        <p id="drawerQuestionCount"></p>
-
-        <p id="drawerScorePreview">
-            Wynik pojawi się po zakończeniu.
-        </p>
+        <div id="noteDetailView" style="display:none;">
+            <img src="arrow.png" id="noteBackBtn" class="note-back" height="20" width="20" alt="wróć">
+            <h2 id="noteDetailTitle"></h2>
+            <p id="noteDetailContent"></p>
+        </div>
 
     </div>
 
