@@ -31,14 +31,23 @@ async function init() {
         .map(tag => `<span class="tag">${tag}</span>`)
         .join("");
 
-    const { data: profile } = await supabaseClient
-        .from("profiles")
-        .select("profiles")
-        .eq("id", loadedQuiz.user_id)
-        .single();
+    const { data: profile } =
+await supabaseClient
+.from("profiles")
+.select("profiles, avatar_url")
+.eq("id", loadedQuiz.user_id)
+.single();
 
-    document.getElementById("author").textContent =
-        profile?.profiles || "Nieznany użytkownik";
+document.getElementById("author").textContent =
+profile?.profiles || "Nieznany użytkownik";
+
+const profilePicture = document.getElementById("profilePicture");
+if (profile?.avatar_url) {
+    profilePicture.src = profile.avatar_url;
+    profilePicture.style.display = "inline-block";
+} else {
+    profilePicture.style.display = "none";
+}
 
     await checkIfSaved();
     await loadNotes();

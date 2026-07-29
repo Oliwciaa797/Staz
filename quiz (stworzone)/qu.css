@@ -243,3 +243,18 @@ header{
     white-space: pre-wrap;
     line-height:1.5;
 }
+
+.author{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    line-height:normal;
+}
+
+#profilePicture{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    object-fit:cover;
+    border:2px solid var(--primary-color);
+}
