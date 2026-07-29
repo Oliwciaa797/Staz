@@ -1,0 +1,115 @@
+@import url(../main.css);
+* {
+	box-sizing: border-box;
+}
+
+body {
+	position: relative;
+	display: flex;
+	overflow: hidden;
+	justify-content: center;
+	align-items: center;
+	min-height: 100vh;
+	margin: 0;
+	background: var(--background);
+}
+
+.profile-container {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	padding: 20px;
+}
+
+.left-section {
+	position: relative;
+	width: 100%;
+	max-width: 420px;
+	padding: 40px 44px;
+	border: 4px solid var(--primary-color);
+	border-radius: 28px;
+	background: #fff;
+}
+
+#arrow {
+	display: flex;
+	align-items: center;
+	width: 28px;
+	height: 28px;
+	margin-bottom: 20px;
+	cursor: pointer;
+}
+
+h1 {
+	margin: 0 0 30px 0;
+	color: var(--primary-color);
+	font-size: 32px;
+	font-weight: 800;
+}
+
+.error {
+	min-height: 16px;
+	margin: -14px 0 14px 0;
+	color: var(--danger);
+	font-size: 13px;
+}
+
+button {
+	width: 100%;
+	margin-top: 10px;
+	padding: 14px;
+	border: none;
+	border-radius: 20px;
+	background: var(--primary-color);
+	color: #fff;
+	font-size: 15px;
+	font-weight: 700;
+	letter-spacing: 0.3px;
+	transition: background 0.2s ease, transform 0.1s ease;
+	cursor: pointer;
+}
+
+button:hover {
+	background: var(--hover-dark);
+}
+
+button:active {
+	transform: scale(0.98);
+}
+
+button:disabled {
+	background: #a9b89a;
+	cursor: not-allowed;
+}
+
+#status {
+	min-height: 18px;
+	margin-top: 18px;
+	color: var(--primary-color);
+	font-size: 14px;
+	text-align: center;
+}
+
+@media (max-width: 480px) {
+  .profile-container{
+    padding: 12px;
+  }
+
+  .left-section{
+    padding: 28px 22px;
+    border-width: 3px;
+    border-radius: 20px;
+  }
+
+  h1{
+    font-size: 24px;
+    margin-bottom: 22px;
+  }
+
+  button{
+    padding: 12px;
+    font-size: 14px;
+  }
+}

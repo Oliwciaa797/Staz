@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WiseUp</title>   
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.8.1/dist/nouislider.min.css">
+    <link rel="stylesheet" href="/strona startowa/start.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/nouislider@15.8.1/dist/nouislider.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- <script src="../history.js"></script> -->
+    <script src="../toast.js"></script>
+    <script defer src="/strona startowa/start.js"></script> 
+</head>
+<body>
+    <div class="background-svg"></div>
+<header>
+
+    <div class="top">
+
+        <div id="menuBtn">
+            ☰
+        </div>
+  
+        <div id="sidebar"></div>
+
+        <h1 class="logo" onclick="back()">WiseUp</h1>
+
+        <div id="userArea" class="user-area">
+
+            <div class="user-info">
+                <img src="avatar.png" class="avatar">
+                <span>Witaj, </span>
+            </div>
+
+    <div class="user-menu">
+
+        <a href="../Profil/prof.html">Profil</a>
+
+        <a href="../wylogowywanie/logout.html">Wyloguj się</a>
+
+    </div>
+
+</div>
+    </div>
+
+</header>
+
+<!-- <div id="mobilePopup" class="mobile-popup">
+    <span id="closeMobilePopup" class="mobile-popup-close">&times;</span>
+    <p>Zmień na wersję na telefon</p> -->
+</div>
+
+
+    
+    <main id="mainContent">
+        <h2 id="welcomeText">Witamy! Czego się dzisiaj nauczysz?</h2>
+        <div class="searchSection">
+            <div class="search-box" id="searchBox">
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="wpisz coś..."
+                >
+                <button id="searchBtn" class="lupa">
+                    <img src="magnifying-glass.png" height="25px" width="25px" style="position: relative; transform: translateY(5px);">
+                </button>
+            </div>
+            <div style="color:red; font-size:15px; margin:10px;" class="searchAlert"></div>
+            <div class="buttons">
+                <button onclick="search()">SZUKAJ</button>
+                <div class="filters">
+                    <button id="filtersBtn" onclick="categoryDropdown()">
+                        FILTRY
+                    </button>
+                        <div id="filtersDropdown" class="dropdown-content">
+                            <div class="language">
+                                <h3>Język</h3>
+                                <label for="polish" class="checkbox">
+                                    <input class="checkbox__input" type="checkbox" id="polish">
+                                    <svg class="checkbox__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22">
+                                        <rect width="21" height="21" x=".5" y=".5"
+                                            fill="#FFF" stroke="#264500" rx="3" />
+                                        <path class="tick"
+                                            stroke="#6EA340"
+                                            fill="none"
+                                            stroke-linecap="round"
+                                            stroke-width="4"
+                                            d="M4 10l5 5 9-9" />
+                                    </svg>
+                                    <span class="checkbox__label">
+                                        Język polski
+                                    </span>
+                                </label>
+                                <label for="english" class="checkbox">
+                                    <input class="checkbox__input" type="checkbox" id="english">
+                                    <svg class="checkbox__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22">
+                                        <rect width="21" height="21" x=".5" y=".5"
+                                            fill="#FFF" stroke="#264500" rx="3" />
+                                        <path class="tick"
+                                            stroke="#6EA340"
+                                            fill="none"
+                                            stroke-linecap="round"
+                                            stroke-width="4"
+                                            d="M4 10l5 5 9-9" />
+                                    </svg>
+                                    <span class="checkbox__label">
+                                        Język angielski
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="duration">
+                                <h3>Czas trwania</h3>
+                                    <span id="durationValue"></span>
+                                
+                                <div id="slider"></div>
+                                <label for="durationCheckbox" class="checkbox">
+                                    <input 
+                                        class="checkbox__input" 
+                                        type="checkbox" 
+                                        id="durationCheckbox"
+                                        checked
+                                    >
+                                    <svg class="checkbox__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22">
+                                        <rect width="21" height="21" x=".5" y=".5"
+                                            fill="#FFF" stroke="#264500" rx="3" />
+                                        <path class="tick"
+                                            stroke="#6EA340"
+                                            fill="none"
+                                            stroke-linecap="round"
+                                            stroke-width="4"
+                                            d="M4 10l5 5 9-9" />
+                                    </svg>
+                                    <span class="checkbox__label">
+                                        Nie zależy
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="resultBox">
+            <div id="results"></div>
+        </div>
+    </main>
+    
+    
+</body>
+</html>
