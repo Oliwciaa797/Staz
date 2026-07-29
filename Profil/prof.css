@@ -340,6 +340,11 @@ header{
     padding: 12px 16px;
   }
 
+  .page{
+    padding-top: 90px; /* kompensacja fixed headera */
+    align-items: flex-start;
+  }
+
   .profile-container{
     flex-direction: column;
     align-items: center;
@@ -394,6 +399,10 @@ header{
     max-width: 270px;
     font-size: 20px;
   }
+
+  #arrowToProjects{
+    display: none; /* strzałka pozycjonowana absolutnie nie ma sensu w układzie kolumnowym */
+  }
 }
 
 @media (max-width: 480px){
@@ -402,5 +411,33 @@ header{
   }
   .field{
     margin-bottom: 22px;
+  }
+
+  .page{
+    padding-top: 80px;
+  }
+
+  .profile-container{
+    padding: 22px 16px;
+    border-radius: 18px;
+  }
+
+  .avatar{
+    width: 110px;
+    height: 110px;
+  }
+
+  .field input{
+    font-size: 15px;
+  }
+
+  #saveBtn{
+    font-size: 17px;
+    height: 48px;
+  }
+
+  .invite-friend-box input,
+  .invite-friend-box button{
+    font-size: 13px;
   }
 }

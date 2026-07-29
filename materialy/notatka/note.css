@@ -37,8 +37,21 @@ body {
 }
 
 .author {
-    line-height: 5px;
+    line-height: 3px;
     margin: 20px 5px;
+}
+
+#authorAvatar {
+    height: 30px;
+    width: 30px;
+    border-radius: 100%;
+    object-fit: cover;
+}
+
+.author-info {
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
 
 #content {
@@ -187,5 +200,25 @@ header{
         font-size: 11px;
         padding: 3px 8px;
         margin: 3px;
+    }
+}
+@media (max-width: 480px){
+
+    .author-info{
+        flex-wrap: wrap;
+    }
+
+    #authorAvatar{
+        height: 26px;
+        width: 26px;
+    }
+
+    #likeBtn{
+        height: 32px;
+        width: 32px;
+    }
+
+    .note-tags{
+        gap: 4px;
     }
 }

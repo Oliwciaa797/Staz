@@ -512,3 +512,122 @@ main.search-mode{
     transform: translateX(-120%);
     pointer-events: none;
 }
+/* ============================================
+   RESPONSYWNOŚĆ - strona główna
+   ============================================ */
+
+@media (max-width: 900px){
+
+    header{
+        padding: 15px 20px;
+    }
+
+    .logo{
+        font-size: 1.5rem;
+    }
+
+    .user-info .avatar,
+    .avatar{
+        width: 36px;
+        height: 36px;
+    }
+
+    main{
+        width: 100%;
+        margin: 4vh auto;
+    }
+
+    #welcomeText{
+        font-size: 2rem;
+        padding: 0 10px;
+    }
+
+    .search-box{
+        width: 100%;
+    }
+
+    .buttons{
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .buttons button{
+        padding: 12px 24px;
+        font-size: 14px;
+    }
+
+    .dropdown-content{
+        min-width: 90vw;
+        max-width: 90vw;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .duration{
+        margin: auto 10px;
+    }
+
+    #slider{
+        width: 90%;
+    }
+
+    #results{
+        grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
+        gap: 15px;
+        margin-top: 25px;
+    }
+}
+
+@media (max-width: 480px){
+
+    .logo{
+        font-size: 1.2rem;
+    }
+
+    #welcomeText{
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+
+    .search-box input{
+        padding: 10px 12px;
+        font-size: 1rem;
+    }
+
+    .search-box button{
+        padding: 0 14px;
+        font-size: 1.2rem;
+    }
+
+    .buttons{
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .buttons button{
+        width: 100%;
+    }
+
+    #results{
+        grid-template-columns: 1fr;
+    }
+
+    .user-menu{
+        width: 160px;
+    }
+
+    .dropdown-content{
+        padding: 15px;
+    }
+
+    .language{
+        line-height: 1.8;
+    }
+
+    .mobile-popup{
+        left: 10px;
+        right: 10px;
+        padding: 10px 30px 10px 12px;
+        font-size: 0.8rem;
+    }
+}
