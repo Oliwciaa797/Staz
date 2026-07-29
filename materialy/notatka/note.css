@@ -37,8 +37,21 @@ body {
 }
 
 .author {
-    line-height: 5px;
+    line-height: 3px;
     margin: 20px 5px;
+}
+
+#authorAvatar {
+    height: 30px;
+    width: 30px;
+    border-radius: 100%;
+    object-fit: cover;
+}
+
+.author-info {
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
 
 #content {
