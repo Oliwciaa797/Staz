@@ -11,7 +11,18 @@ def study():
 
     data = request.get_json()
 
-    transcript = get_transcript(data["url"])
+    from requests.exceptions import RetryError
+
+    try:
+        transcript = get_transcript(data["url"])
+    except RetryError:
+        return {
+            "error": "YouTube temporarily blocked transcript requests (HTTP 429). Please try again later."
+        }, 429
+    except Exception as e:
+        return {
+            "error": str(e)
+        }, 500
 
     notes = generate_notes(transcript)
 

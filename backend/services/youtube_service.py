@@ -21,13 +21,20 @@ def get_video_id(url):
     raise ValueError("Invalid YouTube URL")
 
 
+from youtube_transcript_api import YouTubeTranscriptApi
+
 def get_transcript(url):
     video_id = get_video_id(url)
 
+    print("Video:", video_id)
+
     transcript_list = api.list(video_id)
+    print("Transcript list OK")
 
     transcript = transcript_list.find_transcript(["pl", "en"])
+    print("Transcript found")
 
     data = transcript.fetch()
+    print("Fetched", len(data), "entries")
 
     return " ".join(item.text for item in data)
