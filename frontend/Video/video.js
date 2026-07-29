@@ -68,7 +68,7 @@ async function generateNotes() {
 
     try {
 
-        const response = await fetch("http://127.0.0.1:5000/study", {
+        const response = await fetch("https://wiseup-za92.onrender.com/study", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -104,7 +104,7 @@ async function generateQuiz() {
 
     try {
 
-        const response = await fetch("http://127.0.0.1:5000/quiz", {
+        const response = await fetch("https://wiseup-za92.onrender.com/quiz", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
