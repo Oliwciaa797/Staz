@@ -346,13 +346,21 @@ header{
   }
 
   .profile-container{
+    position: relative;
     flex-direction: column;
     align-items: center;
     min-height: auto;
-    padding: 30px 24px;
+    padding: 70px 24px 30px; /* miejsce na strzałkę + tytuł na górze */
     border-width: 3px;
     border-radius: 24px;
     gap: 30px;
+  }
+
+  #arrow{
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    z-index: 2;
   }
 
   .left-section{
@@ -360,14 +368,18 @@ header{
     order: 2;
   }
 
-  .right-section{
-    order: 1;
+  .left-section h1{
+    position: absolute;
+    top: 20px;
+    left: 60px;
+    right: 24px;
+    margin: 0;
+    font-size: 24px;
+    text-align: left;
   }
 
-  .left-section h1{
-    font-size: 34px;
-    margin-bottom: 20px;
-    text-align: center;
+  .right-section{
+    order: 1;
   }
 
   .field label{
@@ -375,7 +387,7 @@ header{
   }
 
   .field input{
-    font-size: 16px; /* zapobiega auto-zoomowi na iOS */
+    font-size: 16px;
     border-bottom-width: 2px;
   }
 
@@ -401,14 +413,10 @@ header{
   }
 
   #arrowToProjects{
-    display: none; /* strzałka pozycjonowana absolutnie nie ma sensu w układzie kolumnowym */
+    display: none;
   }
 }
-
 @media (max-width: 480px){
-  .left-section h1{
-    font-size: 26px;
-  }
   .field{
     margin-bottom: 22px;
   }
@@ -418,8 +426,20 @@ header{
   }
 
   .profile-container{
-    padding: 22px 16px;
+    padding: 60px 16px 22px;
     border-radius: 18px;
+  }
+
+  #arrow{
+    top: 18px;
+    left: 16px;
+  }
+
+  .left-section h1{
+    top: 16px;
+    left: 50px;
+    right: 16px;
+    font-size: 19px;
   }
 
   .avatar{
