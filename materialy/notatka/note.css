@@ -202,3 +202,23 @@ header{
         margin: 3px;
     }
 }
+@media (max-width: 480px){
+
+    .author-info{
+        flex-wrap: wrap;
+    }
+
+    #authorAvatar{
+        height: 26px;
+        width: 26px;
+    }
+
+    #likeBtn{
+        height: 32px;
+        width: 32px;
+    }
+
+    .note-tags{
+        gap: 4px;
+    }
+}
