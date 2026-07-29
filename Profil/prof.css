@@ -461,3 +461,20 @@ header{
     font-size: 13px;
   }
 }
+@media (max-width: 900px){
+
+  .middleFields{
+    display: flex;
+    flex-direction: column;
+  }
+
+  .saveSection{
+    order: 1;
+    margin: 15px 0 25px;
+  }
+
+  #projectsField{
+    order: 2;
+  }
+
+}
