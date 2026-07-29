@@ -138,10 +138,10 @@ header{
 /* Tablety */
 @media (max-width: 768px) {
     .note-container {
-        width: 100%;
+        width: 92%;
         margin: 20px auto;
-        padding: 20px;
-        border-radius: 14px;
+        padding: 22px;
+        border-radius: 18px;
         border-width: 3px;
     }
 
@@ -150,75 +150,84 @@ header{
     }
 
     #title {
-        font-size: 30px;
+        font-size: 28px;
     }
 
     #content {
         max-height: 500px;
-        padding: 12px;
+        padding: 14px;
         margin: 25px 0;
+        line-height: 1.6;
     }
 }
 
-/* Telefony */
 @media (max-width: 480px) {
     .note-container {
-        margin: 12px auto;
-        padding: 15px;
-        border-radius: 10px;
-        border-width: 2px;
+        width: 90%;
+        margin: 18px auto;
+        padding: 20px 16px;
+        border-radius: 16px;
+        border-width: 3px;
     }
 
     header {
         padding: 14px 16px;
-        flex-wrap: wrap;
-        gap: 10px;
     }
 
-    .menu-btn {
-        font-size: 26px;
+    .title p {
+        font-size: 13px;
+        color: #999;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        margin: 0 0 2px 5px;
     }
 
     #title {
-        font-size: 24px;
+        font-size: 26px;
+        padding-bottom: 8px;
+        margin-bottom: 15px;
     }
 
     .author {
-        line-height: normal;
-        margin: 14px 5px;
-        font-size: 14px;
+        margin: 18px 5px;
+    }
+
+    .author-info {
+        gap: 8px;
+    }
+
+    #authorAvatar {
+        height: 32px;
+        width: 32px;
+        border: 2px solid var(--primary-color);
     }
 
     #content {
-        max-height: 400px;
-        padding: 10px;
-        margin: 18px 0;
-        font-size: 14px;
+        max-height: 420px;
+        padding: 14px;
+        margin: 20px 0;
+        font-size: 15px;
+        line-height: 1.6;
+        border-radius: 12px;
+    }
+
+    .note-tags {
+        gap: 6px;
+        margin: 12px 0;
     }
 
     .tag {
         font-size: 11px;
-        padding: 3px 8px;
+        padding: 4px 10px;
         margin: 3px;
     }
-}
-@media (max-width: 480px){
 
-    .author-info{
-        flex-wrap: wrap;
+    .like-btn {
+        margin-top: 10px;
     }
 
-    #authorAvatar{
-        height: 26px;
-        width: 26px;
-    }
-
-    #likeBtn{
-        height: 32px;
-        width: 32px;
-    }
-
-    .note-tags{
-        gap: 4px;
+    #likeBtn {
+        height: 38px;
+        width: 38px;
     }
 }
