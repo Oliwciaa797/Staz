@@ -56,7 +56,7 @@ async function generateNotes() {
 
     try {
 
-        const response = await fetch("http://127.0.0.1:5000/study", {
+        const response = await fetch("https://wiseup-za92.onrender.com/study", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -92,7 +92,7 @@ async function generateQuiz() {
 
     try {
 
-        const response = await fetch("http://127.0.0.1:5000/quiz", {
+        const response = await fetch("https://wiseup-za92.onrender.com/quiz", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -401,7 +401,7 @@ async function submitReview() {
         .eq("video_id", videoId)
         .maybeSingle();
 
-    if (existingReview) {
+    if (existing) {
         toast.show('error','Błąd',"Dodałeś już opinię do tego filmu.");
         return;
     }
@@ -431,7 +431,7 @@ async function submitReview() {
 
         }
 
-        if (error.code === "23505") {
+        if (result.error && result.error.code === "23505") {
             toast.show('error','Błąd',"Dodałeś już opinię do tego filmu.");
             return;
         }
@@ -449,7 +449,7 @@ async function submitReview() {
     );
 
     loadReviews();
-    loadMyReview();
+    // loadMyReview();
 }
 
 
@@ -557,7 +557,7 @@ document.addEventListener("DOMContentLoaded", () => {
     showUser();
     updateSidebar();
     loadAllNoteLists();
-    loadMyReview();
+    // loadMyReview();
     checkSavedMaterial();
 });
 
