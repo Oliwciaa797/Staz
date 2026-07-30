@@ -108,7 +108,30 @@ header {
 
 .video-top {
 	display: flex;
+	flex-wrap: wrap;
+}
 
+/* ---------- Responsywne wideo (działa na każdej szerokości) ---------- */
+.video-container {
+	position: relative;
+	width: 100%;
+	max-width: 900px;
+}
+
+.video-wrapper {
+	position: relative;
+	width: 100%;
+	padding-top: 56.25%; /* proporcje 16:9 */
+}
+
+#youtubeVideo {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border-radius: 10px;
+	box-shadow: 5px 5px 5px var(--shadow);
 }
 
 .sidepanel {
@@ -165,11 +188,6 @@ header {
 	background-color: var(--primary-color);
 	color: white;
 	box-shadow: inset 0px -7px 5px var(--shadow);
-}
-
-#youtubeVideo {
-	border-radius: 10px;
-	box-shadow: 5px 5px 5px var(--shadow);
 }
 
 .sidepanelcontent {
@@ -791,6 +809,10 @@ input.noteTitleInput {
 	.reviews-top {
 		flex-wrap: wrap;
 	}
+
+	.video-container {
+		max-width: 100%;
+	}
 }
 
 /* Telefony */
@@ -814,6 +836,23 @@ input.noteTitleInput {
 	.login-btn {
 		padding: 10px 18px;
 		font-size: 14px;
+	}
+
+	.middle-section {
+		margin: 6px;
+		padding: 6px;
+	}
+
+	.video-top {
+		flex-direction: column;
+	}
+
+	.video-container {
+		max-width: 100%;
+	}
+
+	.sidepanel {
+		width: 100%;
 	}
 
 	.sidepanelcontent {
@@ -862,6 +901,27 @@ input.noteTitleInput {
 	.submit-btn {
 		width: 100%;
 	}
+
+	.review-text {
+		width: 100%;
+	}
+
+	.reviews-grading {
+		padding: 14px;
+	}
+
+	.user-review textarea {
+		min-height: 100px;
+	}
+
+	.user-area {
+		max-width: none;
+	}
+
+	#sidebar {
+		width: 80%;
+		max-width: 280px;
+	}
 }
 
 /* Małe telefony */
@@ -885,6 +945,26 @@ input.noteTitleInput {
 
 	.note-card, .quiz-card, .review-item {
 		padding: 12px;
+	}
+
+	.video-wrapper {
+		padding-top: 56.25%;
+	}
+
+	.sidepanelcontent {
+		height: 280px;
+	}
+
+	.buttons button {
+		font-size: 13px;
+	}
+
+	.rating-stars {
+		gap: 6px;
+	}
+
+	.star {
+		font-size: 24px;
 	}
 }
 
