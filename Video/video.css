@@ -116,7 +116,6 @@ header {
 	flex-wrap: wrap;
 	justify-content: center;
 	width: 1000px;
-	max-width: 100%;
 	height: auto;
 	background-color: var(--background);
 	text-align: left;
@@ -134,35 +133,35 @@ header {
 	cursor: pointer;
 } 
 .buttons {
-	margin-top: 10px;
 	display: flex;
 	justify-content: center;
 	align-items: flex-start;
-	width: 90%;
-	
+	width: 50%;
+	margin: 10px;
 	padding: 10px;
 }
 
 .buttons button {
-	width: 100%;
+	width: 50%;
 	height: 40px;
-	border: 2px solid var(--primary-color);
-	transition: all 0.2s ease;
+	border: 2px solid var(--secondary-color);
+	box-shadow: inset 0px -5px 5px var(--shadow);
+	transition: all 0.3s ease;
 	cursor: pointer;
 }
 
 #ainotes {
-	border-top-left-radius: 10px;
-	border-bottom-left-radius: 10px;
+	border-top-left-radius: 20px;
+	border-bottom-left-radius: 20px;
 }
 
 #quiztab {
-	border-top-right-radius: 10px;
-	border-bottom-right-radius: 10px;
+	border-top-right-radius: 20px;
+	border-bottom-right-radius: 20px;
 }
 
 .buttons button:hover {
-	background-color: var(--primary-color);
+	background-color: var(--secondary-color);
 	color: white;
 	box-shadow: inset 0px -7px 5px var(--shadow);
 }
@@ -177,7 +176,6 @@ header {
 	width: 90%;
 	height: 400px;
 	margin: 10px;
-	margin-top: 0;
 }
 
 .tab {
@@ -197,10 +195,9 @@ header {
 }
 
 #generated, #quiz {
-	text-align: left;
 	flex-direction: column;
 	justify-content: flex-start;
-	/* align-items: center; */
+	align-items: center;
 }
 
 #gennotes, #genQuizBtn, .user-review button {
@@ -298,7 +295,6 @@ header {
 
 .review-text {
 	width: 800px;
-	max-width: 100%;
 	color: #333;
 	line-height: 1.6;
 }
@@ -423,7 +419,6 @@ input.noteTitleInput {
 	display: flex;
 	gap: 10px;
 	margin-bottom: 18px;
-	flex-wrap: wrap;
 }
 
 .sub-tab-btn {
@@ -465,7 +460,6 @@ input.noteTitleInput {
 	border: 1px solid #ddd;
 	border-radius: 10px;
 	background: white;
-	flex-wrap: wrap;
 }
 
 .quiz-card-info h4 {
@@ -611,7 +605,6 @@ input.noteTitleInput {
 	display: flex;
 	gap: 10px;
 	margin-top: 8px;
-	flex-wrap: wrap;
 }
 .card-actions button{
 	padding: 0;
@@ -677,6 +670,7 @@ input.noteTitleInput {
 
 .note-form-card,
 .item-card{
+	width: 800px;
     overflow:hidden;
 }
 
@@ -746,144 +740,3 @@ input.noteTitleInput {
 /* .review-item div {
 	margin-left: 10px;
 } */
-
-.char-counter{
-    margin-top:8px;
-    text-align:right;
-    font-size:13px;
-    color:#666;
-    transition:0.2s;
-}
-
-.char-counter.limit{
-    color:#e53935;
-    font-weight:700;
-}
-
-.badge {
-	font-weight: normal;
-	font-size: 12px;
-	color: #666;
-	background-color: #ddd;
-	border-radius: 10px;
-	margin: 5px;
-	padding: 2px 7px;
-}
-
-/* ============================================
-   RESPONSYWNOŚĆ (telefon / tablet / komputer)
-   ============================================ */
-
-/* Tablety i mniejsze laptopy */
-@media (max-width: 1024px) {
-	header {
-		padding: 16px 24px;
-	}
-
-	.logo {
-		font-size: 1.6rem;
-	}
-
-	.grade-summary {
-		flex-wrap: wrap;
-	}
-
-	.reviews-top {
-		flex-wrap: wrap;
-	}
-}
-
-/* Telefony */
-@media (max-width: 768px) {
-	header {
-		padding: 14px 16px;
-	}
-
-	.top {
-		flex-wrap: wrap;
-		gap: 10px;
-	}
-
-	.logo {
-		position: static;
-		transform: none;
-		font-size: 1.4rem;
-		margin: 0 auto;
-	}
-
-	.login-btn {
-		padding: 10px 18px;
-		font-size: 14px;
-	}
-
-	.sidepanelcontent {
-		width: 100%;
-		height: 320px;
-	}
-
-	.buttons {
-		width: 100%;
-	}
-
-	.reviews-top {
-		flex-direction: column;
-	}
-
-	.grade-summary {
-		gap: 12px;
-	}
-
-	.grade-box {
-		padding: 14px;
-		flex: 1 1 45%;
-	}
-
-	.quiz-card {
-		flex-direction: column;
-		align-items: flex-start;
-	}
-
-	.sub-tabs {
-		gap: 6px;
-	}
-
-	.sub-tab-btn {
-		padding: 7px 16px;
-		font-size: 13px;
-	}
-
-	#gennotes, #genQuizBtn, .user-review button,
-	#addNoteBtn, #addQuizBtn, .saveNoteBtn,
-	#quiz button {
-		width: 100%;
-		margin: 8px 0;
-	}
-
-	.submit-btn {
-		width: 100%;
-	}
-}
-
-/* Małe telefony */
-@media (max-width: 480px) {
-	#title, .logo {
-		font-size: 1.2rem;
-	}
-
-	.avatar {
-		width: 36px;
-		height: 36px;
-	}
-
-	.grade-box {
-		flex: 1 1 100%;
-	}
-
-	.item-card {
-		padding: 12px;
-	}
-
-	.note-card, .quiz-card, .review-item {
-		padding: 12px;
-	}
-}
