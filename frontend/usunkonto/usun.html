@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuń konto - WiseUp</title>
+    <link rel="stylesheet" href="/usunkonto/usun.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/toast.js" defer></script>
+    <script src="/usunkonto/usun.js" defer></script>
+    <link rel="icon" type="image/x-icon" href="/W (1).png">
+</head>
+<body>
+
+<div class="profile-container">
+    <div class="left-section">
+    <div id="arrow" onclick="back()">
+        <img src="arrow.png" width="20px" height="20px" alt="wróć do profilu">
+    </div>
+
+    <h1>Usuń konto</h1>
+
+    <p>Ta operacja jest nieodwracalna. Wszystkie Twoje dane zostaną trwale usunięte.</p>
+
+    <label for="passwordInput">Wpisz swoje hasło, aby potwierdzić:</label>
+    <input type="password" id="passwordInput" placeholder="Hasło" autocomplete="current-password">
+
+    <button id="deleteBtn" class="danger">TAK, USUŃ MOJE KONTO</button>
+
+    <div id="status"></div>
+</div>
+</div>
+
+</body>
+</html>
