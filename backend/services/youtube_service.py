@@ -18,8 +18,8 @@ def download_audio(url):
         "outtmpl": output,
         "quiet": True,
         "noplaylist": True,
+        "cookiefile": "cookies.txt",
     }
-
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
         filename = ydl.prepare_filename(info)
