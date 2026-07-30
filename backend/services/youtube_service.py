@@ -13,13 +13,18 @@ def download_audio(url):
 
     output = os.path.join(temp_dir, "%(id)s.%(ext)s")
 
+    BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+
     ydl_opts = {
         "format": "bestaudio/best",
         "outtmpl": output,
         "quiet": True,
         "noplaylist": True,
-        "cookiefile": "cookies.txt",
+        "cookiefile": os.path.join(BASE_DIR, "cookies.txt"),
     }
+    print(os.path.join(BASE_DIR, "cookies.txt"))
+    print(os.path.exists(os.path.join(BASE_DIR, "cookies.txt")))
+
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
         filename = ydl.prepare_filename(info)
