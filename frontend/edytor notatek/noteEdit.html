@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edytor notatek — WiseUp</title>
+<link rel="stylesheet" href="noteEdit.css">
+<link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css">
+<!-- Klient Supabase -->
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- Logika strony -->
+ <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+<script src="../toast.js"></script>
+<script src="noteEdit.js" defer></script>
+<link rel="icon" type="image/x-icon" href="/W (1).png">
+</head>
+<body>
+
+<header>
+  <div class="menu-btn" id="menuBtn" aria-label="Menu">
+    ☰
+  </div>
+  <div id="sidebar">
+      <a href="../strona startowa/start.html">Strona startowa</a>
+      <a href="../materialy/not.html">Zapisane materiały</a>
+      <a href="../Profil/prof.html">Profil</a>
+      <a href="../wylogowywanie/logout.html">Wyloguj się</a>
+      <a href="../zglaszanie bledow/blad.html">⚠️Zgłoś błąd⚠️</a>
+  </div>
+  <div id="userArea" class="user-area">
+
+    <div class="profile-chip">
+        <img id="profileAvatar" src="../Profil/avatar.png">
+        <span id="profileName"></span>
+    </div>
+
+    <div class="user-menu" id="userMenu">
+        <a href="../Profil/prof.html">Profil</a>
+        <a href="../wylogowywanie/logout.html">Wyloguj się</a>
+    </div>
+</div>
+</header>
+
+<main>
+  <div class="panel">
+    <div class="panel-top">
+      <button class="back-btn" aria-label="Wstecz" onclick="window.location.href='../materialy/not.html'"><img src="arrow.png" alt="arrow" height="25px" width="25px"></button>
+      <h1>Edytuj notatkę</h1>
+    </div>
+
+    <div id="authNotice" class="empty-state" style="display:none;">
+      <strong>Zaloguj się</strong>
+      Aby tworzyć notatki, musisz być zalogowany.
+    </div>
+
+    <div id="noteBuilder" style="display: none;">
+        <div class="note-form">
+        <h2>Dane notatki</h2>
+        <div class="field title">
+          <label for="noteTitle">Nazwa notatki</label>
+          <input type="text" id="noteTitle" placeholder="np. Notatka z geografii" required>
+        </div>
+        <div class="visibility-toggle">
+          <input type="checkbox" id="notePublic">
+          <label for="notePublic">Notatka publiczna (widoczna dla innych)</label>
+        </div>
+        <div class="field">
+            <label for="noteTags">Tagi</label>
+            <select
+                id="noteTags"
+                multiple
+                placeholder="np. matematyka, algebra, egzamin">
+            </select>
+        </div>
+      </div>
+      <div id="editor"></div>
+
+        <div id="charCounter" class="char-counter">
+            0 / 100000 znaków
+        </div>
+    </div>
+    <div class="actions">
+    <button id="saveNoteBtn" class="btn-primary">
+        ZAPISZ NOTATKĘ
+    </button>
+</div>
+  </div>
+</main>
+
+</body>
+</html>
