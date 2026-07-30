@@ -1,40 +1,47 @@
-from urllib.parse import urlparse, parse_qs
-from youtube_transcript_api import YouTubeTranscriptApi
-from youtube_transcript_api.proxies import WebshareProxyConfig
+import os
+import tempfile
 
-api = YouTubeTranscriptApi(
-    proxy_config=WebshareProxyConfig(
-        proxy_username="hwolfcgd",
-        proxy_password="7ijb3ggn1t6z",
-    )
-)
+import yt_dlp
+from google import genai
+from google.genai import types
 
-def get_video_id(url):
-    parsed = urlparse(url)
-
-    if parsed.hostname == "youtu.be":
-        return parsed.path[1:]
-
-    if parsed.hostname in ("youtube.com", "www.youtube.com"):
-        return parse_qs(parsed.query)["v"][0]
-
-    raise ValueError("Invalid YouTube URL")
+client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
 
-from youtube_transcript_api import YouTubeTranscriptApi
+def download_audio(url):
+    temp_dir = tempfile.mkdtemp()
+
+    output = os.path.join(temp_dir, "%(id)s.%(ext)s")
+
+    ydl_opts = {
+        "format": "bestaudio/best",
+        "outtmpl": output,
+        "quiet": True,
+        "noplaylist": True,
+        "cookiefile": "cookies.txt",
+    }
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        info = ydl.extract_info(url, download=True)
+        filename = ydl.prepare_filename(info)
+
+    return filename
+
 
 def get_transcript(url):
-    video_id = get_video_id(url)
+    audio_file = download_audio(url)
 
-    print("Video:", video_id)
+    with open(audio_file, "rb") as f:
+        audio = f.read()
 
-    transcript_list = api.list(video_id)
-    print("Transcript list OK")
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=[
+            "Transcribe this audio. Return only the transcript.",
+            types.Part.from_bytes(
+                data=audio,
+                mime_type="audio/mp4",
+            ),
+        ],
+    )
 
-    transcript = transcript_list.find_transcript(["pl", "en"])
-    print("Transcript found")
-
-    data = transcript.fetch()
-    print("Fetched", len(data), "entries")
-
-    return " ".join(item.text for item in data)
+    return response.text

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset hasła - WiseUp</title>
+    <link rel="stylesheet" href="odn.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="odn.js" defer></script>
+    <link rel="icon" type="image/x-icon" href="/W (1).png">
+</head>
+<body>
+    <div class="login-container">
+
+    <div id="arrow" onclick="window.location.href='../logowanie/log.html'">
+        <img src="../logowanie/arrow.png" width="20px" height="20px" alt="wróć do logowania">
+    </div>
+
+    <h1>Reset hasła</h1>
+
+    <p>Podaj adres e-mail, na który wyślemy link do zresetowania hasła.</p>
+
+    <input type="email" id="email" placeholder="E-mail">
+
+    <button id="resetBtn" class="login-btn">Wyślij link resetujący</button>
+
+    <div id="status"></div>
+
+</div>
+</body>
+</html>

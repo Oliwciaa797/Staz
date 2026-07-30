@@ -1,0 +1,470 @@
+@import url(../main.css);
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:var(--background);
+    min-height:100vh;
+    background-image:url('../strona startowa/background.png');
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+    background-size:cover;
+}
+header{
+    background-color: var(--background);
+    padding:20px 40px;
+    position: fixed;
+    top: 0; 
+    z-index: 1002; 
+    box-shadow: 5px 5px 5px var(--shadow);
+    left:0;
+    width:100%;
+    padding:15px 20px;
+    z-index:1002;
+}
+.page{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.profile-container{
+    width:min(900px,95vw);
+
+    background:white;
+
+    border:4px solid var(--primary-color);
+
+    border-radius:40px;
+
+    padding:50px;
+
+    display:flex;
+    flex-direction:column;
+
+    align-items:center;
+
+    gap:35px;
+
+    box-shadow:0 20px 50px var(--shadow);
+}
+
+.left-section{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width:55%;
+}
+
+.middleFields{
+
+    width:100%;
+
+    max-width:600px;
+}
+
+.left-section h1{
+    font-size:42px;
+    text-align:center;
+    margin-bottom:25px;
+    color:var(--primary-color);
+    margin-bottom:30px;
+}
+
+.field{
+    margin-bottom:35px;
+
+}
+
+.field label{
+    display:block;
+    font-size:22px;
+    margin-bottom:5px;
+    color:#111;
+}
+
+.field input{
+    width:100%;
+    padding:16px;
+    border:2px solid var(--primary-color);
+    border-radius:14px;
+    background:white;
+    font-size:18px;
+}
+
+.bottom-btns{
+    width:100%;
+    max-width:600px;
+    display:grid;
+    gap:14px;
+    margin-top:30px;
+    grid-template-columns:1fr 1fr;
+    justify-content: space-evenly;
+}
+
+.link-btn,
+#logoutBtn{
+
+    width:100%;
+
+    min-height:60px;
+
+    border-radius:16px;
+
+    background:#f7f7f7;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:18px;
+
+    font-weight:600;
+}
+.delete-account{
+    color:var(--danger);
+    text-decoration:none;
+    font-size:20px;
+}
+
+#logoutBtn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width:130px;
+    height:55px;
+    border:none;
+    text-align: center;
+    border-radius:30px;
+    color:var(--primary-color);
+    font-size:20px;
+    cursor:pointer;
+    margin: 10px 0;
+}
+
+#logoutBtn a{
+    
+    font-family: 'Baloo 2', sans-serif;
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.right-section{
+    order:-1;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.avatar{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    color:#fff;
+    font-family: 'Baloo 2', sans-serif;
+    font-size:20px;
+    overflow:hidden;
+    cursor:pointer;
+    position:relative;
+}
+.avatar{
+
+    width:180px;
+    height:180px;
+    border-radius:50%;
+    border:5px solid var(--primary-color);
+    background:#f0f0f0;
+    transition:.3s;
+}
+
+.avatar:hover{
+
+    transform:scale(1.05);
+
+}
+
+.avatar img{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:center;
+}
+
+.avatar span{
+    padding:20px;
+    cursor: pointer;
+}
+
+#arrow {
+    cursor: pointer;
+}
+.top {
+    display: flex;
+    justify-content: space-between;
+    
+}
+
+.logo{
+    align-self: center;
+    /* margin-left: 10px; */
+    color:var(--primary-color);
+    font-size:2rem;
+    font-weight:700;
+    cursor: pointer;
+}
+
+#menuBtn {
+    color: var(--primary-color);
+    top: 15px;
+    left: 15px;
+    font-size: 32px;
+    cursor: pointer;
+    z-index: 1001;
+    user-select: none;
+}
+
+.top {
+    display: flex;
+    justify-content: space-between;
+    
+}
+
+.logo{
+    align-self: center;
+    /* margin-left: 10px; */
+    color:var(--primary-color);
+    font-size:2rem;
+    font-weight:700;
+}
+
+#menuBtn {
+    color: var(--primary-color);
+    top: 15px;
+    left: 15px;
+    font-size: 32px;
+    cursor: pointer;
+    z-index: 1001;
+    user-select: none;
+}
+
+.top {
+    display: flex;
+    justify-content: space-between;
+    
+}
+
+#deleteAccountBtn {
+    color: var(--danger);
+    cursor: pointer;
+}
+#changePasswordBtn{
+    color: var(--danger);
+    cursor: pointer;
+}
+
+#projectsField, #projects {
+    cursor: pointer;
+}
+
+#arrowToProjects {
+    position: absolute;
+    -webkit-transform: scaleX(-1);
+    transform:
+        scaleX(-1)
+        translateX(100%);
+    height: 20px;
+    width: auto;
+}
+
+.saveSection {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+#saveBtn{
+
+
+
+
+
+
+
+}
+
+#saveBtn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width:180px;
+    height:45px;
+    font-size:18px;
+    font-weight:700;
+    border-radius:25px;
+    box-shadow:0 10px 25px var(--shadow);
+    margin:15px auto;
+    border:none;
+    text-align: center;
+    background: var(--primary-color);
+    color: #fff;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+#saveBtn:hover{
+    background:var(--primary-color);
+}
+
+.show {
+    display: inline;
+}
+
+#status {
+    cursor: not-allowed;
+    font-family: 'Oswald', sans-serif;
+    color: #fff;
+    display: none;
+    position: absolute;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#saveBtn:disabled {
+    cursor:not-allowed;
+    opacity:0.8;
+}
+
+.custom-loader {
+    display:none;
+    width:25px;
+    height:25px;
+    border-radius:50%;
+    border:4px solid #FFF;
+    animation:
+        s10-1 0.8s infinite linear alternate,
+        s10-2 1.6s infinite linear;
+}
+
+@keyframes s10-1{
+   0%    {clip-path: polygon(50% 50%,0       0,  50%   0%,  50%    0%, 50%    0%, 50%    0%, 50%    0% )}
+   12.5% {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100%   0%, 100%   0%, 100%   0% )}
+   25%   {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100% 100%, 100% 100%, 100% 100% )}
+   50%   {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100% 100%, 50%  100%, 0%   100% )}
+   62.5% {clip-path: polygon(50% 50%,100%    0, 100%   0%,  100%   0%, 100% 100%, 50%  100%, 0%   100% )}
+   75%   {clip-path: polygon(50% 50%,100% 100%, 100% 100%,  100% 100%, 100% 100%, 50%  100%, 0%   100% )}
+   100%  {clip-path: polygon(50% 50%,50%  100%,  50% 100%,   50% 100%,  50% 100%, 50%  100%, 0%   100% )}
+}
+@keyframes s10-2{ 
+  0%    {transform:scaleY(1)  rotate(0deg)}
+  49.99%{transform:scaleY(1)  rotate(135deg)}
+  50%   {transform:scaleY(-1) rotate(0deg)}
+  100%  {transform:scaleY(-1) rotate(-135deg)}
+}
+
+.invite-friend-box {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 16px;
+}
+
+.invite-friend-box input {
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.invite-friend-box button {
+    padding: 8px;
+    border: none;
+    border-radius: 6px;
+    background: var(--primary-color);
+    color: #fff;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.invite-friend-box button:hover {
+    opacity: 0.85;
+}
+
+@media (max-width:768px){
+    .profile-container{
+        width:95%;
+        padding:25px;
+        margin-top:90px;
+        border-radius:25px;
+    }
+    .avatar{
+        width:140px;
+        height:140px;
+    }
+    .left-section{
+        width:100%;
+    }
+    .middleFields{
+        width:100%;
+    }
+    .field label{
+        font-size:16px;
+    }
+    .field input{
+        font-size:16px;
+    }
+    #saveBtn{
+        width:100%;
+    }
+    .bottom-btns{
+        width:100%;
+    }
+}
+
+.right-section{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.avatar{
+    margin:0 auto;
+}
+
+#changePasswordBtn,
+#deleteAccountBtn{
+
+    padding:12px;
+
+    text-align:center;
+
+    border-radius:14px;
+
+    background:white;
+
+    border:2px solid currentColor;
+
+    font-size:16px;
+}
+
+#logoutBtn{
+    grid-column:1/3;
+
+    width:100%;
+
+    justify-content:center;
+
+    gap:10px;
+}

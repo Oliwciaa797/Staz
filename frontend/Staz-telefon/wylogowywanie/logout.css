@@ -1,0 +1,131 @@
+@import url(../main.css);
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+    background: var(--background);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+}
+
+.profile-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.left-section {
+    width: 100%;
+    max-width: 420px;
+    background: white;
+    border: 3px solid var(--primary-color);
+    border-radius: 24px;
+    padding: 24px;
+}
+
+#arrow {
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+#arrow img {
+    width: 24px;
+    height: 24px;
+}
+
+h1 {
+    color: var(--primary-color);
+    font-size: 2rem;
+    margin-bottom: 30px;
+}
+
+button {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 18px;
+    background: var(--primary-color);
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: var(--hover-dark);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+button:disabled {
+    background: #a9b89a;
+    cursor: not-allowed;
+}
+
+#status {
+    margin-top: 16px;
+    text-align: center;
+    color: var(--primary-color);
+    font-size: 14px;
+}
+
+.error {
+    min-height: 18px;
+    margin-top: 10px;
+    color: var(--danger);
+    font-size: 13px;
+}
+
+/* Tablet */
+
+@media (max-width: 768px) {
+    .left-section {
+        padding: 20px;
+        border-width: 2px;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+}
+
+/* Telefon */
+
+@media (max-width: 480px) {
+    body {
+        padding: 12px;
+    }
+
+    .left-section {
+        width: 100%;
+        padding: 18px;
+        border-radius: 18px;
+    }
+
+    h1 {
+        font-size: 1.6rem;
+        margin-bottom: 24px;
+    }
+
+    button {
+        padding: 14px;
+        font-size: 15px;
+    }
+
+    #arrow img {
+        width: 22px;
+        height: 22px;
+    }
+}
