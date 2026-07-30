@@ -1,52 +1,44 @@
-import os
-import tempfile
+from urllib.parse import urlparse, parse_qs
+from youtube_transcript_api import YouTubeTranscriptApi
+from youtube_transcript_api.proxies import WebshareProxyConfig
+import requests
 
-import yt_dlp
-from google import genai
-from google.genai import types
+r = requests.get(
+    "https://api.ipify.org",
+    proxies={
+        "http": "http://hwolfcgd:7ijb3ggn1t6z@p.webshare.io:80",
+        "https": "http://hwolfcgd:7ijb3ggn1t6z@p.webshare.io:80",
+    },
+    timeout=10,
+)
 
-client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+print(r.text)
+api = YouTubeTranscriptApi(
+    proxy_config=WebshareProxyConfig(
+        proxy_username="hwolfcgd",
+        proxy_password="7ijb3ggn1t6z",
+    )
+)
 
+def get_video_id(url):
+    parsed = urlparse(url)
 
-def download_audio(url):
-    temp_dir = tempfile.mkdtemp()
+    if parsed.hostname == "youtu.be":
+        return parsed.path[1:]
 
-    output = os.path.join(temp_dir, "%(id)s.%(ext)s")
+    if parsed.hostname in ("youtube.com", "www.youtube.com"):
+        return parse_qs(parsed.query)["v"][0]
 
-    BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-
-    ydl_opts = {
-        "format": "bestaudio/best",
-        "outtmpl": output,
-        "quiet": True,
-        "noplaylist": True,
-        "cookiefile": os.path.join(BASE_DIR, "cookies.txt"),
-    }
-    print(os.path.join(BASE_DIR, "cookies.txt"))
-    print(os.path.exists(os.path.join(BASE_DIR, "cookies.txt")))
-
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(url, download=True)
-        filename = ydl.prepare_filename(info)
-
-    return filename
+    raise ValueError("Invalid YouTube URL")
 
 
 def get_transcript(url):
-    audio_file = download_audio(url)
+    video_id = get_video_id(url)
 
-    with open(audio_file, "rb") as f:
-        audio = f.read()
+    transcript_list = api.list(video_id)
 
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=[
-            "Transcribe this audio. Return only the transcript.",
-            types.Part.from_bytes(
-                data=audio,
-                mime_type="audio/mp4",
-            ),
-        ],
-    )
+    transcript = transcript_list.find_transcript(["pl", "en"])
 
-    return response.text
+    data = transcript.fetch()
+
+    return " ".join(item.text for item in data)
