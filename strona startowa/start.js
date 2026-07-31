@@ -1,5 +1,9 @@
 console.log("JS is working");
 
+let currentResults = [];
+let currentPage = 1;
+
+const RESULTS_PER_PAGE = 10;
 const toast = new Toast();
 const SUPABASE_URL = 'https://yewyjfcrwwmftovbobwl.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlld3lqZmNyd3dtZnRvdmJvYndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2NTk0MDYsImV4cCI6MjA5OTIzNTQwNn0.-IEcT_EfGqxjS4AAIKIbmTOonaXtF0MorQ74hEXzVrQ';
@@ -150,13 +154,15 @@ async function search() {
     value + languages + minDuration + maxDuration + ignoreDuration;
 
     if (cache[cacheKey]) {
-        results.innerHTML =
-        cache[cacheKey];
 
+        currentResults = cache[cacheKey];
+        currentPage = 1;
+
+        renderPage();
         return;
     }
 
-    let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=5&q=${encodeURIComponent(value)}&key=${API_KEY}`;
+    let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=20&q=${encodeURIComponent(value)}&key=${API_KEY}`;
 
 
     if (languages.length === 1) {
@@ -221,7 +227,7 @@ async function search() {
             .select("video_id,rating");
 
 
-        let html = "";
+        const filteredVideos = [];
 
         data.items.forEach(video => {
 
@@ -275,7 +281,7 @@ reviewCount > 0
                 }
             }
             if (Math.round(minutes) > 1) {
-            html += `
+            filteredVideos.push(`
             
             <div class="video">
                 <img src="${video.snippet.thumbnails.medium.url}">
@@ -301,9 +307,9 @@ reviewCount > 0
                     
                 </div>
             </div>
-            `;
+            `);
             } else {
-                html += `
+                filteredVideos.push(`
             
             <div class="video">
                 <img src="${video.snippet.thumbnails.medium.url}">
@@ -329,23 +335,25 @@ reviewCount > 0
                     
                 </div>
             </div>
-            `;
+            `);
             }
         });
 
 // <p class="review-count">${reviewCount} opinii</p>
-        if (html === "") {
+        if (filteredVideos.length === 0) {
             document.querySelector(".searchAlert").textContent =
-            "Brak filmów spełniających filtry.";
+                "Brak filmów spełniających filtry.";
+        } else {
+            document.querySelector(".searchAlert").textContent = "";
         }
 
-        results.innerHTML =
-        html;
+        currentResults = filteredVideos;
+        currentPage = 1;
+        renderPage();
 
-        // zapis gotowych wyników
-        cache[cacheKey] =
-        html;
-    }
+        // zapis do cache
+        cache[cacheKey] = filteredVideos;
+        }
 
     catch(error) {
         console.error(error);
@@ -575,7 +583,59 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
+async function renderPage() {
 
+    const results = document.getElementById("results");
+
+    const start = (currentPage - 1) * RESULTS_PER_PAGE;
+    const end = start + RESULTS_PER_PAGE;
+
+    results.innerHTML =
+        currentResults.slice(start, end).join("");
+
+    renderPagination();
+}
+
+async function renderPagination() {
+
+    let pagination =
+        document.getElementById("pagination");
+
+    if (!pagination) {
+
+        pagination = document.createElement("div");
+        pagination.id = "pagination";
+
+        document
+            .querySelector(".resultBox")
+            .appendChild(pagination);
+    }
+
+    pagination.innerHTML = "";
+
+    const pages =
+        Math.ceil(currentResults.length / RESULTS_PER_PAGE);
+
+    for (let i = 1; i <= pages; i++) {
+
+        const btn = document.createElement("button");
+
+        btn.textContent = i;
+
+        if (i === currentPage) {
+            btn.classList.add("active");
+        }
+
+        btn.onclick = () => {
+
+            currentPage = i;
+            renderPage();
+
+        };
+
+        pagination.appendChild(btn);
+    }
+}
 
 // async function loadHistory() {
 

@@ -5,7 +5,7 @@ from flask_cors import CORS
 from routes.youtube import youtube
 from routes.quiz import quiz
 
-FRONTEND_DIR = os.path.dirname(__file__)   # <- zmiana: to samo miejsce co app.py
+FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "..", "frontend")
 
 app = Flask(__name__)
 CORS(app)
