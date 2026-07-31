@@ -407,8 +407,8 @@ header{
   }
 
   #saveBtn{
-    width: 100%;
-    max-width: 270px;
+    margin: 5px 0;
+    width: 190px;
     font-size: 20px;
   }
 
@@ -452,6 +452,8 @@ header{
   }
 
   #saveBtn{
+    margin: 5px 0;
+    width: 120px;
     font-size: 17px;
     height: 48px;
   }
