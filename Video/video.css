@@ -142,16 +142,15 @@ header {
     min-width: 420px;
 
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
 
     background-color: var(--background);
-	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
 	width: 1000px;
 	overflow-y: scroll;
-	max-height: 600px;
+	max-height: 480px;
 	max-width: 100%;
 	height: auto;
 	background-color: var(--background);
@@ -1034,4 +1033,15 @@ input.noteTitleInput {
         max-width:100%;
     }
 
+}
+.ql-container {
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.ql-editor {
+    min-height: 120px;
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
 }
