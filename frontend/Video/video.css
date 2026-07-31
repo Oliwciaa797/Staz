@@ -104,6 +104,7 @@ header {
 	border-radius: 10px;
 	background-color: var(--background);
 	box-shadow: 5px 5px 5px rgba(104, 117, 80, 0.144);
+	
 }
 
 .video-top {
@@ -116,6 +117,8 @@ header {
 	flex-wrap: wrap;
 	justify-content: center;
 	width: 1000px;
+	overflow-y: scroll;
+	max-height: 600px;
 	max-width: 100%;
 	height: auto;
 	background-color: var(--background);

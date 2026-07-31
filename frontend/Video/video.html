@@ -50,11 +50,19 @@
         <div class="middle-section">
             <div class="video-top">
                 <div class="video-container">
-    <div class="video-wrapper">
-        <iframe id="youtubeVideo" frameborder="0" allow="..." allowfullscreen></iframe>
-    </div>
-    <div id="videoDescription"></div>
-</div>
+
+                    <iframe
+                        id="youtubeVideo"
+                        width="900"
+                        height="500"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
+                    <div id="videoDescription"></div>
+
+
+                </div>
 
                 <div class="sidepanel">
                     <div class="buttons">
@@ -65,8 +73,7 @@
                     <div class="sidepanelcontent">
                         <div id="generated" class="tab">
                             <button id="gennotes" onclick="generateNotes()">
-                                <span id="notesBtnText">Generuj notatki</span>
-                                <span id="notesLoader" class="loader" style="display:none"></span>
+                                Generuj notatki
                             </button>
                             <div id="notesContent"></div>
                         </div>
@@ -97,31 +104,15 @@
                         </div>
 
                             <div id="personalQuizy" class="sub-tab-panel">
-    <button id="addQuizBtn" onclick="goToQuizCreator()">+ Dodaj quiz</button>
-
-    <div class="section-label">Twoje quizy do tego filmu</div>
-    <div id="personalQuizyContainer" class="card-grid">
-        <p>Brak quizów.</p>
-    </div>
-
-    <div class="section-label">Twoje pozostałe quizy</div>
-    <div id="myOtherQuizyContainer" class="card-grid">
-        <p>Brak quizów.</p>
-    </div>
-
-    <div class="section-label">Quizy publiczne innych o tym filmie</div>
-    <div id="publicVideoQuizyContainer" class="card-grid">
-        <p>Brak quizów publicznych.</p>
-    </div>
-</div>
-
+                                <button id="addQuizBtn" onclick="goToQuizCreator()">
+                                <div id="personalQuizyContainer" class="card-grid">
+                                    <p>Brak quizów.</p>
+                                </div>
+                            </div>
                         </div>
 
                         <div id="quiz" class="tab">
-                            <button id="genQuizBtn" onclick="generateQuiz()">
-                                <span id="quizBtnText">Generuj quiz</span>
-                                <span id="quizLoader" class="loader" style="display:none"></span>
-                            </button>
+                            <button onclick="generateQuiz()" id="genQuizBtn">Generuj quiz</button>
                         </div>
                     </div>
                 </div>
