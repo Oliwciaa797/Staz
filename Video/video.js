@@ -960,10 +960,7 @@ async function loadPublicVideoNotes(){
 
     const { data, error } = await supabaseClient
         .from('notes')
-        .select(`
-            *,
-            profiles!user_id ( profiles, avatar_url )
-        `)
+        .select('*')
         .eq('video_id', videoId)
         .eq('is_public', true)
         .order('created_at', { ascending: false });
@@ -974,7 +971,9 @@ async function loadPublicVideoNotes(){
         return;
     }
 
-    const filtered = user ? (data || []).filter(n => n.user_id !== user.id) : (data || []);
+    let filtered = user ? (data || []).filter(n => n.user_id !== user.id) : (data || []);
+
+    filtered = await attachAuthorProfiles(filtered);
 
     container.innerHTML = "";
 
@@ -1117,31 +1116,33 @@ function renderQuizCard(quiz, { editable, showAuthor }){
     return div;
 }
 
-/* ---------- Twoje quizy do tego filmu ---------- */
+/* ---------- Pomocnicze: dołączenie profili autorów bez polegania na FK w bazie ---------- */
+async function attachAuthorProfiles(rows){
+
+    const authorIds = [...new Set(rows.map(r => r.user_id))];
+
+    if(authorIds.length === 0) return rows;
+
+    const { data: profilesData, error: profilesError } = await supabaseClient
+        .from('profiles')
+        .select('id, profiles, avatar_url')
+        .in('id', authorIds);
+
+    if(profilesError || !profilesData){
+        console.error(profilesError);
+        return rows;
+    }
+
+    const profileMap = Object.fromEntries(profilesData.map(p => [p.id, p]));
+
+    return rows.map(r => ({ ...r, profiles: profileMap[r.user_id] || null }));
+}
+
+/* ---------- Wszystkie Twoje quizy (ze wszystkich filmów) ---------- */
 async function loadPersonalQuizzes(){
 
     const { data: { user } } = await supabaseClient.auth.getUser();
     const container = document.getElementById("personalQuizyContainer");
-
-    if(!user){
-        container.innerHTML = "<p>Zaloguj się, aby zobaczyć swoje quizy.</p>";
-        return;
-    }
-
-    const { data, error } = await supabaseClient
-        .from('quizzes')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('video_id', videoId)
-        .order('created_at', { ascending: false });
-
-    if(error){
-        console.error(error);
-        container.innerHTML = "<p>Nie udało się wczytać quizów.</p>";
-        return;
-    }
-
-    container.innerHTML = "";
 
     const quizLoading =
 document.getElementById(
@@ -1152,21 +1153,6 @@ if(quizLoading){
     quizLoading.style.display = "none";
 }
 
-    if(!data || data.length === 0){
-        container.innerHTML = "<p>Brak quizów do tego filmu.</p>";
-        return;
-    }
-
-    data.forEach(quiz => container.appendChild(renderQuizCard(quiz, { editable: true, showAuthor: false })));
-}
-
-/* ---------- Twoje pozostałe quizy (inne filmy) ---------- */
-async function loadMyOtherQuizzes(){
-
-    const { data: { user } } = await supabaseClient.auth.getUser();
-    const container = document.getElementById("myOtherQuizyContainer");
-    if(!container) return;
-
     if(!user){
         container.innerHTML = "<p>Zaloguj się, aby zobaczyć swoje quizy.</p>";
         return;
@@ -1176,7 +1162,6 @@ async function loadMyOtherQuizzes(){
         .from('quizzes')
         .select('*')
         .eq('user_id', user.id)
-        .neq('video_id', videoId)
         .order('created_at', { ascending: false });
 
     if(error){
@@ -1188,15 +1173,15 @@ async function loadMyOtherQuizzes(){
     container.innerHTML = "";
 
     if(!data || data.length === 0){
-        container.innerHTML = "<p>Brak innych quizów.</p>";
+        container.innerHTML = "<p>Nie masz jeszcze żadnych quizów.</p>";
         return;
     }
 
     data.forEach(quiz => container.appendChild(renderQuizCard(quiz, { editable: true, showAuthor: false })));
 }
 
-/* ---------- Quizy publiczne innych użytkowników do tego filmu ---------- */
-async function loadPublicVideoQuizzes(){
+/* ---------- Wszystkie publiczne quizy innych użytkowników ---------- */
+async function loadPublicQuizzes(){
 
     const { data: { user } } = await supabaseClient.auth.getUser();
     const container = document.getElementById("publicVideoQuizyContainer");
@@ -1204,11 +1189,7 @@ async function loadPublicVideoQuizzes(){
 
     const { data, error } = await supabaseClient
         .from('quizzes')
-        .select(`
-            *,
-            profiles!user_id ( profiles, avatar_url )
-        `)
-        .eq('video_id', videoId)
+        .select('*')
         .eq('is_public', true)
         .order('created_at', { ascending: false });
 
@@ -1218,12 +1199,14 @@ async function loadPublicVideoQuizzes(){
         return;
     }
 
-    const filtered = user ? (data || []).filter(q => q.user_id !== user.id) : (data || []);
+    let filtered = user ? (data || []).filter(q => q.user_id !== user.id) : (data || []);
+
+    filtered = await attachAuthorProfiles(filtered);
 
     container.innerHTML = "";
 
     if(filtered.length === 0){
-        container.innerHTML = "<p>Brak quizów publicznych do tego filmu.</p>";
+        container.innerHTML = "<p>Brak quizów publicznych innych użytkowników.</p>";
         return;
     }
 
@@ -1232,8 +1215,7 @@ async function loadPublicVideoQuizzes(){
 
 async function loadAllQuizLists(){
     await loadPersonalQuizzes();
-    await loadMyOtherQuizzes();
-    await loadPublicVideoQuizzes();
+    await loadPublicQuizzes();
 }
 
 // Przejście do tworzenia nowego quizu, z przekazaniem ID bieżącego filmu,

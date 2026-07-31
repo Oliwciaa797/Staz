@@ -131,7 +131,248 @@
             <div class="field">
                 <label for="noteContent">Treść</label>
                 <div id="editor"></div>
+<!DOCTYPE html>
+<html lang="pl">
+<head>
 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WiseUp</title>
+    <link href="quill.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
+    <link rel="stylesheet" href="/Video/video.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/toast.js" defer></script>
+    <script src="/Video/video.js" defer></script>
+    <link rel="icon" type="image/x-icon" href="/W (1).png">
+</head>
+<body>
+    <header>
+        <div class="top">
+
+            <div id="menuBtn">
+                ☰
+            </div>
+    
+            <div id="sidebar">
+                <a href="../strona startowa/start.html">Strona Startowa</a>
+                <a href="../logowanie/log.html">Logowanie</a>
+                <a href="../materialy/not.html">Zapisane materiały</a>
+                <a href="../Profil/prof.html">Profil</a>
+            </div>
+
+            <h1 class="logo" onclick="back()">WiseUp</h1>
+
+            <div id="userArea" class="user-area">
+
+            <div class="user-info">
+                <img src="avatar.png" class="avatar">
+                <span>Witaj, </span>
+            </div>
+
+        <div class="user-menu">
+
+            <a href="../Profil/prof.html">Profil</a>
+
+            <a href="../wylogowywanie/logout.html">Wyloguj się</a>
+
+        </div></div></div>
+    </header>
+
+    <main>
+        <div class="middle-section">
+            <div class="video-top">
+                <div class="video-container">
+    <div class="video-wrapper">
+        <iframe id="youtubeVideo" frameborder="0" allow="..." allowfullscreen></iframe>
+    </div>
+    <div id="videoDescription"></div>
+</div>
+
+                <div class="sidepanel">
+                    <div class="buttons">
+                        <button id="ainotes" onclick="showTab('generated')">Notatki AI</button>
+                        <button id="personalnotes" onclick="showTab('personal')">Własne materiały</button>
+                        <button id="quiztab" onclick="showTab('quiz')">Quiz AI</button>
+                    </div>
+                    <div class="sidepanelcontent">
+                        <div id="generated" class="tab">
+                            <button id="gennotes" onclick="generateNotes()">
+                                Generuj notatki
+                            </button>
+                            <div id="notesContent"></div>
+                        </div>
+
+                        <!-- ===== WŁASNE MATERIAŁY ===== -->
+      <div id="personal" class="tab">
+
+    <div class="sub-tabs">
+        <button class="sub-tab-btn active" data-subtab="personalNotes" onclick="showSubTab('personalNotes')">Notatki</button>
+        <button class="sub-tab-btn" data-subtab="personalQuizy" onclick="showSubTab('personalQuizy')">Quizy</button>
+    </div>
+
+    <!-- ===== QUIZY ===== -->
+    <div id="personalQuizy" class="sub-tab-panel">
+
+        <div class="note-form">
+            <h2>Quizy</h2>
+
+            <p>Twórz własne quizy w kreatorze quizów.</p>
+
+            <button class="btn-primary" onclick="goToQuizCreator()">
+    NOWY QUIZ
+</button>
+
+        </div>
+
+        <div class="section-label">Twoje quizy</div>
+        <div id="personalQuizyLoading" class="loading-msg">Wczytywanie quizów…</div>
+        <div id="personalQuizyContainer" class="card-grid"></div>
+
+        <div class="section-label">Quizy innych użytkowników</div>
+
+        <div class="search-quiz">
+            <input
+                type="text"
+                id="searchQuiz"
+                placeholder="Szukaj quizów...">
+        </div>
+
+        <div id="publicQuizyLoading" class="loading-msg">Wczytywanie…</div>
+        <div id="publicVideoQuizyContainer" class="card-grid">
+            <p>Brak quizów publicznych.</p>
+        </div>
+
+    </div>
+
+    <!-- ===== NOTATKI ===== -->
+    <div id="personalNotes" class="sub-tab-panel active">
+
+        <form class="note-form" id="noteForm">
+            <h2>Nowa notatka</h2>
+
+            <div class="field">
+                <label for="noteTitle">Tytuł</label>
+                <input type="text" id="noteTitle" placeholder="np. Funkcje kwadratowe" required>
+            </div>
+
+            <div class="field">
+                <label for="noteContent">Treść</label>
+                <div id="editor"></div>
+
+                <div id="charCounter" class="char-counter">
+                    0 / 100000 znaków
+                </div>
+
+                <label for="noteTags">Tagi</label>
+                <select id="noteTags" placeholder="np. matematyka, algebra, egzamin"></select>
+            </div>
+
+            <div class="visibility-toggle">
+                <input type="checkbox" id="notePublic">
+                <label for="notePublic">Notatka publiczna (widoczna dla innych)</label>
+            </div>
+
+            <button type="submit" class="btn-primary" id="saveNoteBtn">
+                ZAPISZ NOTATKĘ
+            </button>
+        </form>
+
+        <div class="section-label">Twoje notatki</div>
+        <div id="personalNotesLoading" class="loading-msg">Wczytywanie notatek…</div>
+        <div id="personalNotesContainer" class="card-grid"></div>
+
+        <div class="section-label">Twoje pozostałe notatki</div>
+        <div id="myOtherNotesContainer" class="card-grid">
+            <p>Brak notatek.</p>
+        </div>
+
+        <div class="section-label">Notatki publiczne innych o tym filmie</div>
+
+        <div class="search-notes">
+            <input
+                type="text"
+                id="searchNotes"
+                placeholder="Szukaj po tytule, treści lub tagach...">
+        </div>
+
+        <div id="publicNotesLoading" class="loading-msg">Wczytywanie…</div>
+        <div id="publicVideoNotesContainer" class="card-grid">
+            <p>Brak notatek publicznych.</p>
+        </div>
+
+    </div>
+
+</div>
+
+                        </div>
+
+                        <div id="quiz" class="tab">
+                            <button onclick="generateQuiz()" id="genQuizBtn">Generuj quiz</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button id="saveMaterialBtn" onclick="saveMaterial()">
+            ❤️ Zapisz
+        </button>
+    </div>
+    
+    <section class="reviews-grading">
+    <h2>Recenzje i Ocena</h2>
+    
+    <div class="reviews-top">
+        
+        
+        <div class="user-review">
+            <h3>Twoja ocena</h3>
+            <div class="rating-stars">
+                <span class="star" onclick="setRating(1)">⭐</span>
+                <span class="star" onclick="setRating(2)">⭐</span>
+                <span class="star" onclick="setRating(3)">⭐</span>
+                <span class="star" onclick="setRating(4)">⭐</span>
+                <span class="star" onclick="setRating(5)">⭐</span>
+            </div>
+            
+            
+            <textarea id="reviewText" placeholder="Dodaj swoją opinię..."></textarea>
+            <div id="errorMsg"></div>
+            <div class="visibility-toggle">
+            </div>
+            <button onclick="submitReview()">Prześlij opinię</button>
+        </div>
+        <div class="grade-summary">
+            <div class="grade-box">
+                <p class="grade-avg">Średnia ocena: 4.5/5 ⭐</p>
+                <p class="review-count">245 opinii</p>
+                <button
+                id="reportErrorBtn"
+                onclick="reportError()">
+                ⚠️ Zgłoś błąd
+                </button>
+            </div>
+        </div>
+    </div>
+        <label for="sortReviews">Sortuj:</label>
+    <select id="sortReviews" onchange="loadReviews()">
+        <option value="newest">Najnowsze</option>
+        <option value="oldest">Najstarsze</option>
+        <option value="highest">Najwyżej ocenione</option>
+        <option value="lowest">Najniżej ocenione</option>
+    </select>
+    
+    <!-- Reviews List -->
+    <div class="reviews-list">
+        <h3>Wszystkie opinie</h3>
+        <div id="reviewsContainer"></div>
+        <div class="reviews-sort">
+    </div>
+    
+</section>
+</main>
+
+</body>
+</html>
                 <div id="charCounter" class="char-counter">
                     0 / 100000 znaków
                 </div>
