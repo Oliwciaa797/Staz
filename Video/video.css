@@ -114,11 +114,10 @@ header {
 
 /* ---------- Responsywne wideo (działa na każdej szerokości) ---------- */
 .video-container {
-    flex: 1;
-    min-width: 0;
+    position: relative;
+    width: 100%;
     max-width: 900px;
 }
-
 
 .video-wrapper {
 	position: relative;
