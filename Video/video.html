@@ -71,47 +71,109 @@
                         </div>
 
                         <!-- ===== WŁASNE MATERIAŁY ===== -->
-                        <div id="personal" class="tab">
+      <div id="personal" class="tab">
 
-                            <div class="sub-tabs">
-                                <button class="sub-tab-btn active" data-subtab="personalNotes" onclick="showSubTab('personalNotes')">Notatki</button>
-                                <button class="sub-tab-btn" data-subtab="personalQuizy" onclick="showSubTab('personalQuizy')">Quizy</button>
-                            </div>
-
-                            <div id="personalNotes" class="sub-tab-panel active">
-                            <button id="addNoteBtn" onclick="createPersonalNote()">+ Dodaj notatkę</button>
-
-                            <div class="section-label">Twoje notatki do tego filmu</div>
-                             <div id="personalNotesContainer" class="card-grid">
-                            <p>Brak notatek.</p>
-                            </div>
-                            <div class="section-label">Twoje pozostałe notatki</div>
-                            <div id="myOtherNotesContainer" class="card-grid">
-                                <p>Brak notatek.</p>
-                            </div>
-                            <div class="section-label">Notatki publiczne innych o tym filmie</div>
-                            <div id="publicVideoNotesContainer" class="card-grid">
-                                <p>Brak notatek publicznych.</p>
-                            </div>
-                        </div>
-
-                            <div id="personalQuizy" class="sub-tab-panel">
-    <button id="addQuizBtn" onclick="goToQuizCreator()">+ Dodaj quiz</button>
-
-    <div class="section-label">Twoje quizy do tego filmu</div>
-    <div id="personalQuizyContainer" class="card-grid">
-        <p>Brak quizów.</p>
+    <div class="sub-tabs">
+        <button class="sub-tab-btn active" data-subtab="personalNotes" onclick="showSubTab('personalNotes')">Notatki</button>
+        <button class="sub-tab-btn" data-subtab="personalQuizy" onclick="showSubTab('personalQuizy')">Quizy</button>
     </div>
 
-    <div class="section-label">Twoje pozostałe quizy</div>
-    <div id="myOtherQuizyContainer" class="card-grid">
-        <p>Brak quizów.</p>
+    <!-- ===== QUIZY ===== -->
+    <div id="personalQuizy" class="sub-tab-panel">
+
+        <div class="note-form">
+            <h2>Quizy</h2>
+
+            <p>Twórz własne quizy w kreatorze quizów.</p>
+
+            <button class="btn-primary" onclick="quiz()">
+                NOWY QUIZ
+            </button>
+        </div>
+
+        <div class="section-label">Twoje quizy</div>
+        <div id="personalQuizyLoading" class="loading-msg">Wczytywanie quizów…</div>
+        <div id="personalQuizyContainer" class="card-grid"></div>
+
+        <div class="section-label">Twoje pozostałe quizy</div>
+        <div id="myOtherQuizyContainer" class="card-grid">
+            <p>Brak quizów.</p>
+        </div>
+
+        <div class="section-label">Quizy publiczne innych o tym filmie</div>
+
+        <div class="search-quiz">
+            <input
+                type="text"
+                id="searchQuiz"
+                placeholder="Szukaj quizów...">
+        </div>
+
+        <div id="publicQuizyLoading" class="loading-msg">Wczytywanie…</div>
+        <div id="publicVideoQuizyContainer" class="card-grid">
+            <p>Brak quizów publicznych.</p>
+        </div>
+
     </div>
 
-    <div class="section-label">Quizy publiczne innych o tym filmie</div>
-    <div id="publicVideoQuizyContainer" class="card-grid">
-        <p>Brak quizów publicznych.</p>
+    <!-- ===== NOTATKI ===== -->
+    <div id="personalNotes" class="sub-tab-panel active">
+
+        <form class="note-form" id="noteForm">
+            <h2>Nowa notatka</h2>
+
+            <div class="field">
+                <label for="noteTitle">Tytuł</label>
+                <input type="text" id="noteTitle" placeholder="np. Funkcje kwadratowe" required>
+            </div>
+
+            <div class="field">
+                <label for="noteContent">Treść</label>
+                <div id="editor"></div>
+
+                <div id="charCounter" class="char-counter">
+                    0 / 100000 znaków
+                </div>
+
+                <label for="noteTags">Tagi</label>
+                <select id="noteTags" placeholder="np. matematyka, algebra, egzamin"></select>
+            </div>
+
+            <div class="visibility-toggle">
+                <input type="checkbox" id="notePublic">
+                <label for="notePublic">Notatka publiczna (widoczna dla innych)</label>
+            </div>
+
+            <button type="submit" class="btn-primary" id="saveNoteBtn">
+                ZAPISZ NOTATKĘ
+            </button>
+        </form>
+
+        <div class="section-label">Twoje notatki</div>
+        <div id="personalNotesLoading" class="loading-msg">Wczytywanie notatek…</div>
+        <div id="personalNotesContainer" class="card-grid"></div>
+
+        <div class="section-label">Twoje pozostałe notatki</div>
+        <div id="myOtherNotesContainer" class="card-grid">
+            <p>Brak notatek.</p>
+        </div>
+
+        <div class="section-label">Notatki publiczne innych o tym filmie</div>
+
+        <div class="search-notes">
+            <input
+                type="text"
+                id="searchNotes"
+                placeholder="Szukaj po tytule, treści lub tagach...">
+        </div>
+
+        <div id="publicNotesLoading" class="loading-msg">Wczytywanie…</div>
+        <div id="publicVideoNotesContainer" class="card-grid">
+            <p>Brak notatek publicznych.</p>
+        </div>
+
     </div>
+
 </div>
 
                         </div>
