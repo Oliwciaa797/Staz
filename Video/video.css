@@ -356,6 +356,10 @@ header {
 
 /* ---------- Responsywne wideo (działa na każdej szerokości) ---------- */
 .video-container {
+	display: flex;
+	flex-direction: column;
+    flex: 1;
+    min-width: 0;
     position: relative;
     width: 100%;
     max-width: 900px;
@@ -378,9 +382,6 @@ header {
 }
 
 .sidepanel {
-    width: 420px;
-    min-width: 420px;
-
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -388,7 +389,7 @@ header {
     background-color: var(--background);
 	flex-wrap: wrap;
 	justify-content: center;
-	width: 1000px;
+	width: 900px;
 	overflow-y: scroll;
 	max-height: 480px;
 	max-width: 100%;
