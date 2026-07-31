@@ -22,10 +22,10 @@
     <p id="passwordError" class="error"></p>
 
     <label class="checkbox">
-        <input type="checkbox" id="agree" onchange="sprawdzCheckbox()">
-        Zgadzam się na <a href="https://pdflink.to/f90aecc1/"> warunki użytkowania strony</a>
+    <input type="checkbox" id="agree" onchange="sprawdzCheckbox()">
+    Zgadzam się na
+    <a href="/Polityka.pdf" download onclick="event.stopPropagation()">warunki użytkowania strony</a>
     </label>
-
     <button id="registerBtn" class="register-btn" onclick="checkPasswords()" disabled>
         Zarejestruj się
     </button>

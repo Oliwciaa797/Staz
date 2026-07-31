@@ -567,11 +567,67 @@ async function updateSidebar() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+
+    noteQuill = new Quill("#editor", {
+        theme: "snow",
+        modules: {
+            toolbar: [
+                [{ header: [1, 2, 3, false] }],
+                ["bold", "italic", "underline"],
+                [
+                    { list: "ordered" },
+                    { list: "bullet" }
+                ],
+                ["link"],
+                ["clean"]
+            ]
+        }
+    });
+
+    const counter =
+        document.getElementById("charCounter");
+
+    function updateCounter() {
+
+        const length =
+            Math.max(
+                0,
+                noteQuill.getLength() - 1
+            );
+
+        counter.textContent =
+            `${length} / ${MAX_NOTE_CHARS} znaków`;
+
+        counter.classList.toggle(
+            "limit-reached",
+            length >= MAX_NOTE_CHARS
+        );
+    }
+
+    noteQuill.on(
+        "text-change",
+        updateCounter
+    );
+
+    updateCounter();
+
     showUser();
     updateSidebar();
     loadAllNoteLists();
-    // loadMyReview();
+    loadAllQuizLists();
     checkSavedMaterial();
+    loadMyReview();
+
+    const noteForm =
+        document.getElementById("noteForm");
+
+    if (noteForm) {
+        noteForm.addEventListener(
+            "submit",
+            saveNoteForm
+        );
+    }
+
 });
 
 function back(){
@@ -607,100 +663,8 @@ document.addEventListener("click", () => {
 /* ============================================================
    WŁASNE NOTATKI (3 listy: do tego filmu / pozostałe / publiczne)
    ============================================================ */
-let noteQuill = null;
+let noteQuill;
 
-function createPersonalNote() {
-
-    const container = document.getElementById("personalNotesContainer");
-
-    const emptyText = container.querySelector("p");
-    if(emptyText){
-        emptyText.remove();
-    }
-
-    const div = document.createElement("div");
-    div.className = "note-form-card";
-
-    div.innerHTML = `
-        <input 
-            type="text" 
-            class="noteTitleInput" 
-            placeholder="Tytuł notatki"
-        >
-
-        <div class="quill-container"></div>
-
-        <div class="char-counter">
-            <span class="currentChars">0</span> / 100000 znaków
-        </div>
-
-
-        <div class="visibility-toggle">
-            <input 
-                type="checkbox" 
-                class="notePublicInput"
-            >
-
-            <label>
-                Notatka publiczna (widoczna dla innych)
-            </label>
-        </div>
-
-        <button 
-            type="button" 
-            class="saveNoteBtn">
-            Zapisz
-        </button>
-    `;
-
-
-    container.prepend(div);
-
-
-    const editor =
-    div.querySelector(".quill-container");
-
-
-    noteQuill = new Quill(editor,{
-
-        theme:"snow",
-
-        modules:{
-            toolbar: [
-                [{ header: [1, 2, 3, false] }],
-                ["bold", "italic", "underline"],
-                [
-                    { list: "ordered" },
-                    { list: "bullet" }
-                ],
-                ["link"],
-                ["clean"]
-            ]
-        }
-
-    });
-
-    const counter = div.querySelector(".char-counter");
-    const current = div.querySelector(".currentChars");
-
-    function updateCounter() {
-
-        const length = Math.max(0, noteQuill.getLength() - 1);
-
-        current.textContent = length;
-
-        counter.classList.toggle(
-            "limit-reached",
-            length >= MAX_NOTE_CHARS
-        );
-    }
-
-noteQuill.on("text-change", updateCounter);
-
-updateCounter();
-
-
-}
 function timeAgo(date){
 
     const seconds = Math.floor((new Date() - new Date(date)) / 1000);
@@ -900,6 +864,110 @@ updateCounter();
     });
 
 }
+
+async function saveNoteForm(e){
+
+    e.preventDefault();
+
+    const title =
+        document
+        .getElementById("noteTitle")
+        .value
+        .trim();
+
+    const isPublic =
+        document
+        .getElementById("notePublic")
+        .checked;
+
+    const content =
+        noteQuill.root.innerHTML;
+
+    const plainText =
+        noteQuill.getText().trim();
+
+    const length =
+        Math.max(
+            0,
+            noteQuill.getLength() - 1
+        );
+
+    if(length > MAX_NOTE_CHARS){
+
+        toast.show(
+            'error',
+            'Błąd',
+            'Notatka może mieć maksymalnie 100000 znaków.'
+        );
+
+        return;
+    }
+
+    if(!plainText){
+
+        toast.show(
+            'error',
+            'Błąd',
+            'Wpisz treść notatki.'
+        );
+
+        return;
+    }
+
+    const {
+        data:{user}
+    } =
+    await supabaseClient.auth.getUser();
+
+    if(!user){
+
+        toast.show(
+            'error',
+            'Zaloguj się',
+            'Zaloguj się aby stworzyć notatkę.'
+        );
+
+        return;
+    }
+
+    const { error } =
+    await supabaseClient
+        .from("notes")
+        .insert({
+            user_id: user.id,
+            video_id: videoId,
+            title: title || "Notatka do filmu",
+            content: content,
+            is_public: isPublic
+        });
+
+    if(error){
+
+        console.error(error);
+
+        toast.show(
+            'error',
+            'Błąd',
+            error.message
+        );
+
+        return;
+    }
+
+    toast.show(
+        'success',
+        'Gotowe!',
+        'Notatka została zapisana.'
+    );
+
+    document.getElementById("noteTitle").value = "";
+    document.getElementById("notePublic").checked = false;
+
+    noteQuill.setContents([]);
+
+    loadAllNoteLists();
+}
+
 /* ---------- Wczytywanie 3 list ---------- */
 async function loadPersonalNotes(){
 
@@ -926,6 +994,15 @@ async function loadPersonalNotes(){
     }
 
     container.innerHTML = "";
+
+    const loading =
+document.getElementById(
+    "personalNotesLoading"
+);
+
+if(loading){
+    loading.style.display = "none";
+}
 
     if(!data || data.length === 0){
         container.innerHTML = "<p>Brak notatek.</p>";
@@ -977,10 +1054,7 @@ async function loadPublicVideoNotes(){
 
     const { data, error } = await supabaseClient
         .from('notes')
-        .select(`
-            *,
-            profiles!user_id ( profiles, avatar_url )
-        `)
+        .select('*')
         .eq('video_id', videoId)
         .eq('is_public', true)
         .order('created_at', { ascending: false });
@@ -991,7 +1065,9 @@ async function loadPublicVideoNotes(){
         return;
     }
 
-    const filtered = user ? (data || []).filter(n => n.user_id !== user.id) : (data || []);
+    let filtered = user ? (data || []).filter(n => n.user_id !== user.id) : (data || []);
+
+    filtered = await attachAuthorProfiles(filtered);
 
     container.innerHTML = "";
 
@@ -1043,63 +1119,6 @@ async function togglePersonalNoteVisibility(id, currentlyPublic){
 /* ---------- JEDEN globalny listener na wszystkie akcje kart notatek ---------- */
 document.addEventListener("click", async (e) => {
 
-    // Zapis nowej notatki
-    if(e.target.classList.contains("saveNoteBtn")){
-
-        const card = e.target.parentElement;
-        const titleInput = card.querySelector(".noteTitleInput");
-
-        const title = titleInput 
-            ? titleInput.value.trim() 
-            : "";
-
-
-        const content =
-        noteQuill.root.innerHTML;
-
-
-        const plainText =
-        noteQuill.getText().trim();
-        const length = Math.max(0, noteQuill.getLength() - 1);
-
-        if (length > MAX_NOTE_CHARS) {
-            toast.show('error','Błąd',"Notatka może mieć maksymalnie 100000 znaków.");
-            return;
-        }
-
-        const publicInput = card.querySelector(".notePublicInput");
-        const isPublic = publicInput ? publicInput.checked : false;
-
-        if(!plainText){
-            toast.show('error', 'Błąd',"Wpisz treść notatki");
-            return;
-        }
-
-        const { data: { user } } = await supabaseClient.auth.getUser();
-
-        if(!user){
-            toast.show('error', 'Zaloguj się', "Zaloguj się aby stworzyć notatkę");
-            return;
-        }
-
-        const { error } = await supabaseClient.from("notes").insert({
-            user_id: user.id,
-            video_id: videoId,
-            title: title || "Notatka do filmu",
-            content: content,
-            is_public: isPublic
-        });
-
-        if(error){
-            console.error(error);
-            toast.show('error','Błąd', error.message);
-            return;
-        }
-
-        card.remove();
-        loadAllNoteLists();
-        return;
-    }
 
     // Reszta akcji dotyczy karty .item-card
     const card = e.target.closest(".item-card");
@@ -1191,12 +1210,43 @@ function renderQuizCard(quiz, { editable, showAuthor }){
     return div;
 }
 
-/* ---------- Twoje quizy do tego filmu ---------- */
+/* ---------- Pomocnicze: dołączenie profili autorów bez polegania na FK w bazie ---------- */
+async function attachAuthorProfiles(rows){
+
+    const authorIds = [...new Set(rows.map(r => r.user_id))];
+
+    if(authorIds.length === 0) return rows;
+
+    const { data: profilesData, error: profilesError } = await supabaseClient
+        .from('profiles')
+        .select('id, profiles, avatar_url')
+        .in('id', authorIds);
+
+    if(profilesError || !profilesData){
+        console.error(profilesError);
+        return rows;
+    }
+
+    const profileMap = Object.fromEntries(profilesData.map(p => [p.id, p]));
+
+    return rows.map(r => ({ ...r, profiles: profileMap[r.user_id] || null }));
+}
+
+/* ---------- Wszystkie Twoje quizy (ze wszystkich filmów) ---------- */
 async function loadPersonalQuizzes(){
 
     const { data: { user } } = await supabaseClient.auth.getUser();
     const container = document.getElementById("personalQuizyContainer");
 
+    const quizLoading =
+document.getElementById(
+    "personalQuizyLoading"
+);
+
+if(quizLoading){
+    quizLoading.style.display = "none";
+}
+
     if(!user){
         container.innerHTML = "<p>Zaloguj się, aby zobaczyć swoje quizy.</p>";
         return;
@@ -1206,7 +1256,6 @@ async function loadPersonalQuizzes(){
         .from('quizzes')
         .select('*')
         .eq('user_id', user.id)
-        .eq('video_id', videoId)
         .order('created_at', { ascending: false });
 
     if(error){
@@ -1218,50 +1267,15 @@ async function loadPersonalQuizzes(){
     container.innerHTML = "";
 
     if(!data || data.length === 0){
-        container.innerHTML = "<p>Brak quizów do tego filmu.</p>";
+        container.innerHTML = "<p>Nie masz jeszcze żadnych quizów.</p>";
         return;
     }
 
     data.forEach(quiz => container.appendChild(renderQuizCard(quiz, { editable: true, showAuthor: false })));
 }
 
-/* ---------- Twoje pozostałe quizy (inne filmy) ---------- */
-async function loadMyOtherQuizzes(){
-
-    const { data: { user } } = await supabaseClient.auth.getUser();
-    const container = document.getElementById("myOtherQuizyContainer");
-    if(!container) return;
-
-    if(!user){
-        container.innerHTML = "<p>Zaloguj się, aby zobaczyć swoje quizy.</p>";
-        return;
-    }
-
-    const { data, error } = await supabaseClient
-        .from('quizzes')
-        .select('*')
-        .eq('user_id', user.id)
-        .neq('video_id', videoId)
-        .order('created_at', { ascending: false });
-
-    if(error){
-        console.error(error);
-        container.innerHTML = "<p>Nie udało się wczytać quizów.</p>";
-        return;
-    }
-
-    container.innerHTML = "";
-
-    if(!data || data.length === 0){
-        container.innerHTML = "<p>Brak innych quizów.</p>";
-        return;
-    }
-
-    data.forEach(quiz => container.appendChild(renderQuizCard(quiz, { editable: true, showAuthor: false })));
-}
-
-/* ---------- Quizy publiczne innych użytkowników do tego filmu ---------- */
-async function loadPublicVideoQuizzes(){
+/* ---------- Wszystkie publiczne quizy innych użytkowników ---------- */
+async function loadPublicQuizzes(){
 
     const { data: { user } } = await supabaseClient.auth.getUser();
     const container = document.getElementById("publicVideoQuizyContainer");
@@ -1269,11 +1283,7 @@ async function loadPublicVideoQuizzes(){
 
     const { data, error } = await supabaseClient
         .from('quizzes')
-        .select(`
-            *,
-            profiles!user_id ( profiles, avatar_url )
-        `)
-        .eq('video_id', videoId)
+        .select('*')
         .eq('is_public', true)
         .order('created_at', { ascending: false });
 
@@ -1283,12 +1293,14 @@ async function loadPublicVideoQuizzes(){
         return;
     }
 
-    const filtered = user ? (data || []).filter(q => q.user_id !== user.id) : (data || []);
+    let filtered = user ? (data || []).filter(q => q.user_id !== user.id) : (data || []);
+
+    filtered = await attachAuthorProfiles(filtered);
 
     container.innerHTML = "";
 
     if(filtered.length === 0){
-        container.innerHTML = "<p>Brak quizów publicznych do tego filmu.</p>";
+        container.innerHTML = "<p>Brak quizów publicznych innych użytkowników.</p>";
         return;
     }
 
@@ -1297,8 +1309,7 @@ async function loadPublicVideoQuizzes(){
 
 async function loadAllQuizLists(){
     await loadPersonalQuizzes();
-    await loadMyOtherQuizzes();
-    await loadPublicVideoQuizzes();
+    await loadPublicQuizzes();
 }
 
 // Przejście do tworzenia nowego quizu, z przekazaniem ID bieżącego filmu,
