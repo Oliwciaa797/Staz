@@ -108,9 +108,9 @@ header {
 }
 
 .video-top {
-    display: flex;
     gap: 20px;
-    align-items: flex-start;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 /* ---------- Responsywne wideo (działa na każdej szerokości) ---------- */
@@ -156,6 +156,7 @@ header {
 	background-color: var(--background);
 	text-align: left;
 }
+
 
 #quiz button{
 	width: auto;
