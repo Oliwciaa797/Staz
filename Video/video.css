@@ -1,4 +1,245 @@
 @import url(../main.css);
+
+/* Tablety i mniejsze laptopy */
+@media (max-width: 1024px) {
+	header {
+		padding: 16px 24px;
+	}
+
+	.logo {
+		font-size: 1.6rem;
+	}
+
+	.grade-summary {
+		flex-wrap: wrap;
+	}
+
+	.reviews-top {
+		flex-wrap: wrap;
+	}
+
+	.video-container {
+		max-width: 100%;
+	}
+}
+
+/* Telefony */
+@media (max-width: 768px) {
+	header {
+		padding: 14px 16px;
+	}
+
+	.top {
+		flex-wrap: wrap;
+		gap: 10px;
+	}
+
+	.logo {
+		position: static;
+		transform: none;
+		font-size: 1.4rem;
+		margin: 0 auto;
+	}
+
+	.login-btn {
+		padding: 10px 18px;
+		font-size: 14px;
+	}
+
+	.middle-section {
+		margin: 6px;
+		padding: 6px;
+	}
+
+	.video-container {
+		max-width: 100%;
+	}
+
+
+	.sidepanelcontent {
+		width: 100%;
+		height: 320px;
+	}
+
+	.video-top {
+    flex-direction: column;
+}
+
+.video-container {
+    max-width: 100%;
+}
+
+.sidepanel {
+    width: 100%;
+    min-width: 0;
+}
+
+	.buttons {
+		width: 100%;
+	}
+
+	.reviews-top {
+		flex-direction: column;
+	}
+
+	.grade-summary {
+		gap: 12px;
+	}
+
+	.grade-box {
+		padding: 14px;
+		flex: 1 1 45%;
+	}
+
+	.quiz-card {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.sub-tabs {
+		gap: 6px;
+	}
+
+	.sub-tab-btn {
+		padding: 7px 16px;
+		font-size: 13px;
+	}
+
+	#gennotes, #genQuizBtn, .user-review button,
+	#addNoteBtn, #addQuizBtn, .saveNoteBtn,
+	#quiz button {
+		width: 100%;
+		margin: 8px 0;
+	}
+
+	.submit-btn {
+		width: 100%;
+	}
+
+	.review-text {
+		width: 100%;
+	}
+
+	.reviews-grading {
+		padding: 14px;
+	}
+
+	.user-review textarea {
+		min-height: 100px;
+	}
+
+	.user-area {
+		max-width: none;
+	}
+
+	#sidebar {
+		width: 80%;
+		max-width: 280px;
+	}
+}
+
+/* Małe telefony */
+@media (max-width: 480px) {
+	#title, .logo {
+		font-size: 1.2rem;
+	}
+
+	.avatar {
+		width: 36px;
+		height: 36px;
+	}
+
+	.grade-box {
+		flex: 1 1 100%;
+	}
+
+	.item-card {
+		padding: 12px;
+	}
+
+	.note-card, .quiz-card, .review-item {
+		padding: 12px;
+	}
+
+	.video-wrapper {
+		padding-top: 56.25%;
+	}
+
+	.sidepanelcontent {
+		height: 280px;
+	}
+
+	.buttons button {
+		font-size: 13px;
+	}
+
+	.rating-stars {
+		gap: 6px;
+	}
+
+	.star {
+		font-size: 24px;
+	}
+}
+
+.edit-review-link{
+    border:none;
+    background:none;
+    color:var(--primary-color);
+    font-size:12px;
+    font-weight:700;
+    text-decoration:underline;
+    cursor:pointer;
+    margin-left:8px;
+}
+
+@media (min-width: 769px){
+
+    .video-top{
+        display:flex;
+        flex-direction:row;
+        align-items:flex-start;
+        gap:20px;
+    }
+
+    .video-container{
+        flex:1;
+    }
+
+    .sidepanel{
+        width:420px;
+        min-width:420px;
+    }
+
+}
+
+@media (max-width:768px){
+
+    .video-top{
+        flex-direction:column;
+    }
+
+    .video-container,
+    .sidepanel{
+        width:100%;
+        min-width:0;
+        max-width:100%;
+    }
+
+}
+.ql-container {
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.ql-editor {
+    min-height: 120px;
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+
 * {
 	box-sizing: border-box;
 	margin: 0;
@@ -807,241 +1048,3 @@ input.noteTitleInput {
    RESPONSYWNOŚĆ (telefon / tablet / komputer)
    ============================================ */
 
-/* Tablety i mniejsze laptopy */
-@media (max-width: 1024px) {
-	header {
-		padding: 16px 24px;
-	}
-
-	.logo {
-		font-size: 1.6rem;
-	}
-
-	.grade-summary {
-		flex-wrap: wrap;
-	}
-
-	.reviews-top {
-		flex-wrap: wrap;
-	}
-
-	.video-container {
-		max-width: 100%;
-	}
-}
-
-/* Telefony */
-@media (max-width: 768px) {
-	header {
-		padding: 14px 16px;
-	}
-
-	.top {
-		flex-wrap: wrap;
-		gap: 10px;
-	}
-
-	.logo {
-		position: static;
-		transform: none;
-		font-size: 1.4rem;
-		margin: 0 auto;
-	}
-
-	.login-btn {
-		padding: 10px 18px;
-		font-size: 14px;
-	}
-
-	.middle-section {
-		margin: 6px;
-		padding: 6px;
-	}
-
-	.video-container {
-		max-width: 100%;
-	}
-
-
-	.sidepanelcontent {
-		width: 100%;
-		height: 320px;
-	}
-
-	.video-top {
-    flex-direction: column;
-}
-
-.video-container {
-    max-width: 100%;
-}
-
-.sidepanel {
-    width: 100%;
-    min-width: 0;
-}
-
-	.buttons {
-		width: 100%;
-	}
-
-	.reviews-top {
-		flex-direction: column;
-	}
-
-	.grade-summary {
-		gap: 12px;
-	}
-
-	.grade-box {
-		padding: 14px;
-		flex: 1 1 45%;
-	}
-
-	.quiz-card {
-		flex-direction: column;
-		align-items: flex-start;
-	}
-
-	.sub-tabs {
-		gap: 6px;
-	}
-
-	.sub-tab-btn {
-		padding: 7px 16px;
-		font-size: 13px;
-	}
-
-	#gennotes, #genQuizBtn, .user-review button,
-	#addNoteBtn, #addQuizBtn, .saveNoteBtn,
-	#quiz button {
-		width: 100%;
-		margin: 8px 0;
-	}
-
-	.submit-btn {
-		width: 100%;
-	}
-
-	.review-text {
-		width: 100%;
-	}
-
-	.reviews-grading {
-		padding: 14px;
-	}
-
-	.user-review textarea {
-		min-height: 100px;
-	}
-
-	.user-area {
-		max-width: none;
-	}
-
-	#sidebar {
-		width: 80%;
-		max-width: 280px;
-	}
-}
-
-/* Małe telefony */
-@media (max-width: 480px) {
-	#title, .logo {
-		font-size: 1.2rem;
-	}
-
-	.avatar {
-		width: 36px;
-		height: 36px;
-	}
-
-	.grade-box {
-		flex: 1 1 100%;
-	}
-
-	.item-card {
-		padding: 12px;
-	}
-
-	.note-card, .quiz-card, .review-item {
-		padding: 12px;
-	}
-
-	.video-wrapper {
-		padding-top: 56.25%;
-	}
-
-	.sidepanelcontent {
-		height: 280px;
-	}
-
-	.buttons button {
-		font-size: 13px;
-	}
-
-	.rating-stars {
-		gap: 6px;
-	}
-
-	.star {
-		font-size: 24px;
-	}
-}
-
-.edit-review-link{
-    border:none;
-    background:none;
-    color:var(--primary-color);
-    font-size:12px;
-    font-weight:700;
-    text-decoration:underline;
-    cursor:pointer;
-    margin-left:8px;
-}
-
-@media (min-width: 769px){
-
-    .video-top{
-        display:flex;
-        flex-direction:row;
-        align-items:flex-start;
-        gap:20px;
-    }
-
-    .video-container{
-        flex:1;
-    }
-
-    .sidepanel{
-        width:420px;
-        min-width:420px;
-    }
-
-}
-
-@media (max-width:768px){
-
-    .video-top{
-        flex-direction:column;
-    }
-
-    .video-container,
-    .sidepanel{
-        width:100%;
-        min-width:0;
-        max-width:100%;
-    }
-
-}
-.ql-container {
-    border-radius: 10px;
-    border: 1px solid #ddd;
-}
-
-.ql-editor {
-    min-height: 120px;
-    font-size: 14px;
-    line-height: 1.5;
-    overflow-wrap: anywhere;
-}
