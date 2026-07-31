@@ -372,87 +372,6 @@ const toast = new Toast();
 document.addEventListener('DOMContentLoaded', loadReviews);
 let errorMsg = document.getElementById('errorMsg');
 
-async function submitReview() {
-
-    const {
-        data: { user }
-    } = await supabaseClient.auth.getUser();
-
-    if (!user) {
-        toast.show('error', 'Zaloguj się', 'Zaloguj się aby wstawić opinie')
-        return;
-    }
-
-    const reviewText =
-        document.getElementById("reviewText").value;
-
-    if (userRating === 0) {
-        errorMsg.textContent = "Wybierz ocenę.";
-        return;
-    }
-
-    errorMsg.textContent = "";
-
-    const { data: existing, error: checkError } =
-    await supabaseClient
-        .from("video_reviews")
-        .select("id")
-        .eq("user_id", user.id)
-        .eq("video_id", videoId)
-        .maybeSingle();
-
-    if (existing) {
-        toast.show('error','Błąd',"Dodałeś już opinię do tego filmu.");
-        return;
-    }
-
-    let result;
-
-    if(existing){
-
-        result = await supabaseClient
-            .from("video_reviews")
-            .update({
-                rating: userRating,
-                comment: reviewText
-            })
-            .eq("id", existing.id);
-
-    }else{
-
-        result = await supabaseClient
-            .from("video_reviews")
-            .insert({
-                video_id: videoId,
-                user_id: user.id,
-                rating: userRating,
-                comment: reviewText
-            });
-
-        }
-
-        if (result.error && result.error.code === "23505") {
-            toast.show('error','Błąd',"Dodałeś już opinię do tego filmu.");
-            return;
-        }
-
-    if(result.error){
-        console.error(result.error);
-        toast.show('error', 'Error', result.error.message);
-        return;
-    }
-
-    toast.show(
-        'success',
-        'Gotowe!',
-        existing ? "Opinia zaktualizowana!" : "Opinia dodana!"
-    );
-
-    loadReviews();
-    // loadMyReview();
-}
-
-
 async function showUser() {
 
     const userArea = document.getElementById("userArea");
@@ -984,15 +903,6 @@ async function loadPersonalNotes(){
 
     const loading =
 document.getElementById(
-    "personalQuizyLoading"
-);
-
-if(loading){
-    loading.style.display = "none";
-}
-
-    const loading =
-document.getElementById(
     "personalNotesLoading"
 );
 
@@ -1232,6 +1142,15 @@ async function loadPersonalQuizzes(){
     }
 
     container.innerHTML = "";
+
+    const quizLoading =
+document.getElementById(
+    "personalQuizyLoading"
+);
+
+if(quizLoading){
+    quizLoading.style.display = "none";
+}
 
     if(!data || data.length === 0){
         container.innerHTML = "<p>Brak quizów do tego filmu.</p>";
