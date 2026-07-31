@@ -44,10 +44,10 @@ if (videoId) {
 }
 
 async function generateNotes() {
+    startLoading("gennotes", "notesBtnText", "notesLoader")
     console.log("generateNotes() called");
 
     const notes = document.getElementById("notesContent");
-    notes.innerHTML = "Generowanie notatek...";
 
     if (!videoId) {
         notes.innerHTML = "Brak ID wideo.";
@@ -57,7 +57,7 @@ async function generateNotes() {
     try {
 
         const response = await fetch("https://wiseup-za92.onrender.com/study", {
-            method: "POST",
+            mmethod: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
@@ -82,18 +82,21 @@ async function generateNotes() {
         console.error(error);
         notes.textContent = "Nie udało się połączyć z backendem.";
     }
+    finally {
+        stopLoading("gennotes", "notesBtnText", "notesLoader")
+    }
 }
 
 let currentQuiz = [];
 
 async function generateQuiz() {
-
+    startLoading("genQuizBtn", "quizBtnText", "quizLoader")
     const quizContainer = document.getElementById("quiz");
-
+    
     try {
 
         const response = await fetch("https://wiseup-za92.onrender.com/quiz", {
-            method: "POST",
+           method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
@@ -110,7 +113,13 @@ async function generateQuiz() {
         const data = await response.json();
 
         // Backend może zwrócić pytania pod różnymi kluczami - obsłuż oba warianty
-        currentQuiz = data.questions || data.quiz || [];
+        if (data.questions) {
+            currentQuiz = data.questions;
+        } else if (data.quiz?.questions) {
+            currentQuiz = data.quiz.questions;
+        } else {
+            currentQuiz = [];
+}
 
         if (!currentQuiz.length) {
             toast.show('error', 'Error', "Backend nie zwrócił żadnych pytań.");
@@ -122,6 +131,11 @@ async function generateQuiz() {
     } catch (error) {
         console.error(error);
         toast.show('error', 'Error', "Nie udało się połączyć z backendem.");
+    }
+    finally {
+
+    stopLoading("genQuizBtn", "quizBtnText", "quizLoader");
+
     }
 }
 
@@ -370,7 +384,7 @@ async function loadReviews() {
 const toast = new Toast();
 // Wczytaj recenzje po załadowaniu strony
 document.addEventListener('DOMContentLoaded', loadReviews);
-let errorMsg = document.getElementById('errorMsg');
+// let errorMsg = document.getElementById('errorMsg');
 
 async function submitReview() {
 
@@ -387,11 +401,10 @@ async function submitReview() {
         document.getElementById("reviewText").value;
 
     if (userRating === 0) {
-        errorMsg.textContent = "Wybierz ocenę.";
+        toast.show('error','Błąd',"Wybierz ocenę.");
         return;
     }
 
-    errorMsg.textContent = "";
 
     const { data: existing, error: checkError } =
     await supabaseClient
@@ -1533,11 +1546,10 @@ async function submitReview() {
     const reviewText = document.getElementById("reviewText").value;
 
     if (userRating === 0) {
-        errorMsg.textContent = "Wybierz ocenę.";
+        toast.show('error','Błąd',"Wybierz ocenę.");
         return;
     }
 
-    errorMsg.textContent = "";
 
     let result;
 
@@ -1588,4 +1600,26 @@ async function submitReview() {
 function editMyReview(){
     loadMyReview();
     document.querySelector(".user-review").scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+async function startLoading(buttonId, textId, loaderId) {
+
+    const btn = document.getElementById(buttonId);
+    const text = document.getElementById(textId);
+    const loader = document.getElementById(loaderId);
+
+    btn.disabled = true;
+    text.style.display = "none";
+    loader.style.display = "block";
+}
+
+async function stopLoading(buttonId, textId, loaderId) {
+
+    const btn = document.getElementById(buttonId);
+    const text = document.getElementById(textId);
+    const loader = document.getElementById(loaderId);
+
+    loader.style.display = "none";
+    text.style.display = "block";
+    btn.disabled = false;
 }
