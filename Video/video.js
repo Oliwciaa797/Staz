@@ -16,21 +16,7 @@ const MAX_NOTE_CHARS = 100000;
 
 /* ---------- Pomocnicze: bezpieczne wstawianie tekstu do HTML ---------- */
 function escapeHtml(str){
-    const d = document.createElement('div');if(e.target.classList.contains("show-note-btn")){
-    if (e.target.classList.contains("show-note-btn")) {
-
-        const note = card._note; // notatka przypisana wcześniej w renderNoteCard
-
-        // zapisujemy notatkę do sessionStorage
-        sessionStorage.setItem("selectedNote", JSON.stringify(note));
-
-        // przenosimy na stronę notatki
-        window.location.href = "/materialy/notatka/note.html";
-
-        return;
-    }
-    }
-
+    const d = document.createElement('div');
     d.textContent = str ?? '';
     return d.innerHTML;
 }
