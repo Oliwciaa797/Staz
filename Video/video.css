@@ -946,7 +946,7 @@ input.noteTitleInput {
 }
 
 /* Małe telefony */
-@media (max-width: 480px) {
+/* @media (max-width: 480px) {
 	#title, .logo {
 		font-size: 1.2rem;
 	}
@@ -1044,4 +1044,4 @@ input.noteTitleInput {
     font-size: 14px;
     line-height: 1.5;
     overflow-wrap: anywhere;
-}
+} */
