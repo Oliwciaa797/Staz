@@ -107,16 +107,18 @@ header {
 }
 
 .video-top {
-	display: flex;
-	flex-wrap: wrap;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
 }
 
 /* ---------- Responsywne wideo (działa na każdej szerokości) ---------- */
 .video-container {
-	position: relative;
-	width: 100%;
-	max-width: 900px;
+    flex: 1;
+    min-width: 0;
+    max-width: 900px;
 }
+
 
 .video-wrapper {
 	position: relative;
@@ -135,14 +137,14 @@ header {
 }
 
 .sidepanel {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: center;
-	width: 1000px;
-	max-width: 100%;
-	height: auto;
-	background-color: var(--background);
-	text-align: left;
+    width: 420px;
+    min-width: 420px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    background-color: var(--background);
 }
 
 #quiz button{
@@ -191,11 +193,14 @@ header {
 }
 
 .sidepanelcontent {
-	overflow-y: scroll;
-	width: 90%;
-	height: 400px;
 	margin: 10px;
 	margin-top: 0;
+}
+
+.sidepanelcontent {
+    width: 100%;
+    min-height: 400px;
+    overflow-y: auto;
 }
 
 .tab {
@@ -843,22 +848,28 @@ input.noteTitleInput {
 		padding: 6px;
 	}
 
-	.video-top {
-		flex-direction: column;
-	}
-
 	.video-container {
 		max-width: 100%;
 	}
 
-	.sidepanel {
-		width: 100%;
-	}
 
 	.sidepanelcontent {
 		width: 100%;
 		height: 320px;
 	}
+
+	.video-top {
+    flex-direction: column;
+}
+
+.video-container {
+    max-width: 100%;
+}
+
+.sidepanel {
+    width: 100%;
+    min-width: 0;
+}
 
 	.buttons {
 		width: 100%;
@@ -977,4 +988,39 @@ input.noteTitleInput {
     text-decoration:underline;
     cursor:pointer;
     margin-left:8px;
+}
+
+@media (min-width: 769px){
+
+    .video-top{
+        display:flex;
+        flex-direction:row;
+        align-items:flex-start;
+        gap:20px;
+    }
+
+    .video-container{
+        flex:1;
+    }
+
+    .sidepanel{
+        width:420px;
+        min-width:420px;
+    }
+
+}
+
+@media (max-width:768px){
+
+    .video-top{
+        flex-direction:column;
+    }
+
+    .video-container,
+    .sidepanel{
+        width:100%;
+        min-width:0;
+        max-width:100%;
+    }
+
 }
